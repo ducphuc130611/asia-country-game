@@ -1,5 +1,5 @@
 /* =========================================================
-   GLOBAL
+   RESET
 ========================================================= */
 
 * {
@@ -11,17 +11,12 @@ html {
 }
 
 body {
-
     margin: 0;
-
-    min-height: 100vh;
 
     font-family:
         Arial,
         Helvetica,
         sans-serif;
-
-    color: white;
 
     background:
         linear-gradient(
@@ -31,21 +26,23 @@ body {
             #07111f
         );
 
-    -webkit-tap-highlight-color: transparent;
+    color: white;
+
+    min-height: 100vh;
 }
 
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
 button,
 input,
 select {
-
     font: inherit;
-
 }
 
-
 button {
-
     cursor: pointer;
 
     border: none;
@@ -54,7 +51,7 @@ button {
 
     padding: 14px 18px;
 
-    margin: 5px 0;
+    margin: 6px 0;
 
     background: #1677ff;
 
@@ -63,63 +60,26 @@ button {
     font-weight: bold;
 
     transition:
-        transform .15s,
-        opacity .15s,
-        background .15s;
-
-    touch-action: manipulation;
-
+        transform 0.15s,
+        opacity 0.15s;
 }
-
 
 button:hover {
-
     transform: translateY(-2px);
 
-    opacity: .9;
-
+    opacity: 0.9;
 }
-
 
 button:active {
-
-    transform: scale(.97);
-
+    transform: scale(0.97);
 }
-
 
 button.secondary {
-
-    background: #475569;
-
+    background: #4b5563;
 }
-
 
 button.danger {
-
     background: #dc2626;
-
-}
-
-
-button.owner-button {
-
-    background:
-        linear-gradient(
-            135deg,
-            #7c3aed,
-            #4f46e5
-        );
-
-}
-
-
-button:disabled {
-
-    opacity: .5;
-
-    cursor: not-allowed;
-
 }
 
 
@@ -128,32 +88,7 @@ button:disabled {
 ========================================================= */
 
 #app {
-
-    width: 100%;
-
-    min-height:
-        calc(100vh - 80px);
-
-}
-
-
-.hidden {
-
-    display: none !important;
-
-}
-
-
-.screen {
-
-    width: 100%;
-
-    max-width: 1100px;
-
-    margin: auto;
-
-    padding: 30px 20px;
-
+    min-height: calc(100vh - 90px);
 }
 
 
@@ -162,71 +97,75 @@ button:disabled {
 ========================================================= */
 
 .header {
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 50;
-
     width: 100%;
 
-    padding:
-        18px 5%;
+    padding: 18px 5%;
 
     display: flex;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
     align-items: center;
 
     gap: 20px;
 
     background:
-        rgba(5,15,30,.95);
+        rgba(5, 15, 30, 0.95);
 
     border-bottom:
         1px solid
-        rgba(255,255,255,.1);
+        rgba(255,255,255,0.1);
 
-    backdrop-filter:
-        blur(12px);
+    position: sticky;
 
+    top: 0;
+
+    z-index: 10;
 }
 
-
-.header-title h1 {
-
+.header h1 {
     margin: 0;
 
     font-size: 26px;
-
 }
-
 
 .subtitle {
-
-    margin:
-        5px 0 0;
+    margin: 5px 0 0;
 
     color: #b9c8d8;
-
 }
 
-
 .header-profile {
-
     display: flex;
 
-    align-items: center;
-
     gap: 15px;
+
+    align-items: center;
 
     font-weight: bold;
 
     white-space: nowrap;
+}
 
+
+/* =========================================================
+   SCREEN
+========================================================= */
+
+.screen {
+    display: none;
+
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 30px 20px;
+}
+
+.screen.active {
+    display: block;
 }
 
 
@@ -235,13 +174,12 @@ button:disabled {
 ========================================================= */
 
 .card {
-
     background:
-        rgba(15,31,50,.94);
+        rgba(15, 31, 50, 0.95);
 
     border:
         1px solid
-        rgba(255,255,255,.1);
+        rgba(255,255,255,0.1);
 
     border-radius: 18px;
 
@@ -251,84 +189,57 @@ button:disabled {
 
     box-shadow:
         0 15px 40px
-        rgba(0,0,0,.25);
-
+        rgba(0,0,0,0.25);
 }
 
-
 .card h2 {
-
     margin-top: 0;
-
 }
 
 
 /* =========================================================
-   MAIN MENU
+   HOME
+========================================================= */
+
+.hero-card {
+    text-align: center;
+}
+
+.hero-card p {
+    color: #cbd5e1;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   MENU
 ========================================================= */
 
 .menu-buttons {
-
     display: grid;
 
     grid-template-columns:
-        repeat(2,1fr);
+        repeat(2, 1fr);
 
-    gap: 10px;
+    gap: 12px;
 
+    margin-top: 25px;
 }
 
-
 .menu-buttons button {
-
-    min-height: 60px;
+    min-height: 65px;
 
     font-size: 16px;
-
 }
 
 
 /* =========================================================
-   PROFILE
+   INPUT
 ========================================================= */
-
-#mainProfileInfo,
-#profileInfo {
-
-    line-height: 1.8;
-
-}
-
-
-.profile-stats {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap: 10px;
-
-    margin-top: 15px;
-
-}
-
-
-.profile-stat {
-
-    background:
-        rgba(255,255,255,.05);
-
-    padding: 12px;
-
-    border-radius: 10px;
-
-}
-
 
 input,
 select {
-
     width: 100%;
 
     padding: 14px;
@@ -344,71 +255,15 @@ select {
 
     color: white;
 
-    margin-bottom: 10px;
+    margin:
+        6px 0 12px;
 
     outline: none;
-
 }
-
 
 input:focus,
 select:focus {
-
-    border-color:
-        #1677ff;
-
-}
-
-
-select option {
-
-    background: #10233a;
-
-}
-
-
-.profile-list {
-
-    margin-top: 20px;
-
-}
-
-
-.profile-item {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content:
-        space-between;
-
-    gap: 15px;
-
-    padding: 15px;
-
-    margin-bottom: 10px;
-
-    border-radius: 12px;
-
-    background:
-        rgba(255,255,255,.05);
-
-    border:
-        1px solid
-        rgba(255,255,255,.08);
-
-}
-
-
-.profile-item.selected {
-
-    border-color:
-        #1677ff;
-
-    background:
-        rgba(22,119,255,.15);
-
+    border-color: #1677ff;
 }
 
 
@@ -417,17 +272,13 @@ select option {
 ========================================================= */
 
 .difficulty-card {
-
     max-width: 600px;
 
     margin:
         40px auto;
-
 }
 
-
 .difficulty {
-
     width: 100%;
 
     display: block;
@@ -437,77 +288,37 @@ select option {
     text-align: left;
 
     font-size: 17px;
-
 }
-
-
-.difficulty span {
-
-    display: block;
-
-}
-
 
 .difficulty small {
-
     display: block;
-
-    margin-top: 5px;
 
     color: #cbd5e1;
 
-}
-
-
-.difficulty.easy {
-
-    background: #15803d;
-
-}
-
-
-.difficulty.normal {
-
-    background: #ca8a04;
-
-}
-
-
-.difficulty.hard {
-
-    background: #dc2626;
-
+    margin-top: 5px;
 }
 
 
 /* =========================================================
-   GAME
+   GAME TOP
 ========================================================= */
 
 .game-top {
-
-    max-width: 1100px;
-
-    margin:
-        25px auto 10px;
-
-    padding:
-        0 20px;
+    width: 100%;
 
     display: grid;
 
     grid-template-columns:
-        repeat(3,1fr);
+        repeat(3, 1fr);
 
     gap: 10px;
 
+    margin-bottom: 10px;
 }
 
-
 .game-top div {
-
     background:
-        rgba(15,31,50,.9);
+        rgba(15,31,50,0.95);
 
     padding: 14px;
 
@@ -516,87 +327,68 @@ select option {
     text-align: center;
 
     font-weight: bold;
-
 }
 
 
+/* =========================================================
+   STATS
+========================================================= */
+
 .stats-bar {
-
-    max-width: 1100px;
-
-    margin: 10px auto;
-
-    padding:
-        0 20px;
-
     display: grid;
 
     grid-template-columns:
-        repeat(4,1fr);
+        repeat(4, 1fr);
 
     gap: 10px;
 
+    margin-bottom: 20px;
 }
 
-
 .stats-bar span {
-
     background:
-        rgba(15,31,50,.9);
+        rgba(15,31,50,0.95);
 
     padding: 12px;
 
     border-radius: 10px;
 
     text-align: center;
-
 }
 
+
+/* =========================================================
+   QUESTION
+========================================================= */
 
 .question-card {
-
-    max-width: 1100px;
-
-    margin:
-        20px auto;
-
+    margin-top: 20px;
 }
 
-
 .question-type {
-
-    color:
-        #60a5fa;
+    color: #60a5fa;
 
     font-weight: bold;
 
-    text-transform:
-        uppercase;
+    text-transform: uppercase;
 
-    letter-spacing:
-        1px;
-
+    letter-spacing: 1px;
 }
 
-
 #questionText {
-
     font-size: 27px;
 
     margin:
         20px 0 10px;
-
 }
 
-
 .question-info {
+    font-size: 22px;
 
-    font-size: 21px;
-
-    padding: 20px;
+    padding: 22px;
 
     background:
-        rgba(255,255,255,.05);
+        rgba(255,255,255,0.05);
 
     border-radius: 12px;
 
@@ -605,7 +397,6 @@ select option {
     text-align: center;
 
     font-weight: bold;
-
 }
 
 
@@ -614,18 +405,16 @@ select option {
 ========================================================= */
 
 .answers {
-
     display: grid;
 
     grid-template-columns:
-        repeat(2,1fr);
+        repeat(2, 1fr);
 
     gap: 12px;
-
 }
 
-
 .answer-button {
+    width: 100%;
 
     min-height: 70px;
 
@@ -636,59 +425,65 @@ select option {
 
     border:
         1px solid
-        rgba(255,255,255,.08);
-
+        rgba(255,255,255,0.08);
 }
-
-
-.answer-button:hover {
-
-    background:
-        #24527d;
-
-}
-
-
-.answer-button.correct {
-
-    background:
-        #15803d;
-
-}
-
-
-.answer-button.wrong {
-
-    background:
-        #b91c1c;
-
-}
-
 
 .answer-button.removed {
-
-    opacity: .25;
+    opacity: 0.25;
 
     pointer-events: none;
-
 }
 
 
-.game-tools {
+/* =========================================================
+   GAME TOOLS
+========================================================= */
 
+.game-tools {
     display: flex;
 
     gap: 10px;
 
     margin-top: 20px;
+}
 
+.game-tools button {
+    flex: 1;
 }
 
 
-.game-tools button {
+/* =========================================================
+   PROFILE
+========================================================= */
 
-    flex: 1;
+.profile-item {
+    display: flex;
 
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    margin:
+        10px 0;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,0.05);
+}
+
+.profile-item.selected {
+    border:
+        2px solid
+        #1677ff;
+}
+
+.profile-item button {
+    min-width: 90px;
 }
 
 
@@ -696,29 +491,18 @@ select option {
    SHOP
 ========================================================= */
 
-.shop-balance {
-
-    font-size: 20px;
-
-}
-
-
 .shop-grid {
-
     display: grid;
 
     grid-template-columns:
-        repeat(3,1fr);
+        repeat(3, 1fr);
 
     gap: 15px;
-
 }
 
-
 .shop-item {
-
     background:
-        rgba(255,255,255,.05);
+        rgba(255,255,255,0.05);
 
     padding: 20px;
 
@@ -726,67 +510,21 @@ select option {
 
     border:
         1px solid
-        rgba(255,255,255,.08);
-
+        rgba(255,255,255,0.08);
 }
-
 
 .shop-item h3 {
-
     margin-top: 0;
-
 }
-
 
 .shop-item p {
+    color: #cbd5e1;
 
-    color:
-        #cbd5e1;
-
-    min-height: 45px;
-
+    min-height: 50px;
 }
-
 
 .shop-item button {
-
     width: 100%;
-
-}
-
-
-/* =========================================================
-   INVENTORY
-========================================================= */
-
-.inventory-list {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap: 10px;
-
-}
-
-
-.inventory-item {
-
-    display: flex;
-
-    justify-content:
-        space-between;
-
-    align-items: center;
-
-    background:
-        rgba(255,255,255,.05);
-
-    padding: 16px;
-
-    border-radius: 12px;
-
 }
 
 
@@ -794,20 +532,11 @@ select option {
    DATABASE
 ========================================================= */
 
-.database-count {
-
-    color:
-        #94a3b8;
-
-}
-
-
-.country-list {
-
+#countryList {
     display: grid;
 
     grid-template-columns:
-        repeat(2,1fr);
+        repeat(2, 1fr);
 
     gap: 10px;
 
@@ -815,38 +544,28 @@ select option {
 
     overflow-y: auto;
 
+    margin-bottom: 20px;
 }
 
-
 .country-card {
-
     background:
-        rgba(255,255,255,.05);
+        rgba(255,255,255,0.05);
 
     padding: 15px;
 
     border-radius: 12px;
-
 }
-
 
 .country-card h3 {
-
     margin-top: 0;
 
-    color:
-        #60a5fa;
-
+    color: #60a5fa;
 }
 
-
 .country-card p {
-
     margin: 5px 0;
 
-    color:
-        #dbeafe;
-
+    color: #dbeafe;
 }
 
 
@@ -854,13 +573,10 @@ select option {
    RULES
 ========================================================= */
 
-.rules-list li {
+.rules-list {
+    line-height: 1.8;
 
-    margin:
-        12px 0;
-
-    line-height: 1.6;
-
+    color: #dbeafe;
 }
 
 
@@ -869,9 +585,8 @@ select option {
 ========================================================= */
 
 .update {
-
     background:
-        rgba(255,255,255,.05);
+        rgba(255,255,255,0.05);
 
     padding: 20px;
 
@@ -880,34 +595,21 @@ select option {
     border-left:
         4px solid
         #1677ff;
-
 }
 
-
 .update h3 {
-
     margin-top: 0;
 
     font-size: 24px;
-
 }
-
 
 .date {
-
-    color:
-        #94a3b8;
-
+    color: #94a3b8;
 }
 
-
 .update li {
-
     margin:
         10px 0;
-
-    line-height: 1.5;
-
 }
 
 
@@ -916,88 +618,67 @@ select option {
 ========================================================= */
 
 .result-card {
-
-    text-align: center;
-
     max-width: 700px;
 
     margin:
         60px auto;
 
+    text-align: center;
 }
-
-
-#highScoreMessage {
-
-    font-size: 24px;
-
-    font-weight: bold;
-
-    color:
-        #facc15;
-
-    margin:
-        15px 0;
-
-}
-
-
-.result-info {
-
-    margin:
-        20px 0;
-
-}
-
 
 .result-stat {
-
     display: flex;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
-    padding: 13px;
+    padding: 14px;
 
     border-bottom:
         1px solid
-        rgba(255,255,255,.1);
-
+        rgba(255,255,255,0.1);
 }
 
 
 /* =========================================================
-   OWNER
+   MODAL
 ========================================================= */
 
-.warning {
+.modal {
+    position: fixed;
+
+    inset: 0;
 
     background:
-        rgba(220,38,38,.15);
+        rgba(0,0,0,0.75);
 
-    border:
-        1px solid
-        rgba(220,38,38,.3);
+    display: flex;
 
-    padding: 12px;
+    align-items: center;
 
-    border-radius: 10px;
+    justify-content: center;
 
+    z-index: 100;
 }
 
+.modal.hidden {
+    display: none;
+}
 
-.owner-grid {
+.modal-content {
+    width: 90%;
 
-    display: grid;
+    max-width: 500px;
 
-    grid-template-columns:
-        repeat(2,1fr);
+    background:
+        #10233a;
 
-    gap: 10px;
+    border-radius: 18px;
 
-    margin:
-        15px 0;
+    padding: 25px;
 
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,0.5);
 }
 
 
@@ -1006,7 +687,6 @@ select option {
 ========================================================= */
 
 .toast {
-
     position: fixed;
 
     left: 50%;
@@ -1014,12 +694,10 @@ select option {
     bottom: 30px;
 
     transform:
-        translate(-50%,120px);
+        translateX(-50%);
 
     background:
         #10233a;
-
-    color: white;
 
     padding:
         15px 25px;
@@ -1028,7 +706,7 @@ select option {
 
     box-shadow:
         0 10px 30px
-        rgba(0,0,0,.4);
+        rgba(0,0,0,0.4);
 
     z-index: 200;
 
@@ -1036,24 +714,43 @@ select option {
 
     opacity: 0;
 
+    pointer-events: none;
+
     transition:
-        .3s;
+        opacity 0.2s;
+}
 
-    max-width:
-        90%;
-
-    text-align: center;
-
+.toast.show {
+    opacity: 1;
 }
 
 
-.toast.show {
+/* =========================================================
+   OWNER
+========================================================= */
 
-    opacity: 1;
+.owner-card {
+    border:
+        2px solid
+        #f59e0b;
+}
 
-    transform:
-        translate(-50%,0);
+.owner-warning {
+    color: #fbbf24;
 
+    font-weight: bold;
+}
+
+.owner-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+    margin:
+        15px 0;
 }
 
 
@@ -1062,14 +759,11 @@ select option {
 ========================================================= */
 
 footer {
-
     text-align: center;
 
-    color:
-        #94a3b8;
+    color: #94a3b8;
 
     padding: 20px;
-
 }
 
 
@@ -1080,205 +774,107 @@ footer {
 @media (max-width: 700px) {
 
     .header {
-
         padding: 15px;
 
-        flex-direction:
-            column;
+        flex-direction: column;
 
-        align-items:
-            flex-start;
-
+        align-items: flex-start;
     }
 
-
-    .header-title h1 {
-
+    .header h1 {
         font-size: 21px;
-
     }
-
 
     .header-profile {
-
         width: 100%;
 
         justify-content:
             space-between;
 
-        gap: 5px;
-
         font-size: 13px;
-
     }
-
 
     .screen {
-
         padding:
             15px;
-
     }
-
-
-    .card {
-
-        padding: 18px;
-
-    }
-
 
     .menu-buttons {
-
-        grid-template-columns:
-            1fr;
-
+        grid-template-columns: 1fr;
     }
-
 
     .game-top {
+        grid-template-columns:
+            repeat(3, 1fr);
 
-        padding:
-            0 15px;
-
+        font-size: 13px;
     }
-
 
     .stats-bar {
-
-        padding:
-            0 15px;
-
         grid-template-columns:
-            repeat(2,1fr);
+            repeat(2, 1fr);
 
+        font-size: 13px;
     }
-
 
     .answers {
-
-        grid-template-columns:
-            1fr;
-
+        grid-template-columns: 1fr;
     }
-
 
     #questionText {
-
         font-size: 22px;
-
     }
-
 
     .question-info {
-
         font-size: 18px;
-
     }
-
 
     .shop-grid {
-
-        grid-template-columns:
-            1fr;
-
+        grid-template-columns: 1fr;
     }
 
+    #countryList {
+        grid-template-columns: 1fr;
 
-    .country-list {
-
-        grid-template-columns:
-            1fr;
-
-        max-height:
-            none;
-
+        max-height: none;
     }
-
-
-    .inventory-list {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
 
     .game-tools {
-
-        flex-direction:
-            column;
-
+        flex-direction: column;
     }
-
-
-    .profile-stats {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-
-    .owner-grid {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
 
     .profile-item {
+        flex-direction: column;
 
-        flex-direction:
-            column;
-
-        align-items:
-            stretch;
-
+        align-items: stretch;
     }
 
+    .owner-grid {
+        grid-template-columns: 1fr;
+    }
 
     button {
-
         min-height: 50px;
-
     }
-
 }
 
 
 /* =========================================================
-   VERY SMALL PHONES
+   SMALL PHONES
 ========================================================= */
 
 @media (max-width: 400px) {
 
-    .game-top {
-
-        font-size: 13px;
-
+    .card {
+        padding: 17px;
     }
 
+    .game-top {
+        font-size: 12px;
+    }
 
     .stats-bar {
-
-        font-size: 13px;
-
-    }
-
-
-    .card {
-
-        padding: 16px;
-
-    }
-
-
-    .header-profile {
-
         font-size: 12px;
-
     }
 
 }
