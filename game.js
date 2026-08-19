@@ -1,24 +1,30 @@
 // ============================================================
 // ASIA COUNTRY GUESSING GAME
-// Web Edition
-// game.js
+// WEB EDITION
 // ============================================================
 
 
 // ============================================================
 // OWNER SECURITY
 // ============================================================
+//
+// LỚP 1:
+//     Kiểm tra IP public.
+//
+// LỚP 2:
+//     Kiểm tra mật khẩu Owner.
+//
+// QUAN TRỌNG:
+//     JavaScript chạy ở máy người chơi nên đây KHÔNG phải
+//     bảo mật server tuyệt đối.
+//
+// Hãy thay YOUR_PUBLIC_IP bằng IP public của bạn.
+//
+// ============================================================
 
-// ĐỔI MẬT KHẨU NÀY
-const OWNER_PASSWORD = "AsiaOwner2026!";
+const OWNER_IP = "YOUR_PUBLIC_IP";
 
-// Tên của thiết bị Owner
-const OWNER_DEVICE_KEY =
-    "ASIA_OWNER_DEVICE_2026";
-
-// Key lưu trạng thái Owner
-const OWNER_AUTH_KEY =
-    "asia_owner_authorized";
+const OWNER_PASSWORD = "1306owner2011";
 
 
 // ============================================================
@@ -92,28 +98,50 @@ const countries = [
 // ============================================================
 
 const STORAGE_KEY =
-    "asia_country_game_profiles";
+    "asia_country_game_profiles_v1";
 
 const CURRENT_PROFILE_KEY =
-    "asia_current_profile";
+    "asia_current_profile_v1";
 
 
-let profiles =
-    loadProfiles();
+let profiles = [];
+
+let currentProfile = -1;
 
 
-let currentProfile =
-    Number(
-        localStorage.getItem(
-            CURRENT_PROFILE_KEY
-        )
+try {
+
+    profiles =
+        JSON.parse(
+            localStorage.getItem(
+                STORAGE_KEY
+            )
+        ) || [];
+
+}
+catch (error) {
+
+    profiles = [];
+
+}
+
+
+const savedCurrentProfile =
+    localStorage.getItem(
+        CURRENT_PROFILE_KEY
     );
 
 
+if (savedCurrentProfile !== null) {
+
+    currentProfile =
+        Number(savedCurrentProfile);
+
+}
+
+
 if (
-    !Number.isInteger(currentProfile) ||
-    currentProfile < 0 ||
-    !profiles[currentProfile]
+    !Number.isInteger(currentProfile)
 ) {
 
     currentProfile = -1;
@@ -122,45 +150,7 @@ if (
 
 
 // ============================================================
-// LOAD PROFILES
-// ============================================================
-
-function loadProfiles() {
-
-    try {
-
-        const data =
-            localStorage.getItem(
-                STORAGE_KEY
-            );
-
-        if (!data)
-            return [];
-
-        const parsed =
-            JSON.parse(data);
-
-        return Array.isArray(parsed)
-            ? parsed
-            : [];
-
-    }
-    catch (error) {
-
-        console.error(
-            "Profile loading error:",
-            error
-        );
-
-        return [];
-
-    }
-
-}
-
-
-// ============================================================
-// DEFAULT PROFILE
+// PROFILE DEFAULT
 // ============================================================
 
 function newProfile(name) {
@@ -254,29 +244,27 @@ function getProfile() {
 
 
 // ============================================================
-// SCREEN SYSTEM
+// SCREEN
 // ============================================================
 
 function showScreen(id) {
 
     document
         .querySelectorAll(".screen")
-        .forEach(
-            screen => {
+        .forEach(screen => {
 
-                screen.classList.remove(
-                    "active"
-                );
+            screen.classList.add("hidden");
 
-            }
-        );
+            screen.classList.remove("active");
+
+        });
 
 
-    const target =
+    const screen =
         document.getElementById(id);
 
 
-    if (!target) {
+    if (!screen) {
 
         console.error(
             "Screen not found:",
@@ -288,7 +276,15 @@ function showScreen(id) {
     }
 
 
-    target.classList.add("active");
+    screen.classList.remove("hidden");
+
+    screen.classList.add("active");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
 
     updateHeader();
 
@@ -301,7 +297,7 @@ function showScreen(id) {
 
 function goHome() {
 
-    showScreen("homeScreen");
+    showScreen("mainMenu");
 
     updateMainProfile();
 
@@ -318,9 +314,7 @@ let toastTimer = null;
 function toast(message) {
 
     const element =
-        document.getElementById(
-            "toast"
-        );
+        document.getElementById("toast");
 
 
     if (!element)
@@ -331,25 +325,18 @@ function toast(message) {
         message;
 
 
-    element.classList.add(
-        "show"
-    );
+    element.classList.add("show");
 
 
     clearTimeout(toastTimer);
 
 
     toastTimer =
-        setTimeout(
-            () => {
+        setTimeout(() => {
 
-                element.classList.remove(
-                    "show"
-                );
+            element.classList.remove("show");
 
-            },
-            2200
-        );
+        }, 2200);
 
 }
 
@@ -360,51 +347,57 @@ function toast(message) {
 
 function updateHeader() {
 
-    const p =
-        getProfile();
+    const p = getProfile();
+
+
+    const profileElement =
+        document.getElementById(
+            "headerProfile"
+        );
+
+    const coinsElement =
+        document.getElementById(
+            "headerCoins"
+        );
+
+    const levelElement =
+        document.getElementById(
+            "headerLevel"
+        );
 
 
     if (!p) {
 
-        document.getElementById(
-            "headerProfile"
-        ).textContent =
-            "Guest";
+        if (profileElement)
+            profileElement.textContent =
+                "Guest";
 
+        if (coinsElement)
+            coinsElement.textContent =
+                "0";
 
-        document.getElementById(
-            "headerCoins"
-        ).textContent =
-            "0";
-
-
-        document.getElementById(
-            "headerLevel"
-        ).textContent =
-            "1";
-
+        if (levelElement)
+            levelElement.textContent =
+                "1";
 
         return;
 
     }
 
 
-    document.getElementById(
-        "headerProfile"
-    ).textContent =
-        p.name;
+    if (profileElement)
+        profileElement.textContent =
+            p.name;
 
 
-    document.getElementById(
-        "headerCoins"
-    ).textContent =
-        p.coins;
+    if (coinsElement)
+        coinsElement.textContent =
+            p.coins;
 
 
-    document.getElementById(
-        "headerLevel"
-    ).textContent =
-        p.level;
+    if (levelElement)
+        levelElement.textContent =
+            p.level;
 
 }
 
@@ -425,15 +418,21 @@ function updateMainProfile() {
         return;
 
 
-    const p =
-        getProfile();
+    const p = getProfile();
 
 
     if (!p) {
 
         container.innerHTML = `
-            <p>No profile selected.</p>
-            <p>Create a profile to start playing.</p>
+
+            <p>
+                No profile selected.
+            </p>
+
+            <p>
+                Go to Profile and create one.
+            </p>
+
         `;
 
         return;
@@ -444,23 +443,29 @@ function updateMainProfile() {
     container.innerHTML = `
 
         <p>
-            👤 <strong>${escapeHTML(p.name)}</strong>
+            👤
+            <strong>${escapeHTML(p.name)}</strong>
         </p>
 
         <p>
-            🏆 Level:
+            ⭐ Level:
             <strong>${p.level}</strong>
             (${getRank(p.level)})
         </p>
 
         <p>
-            ✨ XP:
+            XP:
             <strong>${p.xp}</strong>
         </p>
 
         <p>
             🪙 Coins:
             <strong>${p.coins}</strong>
+        </p>
+
+        <p>
+            🏆 High Score:
+            <strong>${p.highScore}</strong>
         </p>
 
         <p>
@@ -481,11 +486,6 @@ function updateMainProfile() {
         <p>
             🔥 Best Combo:
             <strong>${p.bestCombo}</strong>
-        </p>
-
-        <p>
-            🏆 High Score:
-            <strong>${p.highScore}</strong>
         </p>
 
     `;
@@ -534,8 +534,7 @@ function getRank(level) {
 
 function addXP(amount) {
 
-    const p =
-        getProfile();
+    const p = getProfile();
 
 
     if (!p)
@@ -560,18 +559,19 @@ function addXP(amount) {
         oldLevel
     ) {
 
-        const levels =
+        const levelsGained =
             p.level -
             oldLevel;
 
-
         const reward =
-            levels * 500;
+            levelsGained *
+            500;
 
 
         p.coins += reward;
 
-        p.totalCoinsEarned += reward;
+        p.totalCoinsEarned +=
+            reward;
 
 
         toast(
@@ -589,8 +589,7 @@ function addXP(amount) {
 
 function addCoins(amount) {
 
-    const p =
-        getProfile();
+    const p = getProfile();
 
 
     if (!p)
@@ -628,7 +627,7 @@ function openProfileMenu() {
 
 
 // ============================================================
-// RENDER PROFILE INFO
+// PROFILE INFO
 // ============================================================
 
 function renderProfileInfo() {
@@ -639,8 +638,11 @@ function renderProfileInfo() {
         );
 
 
-    const p =
-        getProfile();
+    if (!container)
+        return;
+
+
+    const p = getProfile();
 
 
     if (!p) {
@@ -656,45 +658,53 @@ function renderProfileInfo() {
     container.innerHTML = `
 
         <p>
-            👤 <strong>${escapeHTML(p.name)}</strong>
+            👤
+            <strong>${escapeHTML(p.name)}</strong>
         </p>
 
         <p>
-            🏆 Level ${p.level}
-            - ${getRank(p.level)}
+            Level:
+            <strong>${p.level}</strong>
         </p>
 
         <p>
-            ✨ ${p.xp} XP
+            Rank:
+            <strong>${getRank(p.level)}</strong>
         </p>
 
         <p>
-            🪙 ${p.coins} Coins
+            XP:
+            <strong>${p.xp}</strong>
         </p>
 
         <p>
-            🏆 High Score:
-            ${p.highScore}
+            High Score:
+            <strong>${p.highScore}</strong>
         </p>
 
         <p>
-            🎮 Total Games:
-            ${p.totalGames}
+            Total Games:
+            <strong>${p.totalGames}</strong>
         </p>
 
         <p>
-            🎯 Correct:
-            ${p.totalCorrect}
+            Correct:
+            <strong>${p.totalCorrect}</strong>
         </p>
 
         <p>
-            ❌ Wrong:
-            ${p.totalWrong}
+            Wrong:
+            <strong>${p.totalWrong}</strong>
         </p>
 
         <p>
-            🔥 Best Combo:
-            ${p.bestCombo}
+            Best Combo:
+            <strong>${p.bestCombo}</strong>
+        </p>
+
+        <p>
+            Coins:
+            <strong>${p.coins}</strong>
         </p>
 
     `;
@@ -703,25 +713,15 @@ function renderProfileInfo() {
 
 
 // ============================================================
-// CREATE PROFILE FROM INPUT
+// CREATE PROFILE
 // ============================================================
 
-function createProfileFromInput() {
+function createProfile() {
 
-    const input =
-        document.getElementById(
-            "profileName"
-        );
-
-
-    const name =
-        input.value.trim();
-
-
-    if (!name) {
+    if (profiles.length >= 20) {
 
         toast(
-            "Enter a profile name."
+            "Maximum 20 profiles."
         );
 
         return;
@@ -729,26 +729,35 @@ function createProfileFromInput() {
     }
 
 
-    createProfile(name);
+    const input =
+        document.getElementById(
+            "profileName"
+        );
 
 
-    input.value = "";
+    let name =
+        input
+        ? input.value.trim()
+        : "";
 
-}
+
+    if (!name) {
+
+        name =
+            prompt(
+                "Enter profile name:"
+            ) || "";
+
+        name =
+            name.trim();
+
+    }
 
 
-// ============================================================
-// CREATE PROFILE
-// ============================================================
-
-function createProfile(name) {
-
-    if (
-        profiles.length >= 20
-    ) {
+    if (!name) {
 
         toast(
-            "Maximum 20 profiles."
+            "Please enter a profile name."
         );
 
         return;
@@ -782,6 +791,10 @@ function createProfile(name) {
         profiles.length - 1;
 
 
+    if (input)
+        input.value = "";
+
+
     save();
 
     renderProfiles();
@@ -791,97 +804,6 @@ function createProfile(name) {
 
     toast(
         `Welcome, ${name}!`
-    );
-
-}
-
-
-// ============================================================
-// RENDER PROFILES
-// ============================================================
-
-function renderProfiles() {
-
-    const container =
-        document.getElementById(
-            "profileList"
-        );
-
-
-    if (!container)
-        return;
-
-
-    container.innerHTML = "";
-
-
-    if (
-        profiles.length === 0
-    ) {
-
-        container.innerHTML =
-            "<p>No profiles yet.</p>";
-
-        return;
-
-    }
-
-
-    profiles.forEach(
-        (p,index) => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "profile-item" +
-                (
-                    index ===
-                    currentProfile
-                        ? " selected"
-                        : ""
-                );
-
-
-            div.innerHTML = `
-
-                <div>
-
-                    <strong>
-                        ${escapeHTML(p.name)}
-                    </strong>
-
-                    <br>
-
-                    Level ${p.level}
-
-                    |
-
-                    ${p.xp} XP
-
-                    |
-
-                    🪙 ${p.coins}
-
-                </div>
-
-                <button
-                    onclick="selectProfile(${index})"
-                >
-                    Select
-                </button>
-
-            `;
-
-
-            container.appendChild(
-                div
-            );
-
-        }
     );
 
 }
@@ -956,7 +878,8 @@ function deleteProfile() {
         profiles.length === 0
     ) {
 
-        currentProfile = -1;
+        currentProfile =
+            -1;
 
     }
     else if (
@@ -979,6 +902,97 @@ function deleteProfile() {
 
     toast(
         "Profile deleted."
+    );
+
+}
+
+
+// ============================================================
+// RENDER PROFILES
+// ============================================================
+
+function renderProfiles() {
+
+    const container =
+        document.getElementById(
+            "profileList"
+        );
+
+
+    if (!container)
+        return;
+
+
+    container.innerHTML = "";
+
+
+    if (
+        profiles.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>No profiles yet.</p>";
+
+        return;
+
+    }
+
+
+    profiles.forEach(
+        (p,index) => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "profile-item" +
+                (
+                    index === currentProfile
+                    ? " selected"
+                    : ""
+                );
+
+
+            div.innerHTML = `
+
+                <div>
+
+                    <strong>
+                        ${escapeHTML(p.name)}
+                    </strong>
+
+                    <br>
+
+                    Level ${p.level}
+
+                    |
+
+                    ${p.xp} XP
+
+                    |
+
+                    🪙 ${p.coins}
+
+                </div>
+
+
+                <button
+                    onclick="selectProfile(${index})"
+                >
+                    Select
+                </button>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
     );
 
 }
@@ -1027,6 +1041,8 @@ function openShop() {
             "Create/select a profile first."
         );
 
+        openProfileMenu();
+
         return;
 
     }
@@ -1051,22 +1067,20 @@ function updateShop() {
         return;
 
 
-    document.getElementById(
-        "shopCoins"
-    ).textContent =
-        p.coins;
+    const element =
+        document.getElementById(
+            "shopCoins"
+        );
+
+
+    if (element)
+        element.textContent =
+            p.coins;
 
 }
 
 
-// ============================================================
-// BUY ITEM
-// ============================================================
-
-function buyItem(
-    item,
-    price
-) {
+function buyItem(item, price) {
 
     const p =
         getProfile();
@@ -1077,8 +1091,8 @@ function buyItem(
 
 
     if (
-        typeof p[item] !==
-        "number"
+        !Object.prototype.hasOwnProperty
+            .call(p,item)
     ) {
 
         toast(
@@ -1091,7 +1105,8 @@ function buyItem(
 
 
     if (
-        p.coins < price
+        p.coins <
+        price
     ) {
 
         toast(
@@ -1103,7 +1118,9 @@ function buyItem(
     }
 
 
-    p.coins -= price;
+    p.coins -=
+        price;
+
 
     p[item]++;
 
@@ -1124,44 +1141,50 @@ function buyItem(
 // INVENTORY
 // ============================================================
 
-function getInventoryHTML() {
+function renderInventory() {
 
     const p =
         getProfile();
 
 
-    if (!p)
-        return "";
+    const container =
+        document.getElementById(
+            "inventoryInfo"
+        );
 
 
-    return `
+    if (!p || !container)
+        return;
 
-        <div class="result-stat">
+
+    container.innerHTML = `
+
+        <div class="inventory-row">
             <span>💡 Hint</span>
             <strong>${p.hints}</strong>
         </div>
 
-        <div class="result-stat">
+        <div class="inventory-row">
             <span>❤️ Extra Life</span>
             <strong>${p.extraLives}</strong>
         </div>
 
-        <div class="result-stat">
+        <div class="inventory-row">
             <span>✨ Double XP</span>
             <strong>${p.doubleXP}</strong>
         </div>
 
-        <div class="result-stat">
+        <div class="inventory-row">
             <span>📈 Score Boost</span>
             <strong>${p.scoreBoost}</strong>
         </div>
 
-        <div class="result-stat">
+        <div class="inventory-row">
             <span>🔄 Second Chance</span>
             <strong>${p.secondChance}</strong>
         </div>
 
-        <div class="result-stat">
+        <div class="inventory-row">
             <span>🍀 Lucky Answer</span>
             <strong>${p.luckyAnswer}</strong>
         </div>
@@ -1171,7 +1194,7 @@ function getInventoryHTML() {
 }
 
 
-function openInventoryDuringGame() {
+function showInventoryDuringGame() {
 
     const p =
         getProfile();
@@ -1181,15 +1204,16 @@ function openInventoryDuringGame() {
         return;
 
 
-    document.getElementById(
-        "inventoryInfo"
-    ).innerHTML =
-        getInventoryHTML();
+    renderInventory();
 
 
-    document.getElementById(
-        "inventoryModal"
-    ).classList.remove(
+    const modal =
+        document.getElementById(
+            "inventoryModal"
+        );
+
+
+    modal.classList.remove(
         "hidden"
     );
 
@@ -1198,9 +1222,13 @@ function openInventoryDuringGame() {
 
 function closeInventory() {
 
-    document.getElementById(
-        "inventoryModal"
-    ).classList.add(
+    const modal =
+        document.getElementById(
+            "inventoryModal"
+        );
+
+
+    modal.classList.add(
         "hidden"
     );
 
@@ -1293,9 +1321,21 @@ function startGame(difficulty) {
     }
 
 
+    if (
+        difficulty !== 1 &&
+        difficulty !== 2 &&
+        difficulty !== 3
+    ) {
+
+        difficulty = 1;
+
+    }
+
+
     game = {
 
         difficulty:
+
             difficulty,
 
         question: 0,
@@ -1329,8 +1369,6 @@ function startGame(difficulty) {
     };
 
 
-    // Extra Life
-
     if (
         p.extraLives > 0
     ) {
@@ -1359,7 +1397,90 @@ function startGame(difficulty) {
     );
 
 
+    updateGameStats();
+
     nextQuestion();
+
+}
+
+
+// ============================================================
+// GAME STATS
+// ============================================================
+
+function updateGameStats() {
+
+    const p =
+        getProfile();
+
+
+    if (!p)
+        return;
+
+
+    const q =
+        document.getElementById(
+            "questionNumber"
+        );
+
+    const lives =
+        document.getElementById(
+            "lives"
+        );
+
+    const combo =
+        document.getElementById(
+            "combo"
+        );
+
+    const score =
+        document.getElementById(
+            "score"
+        );
+
+    const xp =
+        document.getElementById(
+            "xp"
+        );
+
+    const coins =
+        document.getElementById(
+            "coins"
+        );
+
+    const level =
+        document.getElementById(
+            "level"
+        );
+
+
+    if (q)
+        q.textContent =
+            `${game.question}/${game.totalQuestions}`;
+
+    if (lives)
+        lives.textContent =
+            game.lives;
+
+    if (combo)
+        combo.textContent =
+            game.combo;
+
+    if (score)
+        score.textContent =
+            game.score;
+
+    if (xp)
+        xp.textContent =
+            p.xp;
+
+    if (coins)
+        coins.textContent =
+            p.coins;
+
+    if (level)
+        level.textContent =
+            p.level;
 
 }
 
@@ -1370,7 +1491,8 @@ function startGame(difficulty) {
 
 function nextQuestion() {
 
-    game.locked = false;
+    game.locked =
+        false;
 
 
     if (
@@ -1398,7 +1520,8 @@ function nextQuestion() {
 
     game.question++;
 
-    game.hintUsed = false;
+    game.hintUsed =
+        false;
 
 
     let correct;
@@ -1505,7 +1628,8 @@ function nextQuestion() {
         game.difficulty === 1
     ) {
 
-        game.type = 1;
+        game.type =
+            1;
 
     }
     else if (
@@ -1515,7 +1639,8 @@ function nextQuestion() {
         game.type =
             1 +
             Math.floor(
-                Math.random() * 2
+                Math.random() *
+                3
             );
 
     }
@@ -1524,11 +1649,14 @@ function nextQuestion() {
         game.type =
             1 +
             Math.floor(
-                Math.random() * 4
+                Math.random() *
+                4
             );
 
     }
 
+
+    updateGameStats();
 
     renderQuestion();
 
@@ -1547,50 +1675,25 @@ function renderQuestion() {
         ];
 
 
-    const p =
-        getProfile();
+    const typeElement =
+        document.getElementById(
+            "questionType"
+        );
 
+    const textElement =
+        document.getElementById(
+            "questionText"
+        );
 
-    document.getElementById(
-        "questionNumber"
-    ).textContent =
-        `${game.question}/${game.totalQuestions}`;
+    const infoElement =
+        document.getElementById(
+            "questionInfo"
+        );
 
-
-    document.getElementById(
-        "lives"
-    ).textContent =
-        game.lives;
-
-
-    document.getElementById(
-        "combo"
-    ).textContent =
-        game.combo;
-
-
-    document.getElementById(
-        "score"
-    ).textContent =
-        game.score;
-
-
-    document.getElementById(
-        "gameXP"
-    ).textContent =
-        p ? p.xp : 0;
-
-
-    document.getElementById(
-        "gameCoins"
-    ).textContent =
-        p ? p.coins : 0;
-
-
-    document.getElementById(
-        "gameLevel"
-    ).textContent =
-        p ? p.level : 1;
+    const answers =
+        document.getElementById(
+            "answers"
+        );
 
 
     let title = "";
@@ -1642,31 +1745,18 @@ function renderQuestion() {
     }
 
 
-    document.getElementById(
-        "questionType"
-    ).textContent =
+    typeElement.textContent =
         title;
 
-
-    document.getElementById(
-        "questionText"
-    ).textContent =
+    textElement.textContent =
         "Choose the correct answer:";
 
-
-    document.getElementById(
-        "questionValue"
-    ).textContent =
+    infoElement.textContent =
         value;
 
 
-    const answers =
-        document.getElementById(
-            "answers"
-        );
-
-
-    answers.innerHTML = "";
+    answers.innerHTML =
+        "";
 
 
     game.options.forEach(
@@ -1686,15 +1776,20 @@ function renderQuestion() {
                 `${position + 1}. ${countries[index][0]}`;
 
 
-            button.onclick =
-                () =>
+            button.dataset.position =
+                position;
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
                     answerQuestion(
                         position
                     );
 
-
-            button.dataset.position =
-                position;
+                }
+            );
 
 
             answers.appendChild(
@@ -1703,6 +1798,9 @@ function renderQuestion() {
 
         }
     );
+
+
+    updateGameStats();
 
 }
 
@@ -1715,17 +1813,6 @@ function answerQuestion(position) {
 
     if (game.locked)
         return;
-
-
-    if (
-        position < 0 ||
-        position >=
-        game.options.length
-    )
-        return;
-
-
-    game.locked = true;
 
 
     const selected =
@@ -1750,10 +1837,6 @@ function answerQuestion(position) {
     const p =
         getProfile();
 
-
-    // --------------------------------------------------------
-    // LUCKY ANSWER
-    // --------------------------------------------------------
 
     if (
         p &&
@@ -1803,6 +1886,14 @@ function correctAnswer(
     savedByLucky = false
 ) {
 
+    if (game.locked)
+        return;
+
+
+    game.locked =
+        true;
+
+
     const p =
         getProfile();
 
@@ -1844,17 +1935,10 @@ function correctAnswer(
         baseScore = 200;
 
 
-    let comboBonus = 0;
-
-
-    if (
+    let comboBonus =
         game.combo >= 2
-    ) {
-
-        comboBonus =
-            game.combo * 25;
-
-    }
+        ? game.combo * 25
+        : 0;
 
 
     let gained =
@@ -1950,20 +2034,18 @@ function correctAnswer(
 
     save();
 
-
-    let message =
-        `✅ Correct! +${gained} points, +${gainedXP} XP, +${coinReward} Coins`;
+    updateGameStats();
 
 
-    if (savedByLucky) {
-
-        message =
-            `🍀 Lucky Answer! +${gained} points`;
-
-    }
+    const luckyText =
+        savedByLucky
+        ? " 🍀"
+        : "";
 
 
-    toast(message);
+    toast(
+        `✅ Correct!${luckyText} +${gained} points, +${gainedXP} XP, +${coinReward} Coins`
+    );
 
 
     setTimeout(
@@ -1979,6 +2061,14 @@ function correctAnswer(
 // ============================================================
 
 function wrongAnswer() {
+
+    if (game.locked)
+        return;
+
+
+    game.locked =
+        true;
+
 
     const p =
         getProfile();
@@ -2014,7 +2104,10 @@ function wrongAnswer() {
 
             p.totalQuestions++;
 
+
             save();
+
+            updateGameStats();
 
 
             toast(
@@ -2049,6 +2142,8 @@ function wrongAnswer() {
 
     save();
 
+    updateGameStats();
+
 
     const correctCountry =
         countries[
@@ -2074,6 +2169,10 @@ function wrongAnswer() {
 // ============================================================
 
 function useHint() {
+
+    if (game.locked)
+        return;
+
 
     const p =
         getProfile();
@@ -2111,10 +2210,12 @@ function useHint() {
 
     p.hints--;
 
-    game.hintUsed = true;
+    game.hintUsed =
+        true;
 
 
-    game.score -= 25;
+    game.score -=
+        25;
 
 
     if (
@@ -2129,11 +2230,12 @@ function useHint() {
         );
 
 
-    const wrongButtons = [];
+    const wrongButtons =
+        [];
 
 
     buttons.forEach(
-        (button, index) => {
+        (button,index) => {
 
             if (
                 game.options[index] !==
@@ -2150,16 +2252,15 @@ function useHint() {
     );
 
 
-    // Shuffle wrong answers
-
-    wrongButtons.sort(
-        () =>
-            Math.random() - 0.5
-    );
-
-
     wrongButtons
-        .slice(0, 2)
+        .sort(
+            () =>
+                Math.random() - 0.5
+        )
+        .slice(
+            0,
+            2
+        )
         .forEach(
             button => {
 
@@ -2173,10 +2274,45 @@ function useHint() {
 
     save();
 
+    updateGameStats();
+
 
     toast(
         "💡 Hint used! -25 points"
     );
+
+}
+
+
+// ============================================================
+// CONFIRM EXIT
+// ============================================================
+
+function confirmExitGame() {
+
+    if (
+        game.question === 0
+    ) {
+
+        goHome();
+
+        return;
+
+    }
+
+
+    if (
+        confirm(
+            "Exit the current game?"
+        )
+    ) {
+
+        game.locked =
+            true;
+
+        goHome();
+
+    }
 
 }
 
@@ -2195,22 +2331,24 @@ function finishGame() {
         return;
 
 
-    const perfect =
-        game.correct ===
-        game.totalQuestions;
+    game.locked =
+        true;
 
 
     const completionReward =
         100 +
+
         (
-            perfect
-                ? 250
-                : 0
+            game.correct ===
+            game.totalQuestions
+            ? 250
+            : 0
         ) +
+
         (
             game.difficulty === 3
-                ? 100
-                : 0
+            ? 100
+            : 0
         );
 
 
@@ -2254,16 +2392,27 @@ function finishGame() {
     save();
 
 
+    const resultInfo =
+        document.getElementById(
+            "resultInfo"
+        );
+
+
     let message;
 
 
-    if (newHighScore) {
+    if (
+        newHighScore
+    ) {
 
         message =
             "🏆 NEW HIGH SCORE!";
 
     }
-    else if (perfect) {
+    else if (
+        game.correct ===
+        game.totalQuestions
+    ) {
 
         message =
             "🎉 PERFECT GAME!";
@@ -2277,46 +2426,44 @@ function finishGame() {
     }
 
 
-    document.getElementById(
-        "resultInfo"
-    ).innerHTML = `
+    resultInfo.innerHTML = `
 
-        <p class="result-stat">
+        <div class="result-highlight">
+            ${message}
+        </div>
+
+        <div class="result-stat">
             <span>⭐ Score</span>
             <strong>${game.score}</strong>
-        </p>
+        </div>
 
-        <p class="result-stat">
-            <span>🎯 Correct</span>
+        <div class="result-stat">
+            <span>✅ Correct</span>
             <strong>${game.correct}</strong>
-        </p>
+        </div>
 
-        <p class="result-stat">
+        <div class="result-stat">
             <span>❌ Wrong</span>
             <strong>${game.wrong}</strong>
-        </p>
+        </div>
 
-        <p class="result-stat">
+        <div class="result-stat">
             <span>🔥 Best Combo</span>
             <strong>${game.bestCombo}</strong>
-        </p>
+        </div>
 
-        <p class="result-stat">
+        <div class="result-stat">
             <span>🪙 Coins</span>
             <strong>${p.coins}</strong>
-        </p>
+        </div>
 
-        <p class="result-stat">
-            <span>🏆 Level</span>
+        <div class="result-stat">
+            <span>⭐ Level</span>
             <strong>
                 ${p.level}
                 (${getRank(p.level)})
             </strong>
-        </p>
-
-        <h3>
-            ${message}
-        </h3>
+        </div>
 
     `;
 
@@ -2340,7 +2487,12 @@ function openCountries() {
         );
 
 
-    container.innerHTML = "";
+    if (!container)
+        return;
+
+
+    container.innerHTML =
+        "";
 
 
     countries.forEach(
@@ -2413,7 +2565,7 @@ function openRules() {
 // UPDATE LOG
 // ============================================================
 
-function openUpdateLog() {
+function showUpdateLog() {
 
     showScreen(
         "updateScreen"
@@ -2425,46 +2577,88 @@ function openUpdateLog() {
 // ============================================================
 // OWNER SECURITY
 // ============================================================
+//
+// KHÔNG CÓ NÚT OWNER TRÊN HTML.
+//
+// Cách gọi:
+//     Ctrl + Shift + O
+//
+// Sau đó:
+//     Lớp 1: kiểm tra IP
+//     Lớp 2: nhập password
+//
+// ============================================================
 
-function getOwnerDeviceKey() {
-
-    return localStorage.getItem(
-        "asia_owner_device_key"
-    );
-
-}
+let ownerAuthenticated =
+    false;
 
 
-function isOwnerDeviceAuthorized() {
-
-    const key =
-        getOwnerDeviceKey();
+let ownerIPChecked =
+    false;
 
 
-    return (
-        key ===
-        OWNER_DEVICE_KEY
-    );
+let detectedPublicIP =
+    "";
+
+
+async function getPublicIP() {
+
+    try {
+
+        const response =
+            await fetch(
+                "https://api.ipify.org?format=json",
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok)
+            throw new Error(
+                "IP request failed"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        return data.ip || "";
+
+    }
+    catch (error) {
+
+        console.error(
+            "Cannot determine public IP:",
+            error
+        );
+
+
+        return "";
+
+    }
 
 }
 
 
 // ============================================================
-// OWNER AUTHENTICATION
+// OWNER PANEL
 // ============================================================
 
-function openOwnerPanel() {
+async function openOwnerPanel() {
 
     // --------------------------------------------------------
-    // LAYER 1
+    // Layer 1
     // --------------------------------------------------------
 
     if (
-        !isOwnerDeviceAuthorized()
+        OWNER_IP ===
+        "YOUR_PUBLIC_IP"
     ) {
 
-        toast(
-            "🚫 Owner access denied."
+        alert(
+            "Owner IP has not been configured yet."
         );
 
         return;
@@ -2472,13 +2666,60 @@ function openOwnerPanel() {
     }
 
 
+    toast(
+        "🔐 Checking Owner IP..."
+    );
+
+
+    detectedPublicIP =
+        await getPublicIP();
+
+
+    if (
+        !detectedPublicIP
+    ) {
+
+        alert(
+            "Cannot determine your public IP."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        detectedPublicIP !==
+        OWNER_IP
+    ) {
+
+        console.warn(
+            "Unauthorized Owner attempt:",
+            detectedPublicIP
+        );
+
+
+        alert(
+            "❌ Access denied.\n\nYour IP is not authorized."
+        );
+
+
+        return;
+
+    }
+
+
+    ownerIPChecked =
+        true;
+
+
     // --------------------------------------------------------
-    // LAYER 2
+    // Layer 2
     // --------------------------------------------------------
 
     const password =
         prompt(
-            "🔐 Enter Owner Password:"
+            "🔐 OWNER PANEL\n\nEnter Owner Password:"
         );
 
 
@@ -2487,58 +2728,217 @@ function openOwnerPanel() {
         OWNER_PASSWORD
     ) {
 
-        toast(
-            "❌ Incorrect Owner Password."
+        ownerIPChecked =
+            false;
+
+
+        alert(
+            "❌ Wrong Owner Password."
         );
+
 
         return;
 
     }
 
 
-    localStorage.setItem(
-        OWNER_AUTH_KEY,
-        "true"
-    );
+    ownerAuthenticated =
+        true;
 
 
     renderOwnerProfiles();
 
 
-    showScreen(
-        "ownerScreen"
-    );
+    showOwnerPanel();
 
-
-    toast(
-        "👑 Owner Mode activated."
-    );
 
 }
 
 
 // ============================================================
-// OWNER SHORTCUT
+// HIDDEN OWNER PANEL
+// ============================================================
+//
+// Panel được tạo bằng JavaScript.
+// Không xuất hiện trong HTML ban đầu.
 // ============================================================
 
-document.addEventListener(
-    "keydown",
-    function(event) {
+function showOwnerPanel() {
 
-        if (
-            event.ctrlKey &&
-            event.shiftKey &&
-            event.key.toLowerCase() === "o"
-        ) {
+    let panel =
+        document.getElementById(
+            "ownerPanel"
+        );
 
-            event.preventDefault();
 
-            openOwnerPanel();
+    if (!panel) {
 
-        }
+        panel =
+            document.createElement(
+                "section"
+            );
+
+
+        panel.id =
+            "ownerPanel";
+
+
+        panel.className =
+            "screen";
+
+
+        panel.innerHTML = `
+
+            <div class="card">
+
+                <h2>
+                    👑 Owner Panel
+                </h2>
+
+                <p>
+                    Authorized Owner
+                </p>
+
+                <select
+                    id="ownerProfile"
+                    class="owner-select"
+                >
+                </select>
+
+
+                <input
+                    id="ownerAmount"
+                    type="number"
+                    min="0"
+                    placeholder="Amount"
+                >
+
+
+                <button
+                    onclick="ownerCoins()"
+                >
+                    🪙 Give Coins
+                </button>
+
+
+                <button
+                    onclick="ownerXP()"
+                >
+                    ⭐ Give XP
+                </button>
+
+
+                <button
+                    onclick="ownerLevel()"
+                >
+                    📈 Set Level
+                </button>
+
+
+                <button
+                    onclick="ownerMaxItems()"
+                >
+                    🎁 Max Items
+                </button>
+
+
+                <button
+                    class="danger"
+                    onclick="ownerReset()"
+                >
+                    🔄 Reset Profile
+                </button>
+
+
+                <button
+                    class="danger"
+                    onclick="ownerDeleteAll()"
+                >
+                    ☢️ Delete ALL Profiles
+                </button>
+
+
+                <button
+                    class="secondary"
+                    onclick="closeOwnerPanel()"
+                >
+                    🔒 Close Owner Panel
+                </button>
+
+            </div>
+
+        `;
+
+
+        document
+            .getElementById("app")
+            .appendChild(panel);
 
     }
-);
+
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(
+            screen => {
+
+                screen.classList.add(
+                    "hidden"
+                );
+
+                screen.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    panel.classList.remove(
+        "hidden"
+    );
+
+
+    panel.classList.add(
+        "active"
+    );
+
+
+    renderOwnerProfiles();
+
+}
+
+
+// ============================================================
+// CLOSE OWNER PANEL
+// ============================================================
+
+function closeOwnerPanel() {
+
+    ownerAuthenticated =
+        false;
+
+    ownerIPChecked =
+        false;
+
+
+    goHome();
+
+}
+
+
+// ============================================================
+// OWNER AUTH CHECK
+// ============================================================
+
+function isOwnerAuthenticated() {
+
+    return (
+        ownerAuthenticated &&
+        ownerIPChecked
+    );
+
+}
 
 
 // ============================================================
@@ -2546,6 +2946,12 @@ document.addEventListener(
 // ============================================================
 
 function renderOwnerProfiles() {
+
+    if (
+        !isOwnerAuthenticated()
+    )
+        return;
+
 
     const select =
         document.getElementById(
@@ -2557,7 +2963,8 @@ function renderOwnerProfiles() {
         return;
 
 
-    select.innerHTML = "";
+    select.innerHTML =
+        "";
 
 
     profiles.forEach(
@@ -2587,7 +2994,8 @@ function renderOwnerProfiles() {
 
     if (
         currentProfile >= 0 &&
-        profiles[currentProfile]
+        currentProfile <
+        profiles.length
     ) {
 
         select.value =
@@ -2599,10 +3007,16 @@ function renderOwnerProfiles() {
 
 
 // ============================================================
-// OWNER SELECTED PROFILE
+// OWNER SELECTED
 // ============================================================
 
 function getOwnerProfile() {
+
+    if (
+        !isOwnerAuthenticated()
+    )
+        return null;
+
 
     const select =
         document.getElementById(
@@ -2620,8 +3034,13 @@ function getOwnerProfile() {
         );
 
 
-    return profiles[index]
-        || null;
+    if (
+        !profiles[index]
+    )
+        return null;
+
+
+    return profiles[index];
 
 }
 
@@ -2649,9 +3068,7 @@ function getOwnerAmount() {
 
 
     if (
-        !Number.isFinite(
-            value
-        )
+        !Number.isFinite(value)
     )
         return 0;
 
@@ -2665,55 +3082,14 @@ function getOwnerAmount() {
 
 
 // ============================================================
-// OWNER CHECK
-// ============================================================
-
-function ownerSecurityCheck() {
-
-    if (
-        !isOwnerDeviceAuthorized()
-    ) {
-
-        toast(
-            "🚫 Owner authorization required."
-        );
-
-        goHome();
-
-        return false;
-
-    }
-
-
-    if (
-        localStorage.getItem(
-            OWNER_AUTH_KEY
-        ) !== "true"
-    ) {
-
-        toast(
-            "🔐 Owner authentication required."
-        );
-
-        goHome();
-
-        return false;
-
-    }
-
-
-    return true;
-
-}
-
-
-// ============================================================
 // OWNER GIVE COINS
 // ============================================================
 
 function ownerCoins() {
 
-    if (!ownerSecurityCheck())
+    if (
+        !isOwnerAuthenticated()
+    )
         return;
 
 
@@ -2729,7 +3105,9 @@ function ownerCoins() {
         getOwnerAmount();
 
 
-    p.coins += amount;
+    p.coins +=
+        amount;
+
 
     p.totalCoinsEarned +=
         amount;
@@ -2753,7 +3131,9 @@ function ownerCoins() {
 
 function ownerXP() {
 
-    if (!ownerSecurityCheck())
+    if (
+        !isOwnerAuthenticated()
+    )
         return;
 
 
@@ -2773,7 +3153,8 @@ function ownerXP() {
         p.level;
 
 
-    p.xp += amount;
+    p.xp +=
+        amount;
 
 
     p.level =
@@ -2800,7 +3181,9 @@ function ownerXP() {
 
 function ownerLevel() {
 
-    if (!ownerSecurityCheck())
+    if (
+        !isOwnerAuthenticated()
+    )
         return;
 
 
@@ -2834,7 +3217,8 @@ function ownerLevel() {
 
 
     p.xp =
-        (amount - 1) * 500;
+        (amount - 1) *
+        500;
 
 
     save();
@@ -2855,7 +3239,9 @@ function ownerLevel() {
 
 function ownerMaxItems() {
 
-    if (!ownerSecurityCheck())
+    if (
+        !isOwnerAuthenticated()
+    )
         return;
 
 
@@ -2867,17 +3253,23 @@ function ownerMaxItems() {
         return;
 
 
-    p.hints = 100;
+    p.hints =
+        100;
 
-    p.extraLives = 100;
+    p.extraLives =
+        100;
 
-    p.doubleXP = 100;
+    p.doubleXP =
+        100;
 
-    p.scoreBoost = 100;
+    p.scoreBoost =
+        100;
 
-    p.secondChance = 100;
+    p.secondChance =
+        100;
 
-    p.luckyAnswer = 100;
+    p.luckyAnswer =
+        100;
 
 
     save();
@@ -2896,7 +3288,9 @@ function ownerMaxItems() {
 
 function ownerReset() {
 
-    if (!ownerSecurityCheck())
+    if (
+        !isOwnerAuthenticated()
+    )
         return;
 
 
@@ -2904,6 +3298,10 @@ function ownerReset() {
         document.getElementById(
             "ownerProfile"
         );
+
+
+    if (!select)
+        return;
 
 
     const index =
@@ -2931,7 +3329,9 @@ function ownerReset() {
 
 
     profiles[index] =
-        newProfile(name);
+        newProfile(
+            name
+        );
 
 
     save();
@@ -2952,7 +3352,9 @@ function ownerReset() {
 
 function ownerDeleteAll() {
 
-    if (!ownerSecurityCheck())
+    if (
+        !isOwnerAuthenticated()
+    )
         return;
 
 
@@ -2966,7 +3368,8 @@ function ownerDeleteAll() {
 
     profiles = [];
 
-    currentProfile = -1;
+    currentProfile =
+        -1;
 
 
     save();
@@ -2977,63 +3380,38 @@ function ownerDeleteAll() {
     );
 
 
-    goHome();
+    closeOwnerPanel();
 
 }
 
 
 // ============================================================
-// OWNER DEVICE SETUP
+// OWNER HOTKEY
+// ============================================================
+//
+// Ctrl + Shift + O
+//
+// Không có nút Owner trên trang.
 // ============================================================
 
-/*
-    CHỈ DÙNG TRÊN MÁY CỦA BẠN.
+document.addEventListener(
+    "keydown",
+    event => {
 
-    Mở Console của trình duyệt và chạy:
+        if (
+            event.ctrlKey &&
+            event.shiftKey &&
+            event.key.toLowerCase() === "o"
+        ) {
 
-    enableOwnerDevice()
+            event.preventDefault();
 
-    Sau đó reload trang.
+            openOwnerPanel();
 
-    Người chơi bình thường không có key này.
-*/
+        }
 
-function enableOwnerDevice() {
-
-    localStorage.setItem(
-        "asia_owner_device_key",
-        OWNER_DEVICE_KEY
-    );
-
-
-    toast(
-        "🖥️ This browser is now authorized as Owner."
-    );
-
-}
-
-
-// ============================================================
-// DISABLE OWNER DEVICE
-// ============================================================
-
-function disableOwnerDevice() {
-
-    localStorage.removeItem(
-        "asia_owner_device_key"
-    );
-
-
-    localStorage.removeItem(
-        OWNER_AUTH_KEY
-    );
-
-
-    toast(
-        "🔒 Owner device authorization removed."
-    );
-
-}
+    }
+);
 
 
 // ============================================================
@@ -3047,9 +3425,8 @@ function initialize() {
         !profiles[currentProfile]
     ) {
 
-        currentProfile = -1;
-
-        save();
+        currentProfile =
+            -1;
 
     }
 
