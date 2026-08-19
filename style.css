@@ -1,23 +1,25 @@
-/* =========================================================
-   GLOBAL
-========================================================= */
-
 * {
     box-sizing: border-box;
 }
+
 
 html {
     scroll-behavior: smooth;
 }
 
+
 body {
 
     margin: 0;
+
+    min-height: 100vh;
 
     font-family:
         Arial,
         Helvetica,
         sans-serif;
+
+    color: white;
 
     background:
         linear-gradient(
@@ -27,19 +29,18 @@ body {
             #07111f
         );
 
-    color: white;
-
-    min-height: 100vh;
 }
+
 
 button,
 input {
+
     font: inherit;
+
 }
 
-button {
 
-    cursor: pointer;
+button {
 
     border: none;
 
@@ -47,7 +48,7 @@ button {
 
     padding: 14px 18px;
 
-    margin: 6px 0;
+    margin: 5px 0;
 
     background: #1677ff;
 
@@ -55,57 +56,94 @@ button {
 
     font-weight: bold;
 
+    cursor: pointer;
+
     transition:
-        transform 0.15s,
-        opacity 0.15s;
+        transform .15s,
+        opacity .15s;
+
 }
+
 
 button:hover {
 
     transform: translateY(-2px);
 
-    opacity: 0.9;
+    opacity: .9;
+
 }
+
 
 button:active {
 
-    transform: scale(0.97);
+    transform: scale(.97);
+
 }
+
 
 button.secondary {
 
-    background: #4b5563;
+    background: #475569;
+
 }
+
 
 button.danger {
 
     background: #dc2626;
+
 }
 
 
-/* =========================================================
-   APP
-========================================================= */
+button.easy {
+
+    background: #15803d;
+
+}
+
+
+button.normal {
+
+    background: #ca8a04;
+
+}
+
+
+button.hard {
+
+    background: #dc2626;
+
+}
+
+
+button:disabled {
+
+    opacity: .5;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+}
+
 
 #app {
 
-    width: 100%;
-
     min-height:
         calc(100vh - 80px);
+
 }
 
 
-/* =========================================================
-   HEADER
-========================================================= */
+/* HEADER */
 
 .header {
 
-    width: 100%;
+    position: sticky;
 
-    padding:
-        18px 5%;
+    top: 0;
+
+    z-index: 50;
 
     display: flex;
 
@@ -116,141 +154,396 @@ button.danger {
 
     gap: 20px;
 
+    padding:
+        18px 5%;
+
     background:
-        rgba(5,15,30,0.95);
+        rgba(5,15,30,.95);
 
     border-bottom:
         1px solid
-        rgba(255,255,255,0.1);
+        rgba(255,255,255,.1);
 
-    position: sticky;
+    backdrop-filter:
+        blur(10px);
 
-    top: 0;
-
-    z-index: 10;
 }
+
 
 .header h1 {
 
     margin: 0;
 
     font-size: 26px;
+
 }
 
-.subtitle {
 
-    margin:
-        5px 0 0;
+.header p {
 
-    color:
-        #b9c8d8;
+    margin: 5px 0 0;
+
+    color: #b9c8d8;
+
 }
+
 
 .header-profile {
 
     display: flex;
 
-    gap: 15px;
-
     align-items: center;
 
-    font-weight: bold;
+    gap: 15px;
 
     white-space: nowrap;
+
 }
 
 
-/* =========================================================
-   SCREEN
-========================================================= */
+/* SCREEN */
 
 .screen {
 
+    display: none;
+
     width: 100%;
 
-    max-width:
-        1100px;
+    max-width: 1100px;
 
-    margin:
-        auto;
+    margin: auto;
 
     padding:
         30px 20px;
-}
 
-.hidden {
-
-    display: none !important;
 }
 
 
-/* =========================================================
-   CARD
-========================================================= */
+.screen.active {
+
+    display: block;
+
+}
+
+
+/* CARD */
 
 .card {
 
-    background:
-        rgba(15,31,50,0.94);
+    margin-bottom: 20px;
+
+    padding: 25px;
 
     border:
         1px solid
-        rgba(255,255,255,0.1);
+        rgba(255,255,255,.1);
 
-    border-radius:
-        18px;
+    border-radius: 18px;
 
-    padding:
-        25px;
-
-    margin-bottom:
-        20px;
+    background:
+        rgba(15,31,50,.94);
 
     box-shadow:
         0 15px 40px
-        rgba(0,0,0,0.25);
+        rgba(0,0,0,.25);
+
 }
+
 
 .card h2 {
 
     margin-top: 0;
+
 }
 
 
-/* =========================================================
-   MAIN MENU
-========================================================= */
+/* MENU */
 
-.menu-buttons {
+.menu-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+}
+
+
+.menu-grid button {
+
+    min-height: 65px;
+
+    font-size: 16px;
+
+}
+
+
+.shortcuts-card p {
+
+    margin: 8px 0;
+
+}
+
+
+kbd {
+
+    display: inline-block;
+
+    min-width: 30px;
+
+    padding: 4px 8px;
+
+    margin-right: 6px;
+
+    text-align: center;
+
+    border-radius: 6px;
+
+    background: #020617;
+
+    border:
+        1px solid #475569;
+
+    box-shadow:
+        0 2px 0 #475569;
+
+}
+
+
+/* DIFFICULTY */
+
+.difficulty-card {
+
+    max-width: 600px;
+
+    margin:
+        40px auto;
+
+}
+
+
+.difficulty {
+
+    display: block;
+
+    width: 100%;
+
+    min-height: 70px;
+
+    text-align: left;
+
+    font-size: 18px;
+
+}
+
+
+.difficulty small {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #dbeafe;
+
+}
+
+
+/* GAME */
+
+.game-top {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 10px;
+
+    margin:
+        20px auto 10px;
+
+}
+
+
+.game-top div {
+
+    padding: 14px;
+
+    text-align: center;
+
+    border-radius: 12px;
+
+    background:
+        rgba(15,31,50,.9);
+
+}
+
+
+.stats-bar {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.stats-bar div {
+
+    padding: 12px;
+
+    text-align: center;
+
+    border-radius: 10px;
+
+    background:
+        rgba(15,31,50,.9);
+
+}
+
+
+.question-card {
+
+    text-align: center;
+
+}
+
+
+.question-type {
+
+    color: #60a5fa;
+
+    font-weight: bold;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+}
+
+
+#questionText {
+
+    margin:
+        20px 0 10px;
+
+    font-size: 27px;
+
+}
+
+
+.question-value {
+
+    padding: 20px;
+
+    margin-bottom: 20px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,.05);
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+}
+
+
+/* ANSWERS */
+
+.answers {
 
     display: grid;
 
     grid-template-columns:
         repeat(2,1fr);
 
+    gap: 12px;
+
+}
+
+
+.answer-button {
+
+    min-height: 70px;
+
+    margin: 0;
+
+    font-size: 18px;
+
+    background: #193a5c;
+
+}
+
+
+.answer-button:hover {
+
+    background: #24547f;
+
+}
+
+
+.answer-button.correct {
+
+    background: #15803d;
+
+}
+
+
+.answer-button.wrong {
+
+    background: #b91c1c;
+
+}
+
+
+.answer-button.removed {
+
+    opacity: .2;
+
+    pointer-events: none;
+
+}
+
+
+/* TOOLS */
+
+.game-tools {
+
+    display: flex;
+
     gap: 10px;
-}
 
-.menu-buttons button {
+    margin-top: 20px;
 
-    min-height:
-        60px;
-
-    font-size:
-        16px;
 }
 
 
-/* =========================================================
-   PROFILE
-========================================================= */
+.game-tools button {
 
-#profileInfo,
-#mainProfileInfo {
+    flex: 1;
 
-    line-height:
-        1.8;
 }
+
+
+/* PROFILE */
+
+#profileList {
+
+    display: grid;
+
+    gap: 10px;
+
+}
+
 
 .profile-item {
 
@@ -261,315 +554,76 @@ button.danger {
 
     align-items: center;
 
-    gap: 15px;
+    gap: 10px;
 
-    padding:
-        15px;
+    padding: 15px;
 
-    margin:
-        10px 0;
+    border-radius: 12px;
 
     background:
-        rgba(255,255,255,0.05);
+        rgba(255,255,255,.05);
 
-    border-radius:
-        12px;
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
 }
+
 
 .profile-item.selected {
 
-    border:
-        2px solid
-        #1677ff;
+    border-color: #1677ff;
+
+    background:
+        rgba(22,119,255,.15);
+
 }
+
+
+.profile-item button {
+
+    margin: 0;
+
+}
+
 
 input {
 
     width: 100%;
 
-    padding:
-        14px;
+    padding: 14px;
 
-    border-radius:
-        10px;
+    margin-bottom: 10px;
+
+    color: white;
+
+    background: #0f1f32;
 
     border:
-        1px solid
-        #64748b;
+        1px solid #64748b;
 
-    background:
-        #0f1f32;
+    border-radius: 10px;
 
-    color:
-        white;
+    outline: none;
 
-    margin-bottom:
-        10px;
-
-    outline:
-        none;
 }
+
 
 input:focus {
 
-    border-color:
-        #1677ff;
+    border-color: #1677ff;
+
 }
 
 
-/* =========================================================
-   DIFFICULTY
-========================================================= */
+/* SHOP */
 
-#difficultyScreen .card {
+.shop-balance {
 
-    max-width:
-        600px;
+    font-size: 20px;
 
-    margin:
-        40px auto;
 }
 
-.difficulty-button {
-
-    width: 100%;
-
-    display: block;
-
-    min-height:
-        65px;
-
-    text-align:
-        left;
-
-    font-size:
-        17px;
-}
-
-.difficulty-button small {
-
-    display: block;
-
-    color:
-        #cbd5e1;
-
-    margin-top:
-        5px;
-}
-
-
-/* =========================================================
-   GAME
-========================================================= */
-
-.game-top {
-
-    max-width:
-        1100px;
-
-    margin:
-        25px auto 10px;
-
-    padding:
-        0 20px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap:
-        10px;
-}
-
-.game-top div {
-
-    background:
-        rgba(15,31,50,0.9);
-
-    padding:
-        14px;
-
-    border-radius:
-        12px;
-
-    text-align:
-        center;
-
-    font-weight:
-        bold;
-}
-
-.stats-bar {
-
-    max-width:
-        1100px;
-
-    margin:
-        10px auto;
-
-    padding:
-        0 20px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap:
-        10px;
-}
-
-.stats-bar span {
-
-    background:
-        rgba(15,31,50,0.9);
-
-    padding:
-        12px;
-
-    border-radius:
-        10px;
-
-    text-align:
-        center;
-}
-
-.question-card {
-
-    max-width:
-        1100px;
-
-    margin:
-        20px auto;
-}
-
-.question-type {
-
-    color:
-        #60a5fa;
-
-    font-weight:
-        bold;
-
-    text-transform:
-        uppercase;
-
-    letter-spacing:
-        1px;
-}
-
-#questionText {
-
-    font-size:
-        27px;
-
-    margin:
-        20px 0 10px;
-}
-
-.question-info {
-
-    font-size:
-        20px;
-
-    padding:
-        20px;
-
-    background:
-        rgba(255,255,255,0.05);
-
-    border-radius:
-        12px;
-
-    margin-bottom:
-        20px;
-
-    text-align:
-        center;
-}
-
-
-/* =========================================================
-   ANSWERS
-========================================================= */
-
-.answers {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap:
-        12px;
-}
-
-.answer-button {
-
-    min-height:
-        70px;
-
-    font-size:
-        18px;
-
-    background:
-        #193a5c;
-
-    border:
-        1px solid
-        rgba(255,255,255,0.08);
-
-    width: 100%;
-}
-
-.answer-button.correct {
-
-    background:
-        #15803d;
-}
-
-.answer-button.wrong {
-
-    background:
-        #b91c1c;
-}
-
-.answer-button.removed {
-
-    opacity:
-        0.25;
-
-    pointer-events:
-        none;
-}
-
-.game-tools {
-
-    display: flex;
-
-    gap:
-        10px;
-
-    margin-top:
-        20px;
-}
-
-.game-tools button {
-
-    flex: 1;
-}
-
-
-/* =========================================================
-   SHOP
-========================================================= */
-
-.coin-display {
-
-    font-size:
-        20px;
-}
 
 .shop-grid {
 
@@ -578,489 +632,395 @@ input:focus {
     grid-template-columns:
         repeat(3,1fr);
 
-    gap:
-        15px;
+    gap: 15px;
+
 }
+
 
 .shop-item {
 
+    padding: 20px;
+
+    border-radius: 14px;
+
     background:
-        rgba(255,255,255,0.05);
-
-    padding:
-        20px;
-
-    border-radius:
-        14px;
+        rgba(255,255,255,.05);
 
     border:
         1px solid
-        rgba(255,255,255,0.08);
+        rgba(255,255,255,.08);
+
 }
+
 
 .shop-item h3 {
 
-    margin-top:
-        0;
+    margin-top: 0;
+
 }
+
 
 .shop-item p {
 
-    color:
-        #cbd5e1;
+    min-height: 45px;
 
-    min-height:
-        45px;
+    color: #cbd5e1;
+
 }
+
 
 .shop-item button {
 
-    width:
-        100%;
+    width: 100%;
+
 }
 
 
-/* =========================================================
-   DATABASE
-========================================================= */
+/* DATABASE */
 
-#countryList {
+.country-list {
 
     display: grid;
 
     grid-template-columns:
         repeat(2,1fr);
 
-    gap:
-        10px;
+    gap: 10px;
 
-    max-height:
-        650px;
+    max-height: 650px;
 
-    overflow-y:
-        auto;
+    overflow-y: auto;
+
 }
+
 
 .country-card {
 
+    padding: 15px;
+
+    border-radius: 12px;
+
     background:
-        rgba(255,255,255,0.05);
+        rgba(255,255,255,.05);
 
-    padding:
-        15px;
-
-    border-radius:
-        12px;
 }
+
 
 .country-card h3 {
 
-    margin-top:
-        0;
+    margin-top: 0;
 
-    color:
-        #60a5fa;
+    color: #60a5fa;
+
 }
+
 
 .country-card p {
 
-    margin:
-        5px 0;
+    margin: 6px 0;
 
-    color:
-        #dbeafe;
+    color: #dbeafe;
+
 }
 
 
-/* =========================================================
-   UPDATE LOG
-========================================================= */
+/* RULES */
 
-.update {
+.rules li {
 
-    background:
-        rgba(255,255,255,0.05);
+    margin: 12px 0;
 
-    padding:
-        20px;
+}
 
-    border-radius:
-        14px;
+
+/* UPDATE */
+
+.update-card {
+
+    padding: 20px;
 
     border-left:
-        4px solid
-        #1677ff;
+        4px solid #1677ff;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,.05);
+
 }
 
-.update h3 {
 
-    margin-top:
-        0;
+.update-card h3 {
 
-    font-size:
-        24px;
+    margin-top: 0;
+
+    font-size: 24px;
+
 }
+
 
 .date {
 
-    color:
-        #94a3b8;
-}
+    color: #94a3b8;
 
-.update li {
-
-    margin:
-        10px 0;
 }
 
 
-/* =========================================================
-   RESULT
-========================================================= */
+.update-card li {
+
+    margin: 10px 0;
+
+}
+
+
+/* RESULT */
 
 .result-card {
 
-    text-align:
-        center;
-
-    max-width:
-        700px;
+    max-width: 700px;
 
     margin:
-        60px auto;
+        50px auto;
+
+    text-align: center;
+
 }
+
 
 .result-stat {
 
-    display:
-        flex;
+    display: flex;
 
     justify-content:
         space-between;
 
-    padding:
-        12px;
+    padding: 12px;
 
     border-bottom:
         1px solid
-        rgba(255,255,255,0.1);
-}
+        rgba(255,255,255,.1);
 
-.result-highlight {
-
-    font-size:
-        22px;
-
-    margin:
-        20px 0;
-
-    color:
-        #60a5fa;
 }
 
 
-/* =========================================================
-   MODAL
-========================================================= */
-
-.modal {
-
-    position:
-        fixed;
-
-    inset:
-        0;
-
-    background:
-        rgba(0,0,0,0.75);
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    z-index:
-        100;
-}
-
-.modal-content {
-
-    width:
-        90%;
-
-    max-width:
-        500px;
-
-    background:
-        #10233a;
-
-    border-radius:
-        18px;
-
-    padding:
-        25px;
-
-    box-shadow:
-        0 20px 60px
-        rgba(0,0,0,0.5);
-}
-
-.inventory-row {
-
-    display:
-        flex;
-
-    justify-content:
-        space-between;
-
-    padding:
-        10px;
-
-    border-bottom:
-        1px solid
-        rgba(255,255,255,0.1);
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
+/* TOAST */
 
 .toast {
 
-    position:
-        fixed;
+    position: fixed;
 
-    left:
-        50%;
+    left: 50%;
 
-    bottom:
-        30px;
+    bottom: 30px;
+
+    z-index: 1000;
 
     transform:
-        translateX(-50%);
-
-    background:
-        #10233a;
+        translate(-50%,150px);
 
     padding:
         15px 25px;
 
-    border-radius:
-        12px;
+    max-width: 90%;
+
+    text-align: center;
+
+    border-radius: 12px;
+
+    background: #10233a;
 
     box-shadow:
         0 10px 30px
-        rgba(0,0,0,0.4);
+        rgba(0,0,0,.5);
 
-    z-index:
-        200;
-
-    font-weight:
-        bold;
-
-    opacity:
-        0;
-
-    pointer-events:
-        none;
+    font-weight: bold;
 
     transition:
-        opacity 0.2s,
-        transform 0.2s;
+        transform .25s;
 
-    max-width:
-        90%;
-
-    text-align:
-        center;
 }
+
 
 .toast.show {
 
-    opacity:
-        1;
-
     transform:
-        translateX(-50%)
-        translateY(-5px);
+        translate(-50%,0);
+
 }
 
 
-/* =========================================================
-   FOOTER
-========================================================= */
+/* FOOTER */
 
 footer {
 
-    text-align:
-        center;
+    padding: 20px;
 
-    color:
-        #94a3b8;
+    color: #94a3b8;
 
-    padding:
-        20px;
+    text-align: center;
+
 }
 
 
-/* =========================================================
-   MOBILE
-========================================================= */
+/* MOBILE */
 
 @media (max-width:700px) {
 
     .header {
 
-        padding:
-            15px;
+        flex-direction: column;
 
-        flex-direction:
-            column;
+        align-items: flex-start;
 
-        align-items:
-            flex-start;
+        padding: 15px;
+
     }
+
 
     .header h1 {
 
-        font-size:
-            21px;
+        font-size: 21px;
+
     }
+
 
     .header-profile {
 
-        width:
-            100%;
+        width: 100%;
 
         justify-content:
             space-between;
 
-        gap:
-            8px;
+        gap: 5px;
 
-        font-size:
-            14px;
+        font-size: 13px;
+
     }
+
 
     .screen {
 
-        padding:
-            15px;
+        padding: 15px;
+
     }
 
-    .menu-buttons {
 
-        grid-template-columns:
-            1fr;
+    .menu-grid {
+
+        grid-template-columns: 1fr;
+
     }
 
-    .game-top {
-
-        padding:
-            0 15px;
-    }
-
-    .stats-bar {
-
-        padding:
-            0 15px;
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-    .answers {
-
-        grid-template-columns:
-            1fr;
-    }
-
-    .question-card {
-
-        padding:
-            18px;
-    }
-
-    #questionText {
-
-        font-size:
-            22px;
-    }
-
-    .question-info {
-
-        font-size:
-            18px;
-    }
-
-    .shop-grid {
-
-        grid-template-columns:
-            1fr;
-    }
-
-    #countryList {
-
-        grid-template-columns:
-            1fr;
-
-        max-height:
-            none;
-    }
-
-    .game-tools {
-
-        flex-direction:
-            column;
-    }
-
-    .profile-item {
-
-        flex-direction:
-            column;
-
-        align-items:
-            stretch;
-    }
-
-    button {
-
-        min-height:
-            50px;
-    }
-}
-
-
-/* =========================================================
-   VERY SMALL PHONES
-========================================================= */
-
-@media (max-width:400px) {
 
     .game-top {
 
         grid-template-columns:
             repeat(3,1fr);
 
-        font-size:
-            13px;
+        font-size: 13px;
+
     }
+
 
     .stats-bar {
 
-        font-size:
-            13px;
+        grid-template-columns:
+            repeat(2,1fr);
+
+        font-size: 14px;
+
     }
+
+
+    .answers {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    #questionText {
+
+        font-size: 22px;
+
+    }
+
+
+    .question-value {
+
+        font-size: 18px;
+
+    }
+
+
+    .game-tools {
+
+        flex-direction: column;
+
+    }
+
+
+    .shop-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .country-list {
+
+        grid-template-columns: 1fr;
+
+        max-height: none;
+
+    }
+
+
+    .profile-item {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    button {
+
+        min-height: 50px;
+
+    }
+
+}
+
+
+@media (max-width:400px) {
+
+    .header-profile {
+
+        font-size: 11px;
+
+    }
+
+
+    .game-top {
+
+        font-size: 11px;
+
+    }
+
+
+    .stats-bar {
+
+        font-size: 12px;
+
+    }
+
 
     .card {
 
-        padding:
-            17px;
+        padding: 17px;
+
     }
 
 }
