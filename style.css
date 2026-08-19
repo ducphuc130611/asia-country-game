@@ -1,0 +1,577 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(circle at top, #243b55, #141e30);
+    color: white;
+    min-height: 100vh;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+#app {
+    width: 100%;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar {
+    min-height: 80px;
+    padding: 15px 5%;
+    background: rgba(0,0,0,.35);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid rgba(255,255,255,.15);
+}
+
+.topbar h1 {
+    font-size: 26px;
+}
+
+.topbar p {
+    opacity: .7;
+    margin-top: 4px;
+}
+
+#topProfile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   SCREEN
+========================================================= */
+
+main {
+    width: min(1100px, 94%);
+    margin: auto;
+    padding: 30px 0 60px;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+.hero {
+    text-align: center;
+    padding: 35px 10px;
+}
+
+.hero h2 {
+    font-size: clamp(28px, 5vw, 48px);
+    margin-bottom: 12px;
+}
+
+.hero p {
+    opacity: .75;
+    font-size: 18px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.menu-grid button,
+.difficulty-grid button,
+.shop-grid button {
+    min-height: 140px;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 18px;
+    background: rgba(255,255,255,.08);
+    color: white;
+    transition: .2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-grid button {
+    font-size: 38px;
+}
+
+.menu-grid button span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.menu-grid button:hover,
+.difficulty-grid button:hover,
+.shop-grid button:hover {
+    transform: translateY(-4px);
+    background: rgba(255,255,255,.15);
+}
+
+
+/* =========================================================
+   TITLES
+========================================================= */
+
+.screen h2 {
+    text-align: center;
+    margin: 25px 0;
+    font-size: 32px;
+}
+
+.back {
+    border: none;
+    background: rgba(255,255,255,.1);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   DIFFICULTY
+========================================================= */
+
+.difficulty-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.difficulty-grid button strong {
+    font-size: 24px;
+}
+
+.difficulty-grid small {
+    opacity: .7;
+}
+
+
+/* =========================================================
+   GAME
+========================================================= */
+
+.game-header {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.game-header div {
+    background: rgba(255,255,255,.08);
+    padding: 15px;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.game-card {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 22px;
+    padding: 30px;
+    text-align: center;
+}
+
+#questionType {
+    opacity: .65;
+    margin-bottom: 15px;
+}
+
+#questionText {
+    font-size: 25px;
+}
+
+.question-value {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 25px 0;
+}
+
+.answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.answers button {
+    border: none;
+    border-radius: 14px;
+    padding: 18px;
+    background: rgba(255,255,255,.1);
+    color: white;
+    transition: .2s;
+}
+
+.answers button:hover {
+    background: rgba(255,255,255,.2);
+}
+
+.answers button.removed {
+    opacity: .25;
+    pointer-events: none;
+}
+
+.game-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.game-actions button,
+.primary,
+.profile-actions button {
+    border: none;
+    padding: 13px 20px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #141e30;
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.result-card {
+    max-width: 500px;
+    margin: auto;
+    background: rgba(255,255,255,.08);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.result-card p {
+    margin-top: 15px;
+    opacity: .7;
+}
+
+.result-card strong {
+    display: block;
+    font-size: 30px;
+}
+
+.result-card + button,
+.primary {
+    display: block;
+    margin: 25px auto;
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+#profileList {
+    display: grid;
+    gap: 12px;
+}
+
+.profile-item {
+    background: rgba(255,255,255,.08);
+    padding: 18px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-item.selected {
+    border: 2px solid white;
+}
+
+.profile-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+
+/* =========================================================
+   SHOP
+========================================================= */
+
+.coins-display {
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 25px;
+}
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.shop-grid button {
+    min-height: 130px;
+    font-size: 24px;
+}
+
+.shop-grid small {
+    font-size: 14px;
+    opacity: .7;
+}
+
+
+/* =========================================================
+   INVENTORY
+========================================================= */
+
+#inventoryList {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.inventory-item {
+    background: rgba(255,255,255,.08);
+    padding: 25px;
+    text-align: center;
+    border-radius: 15px;
+}
+
+.inventory-item strong {
+    display: block;
+    font-size: 25px;
+    margin-top: 8px;
+}
+
+
+/* =========================================================
+   COUNTRY DATABASE
+========================================================= */
+
+#countryList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.country-card {
+    background: rgba(255,255,255,.08);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.country-card h3 {
+    margin-bottom: 10px;
+}
+
+.country-card p {
+    opacity: .8;
+    margin: 5px 0;
+}
+
+
+/* =========================================================
+   INFO / RULES
+========================================================= */
+
+.info-card {
+    background: rgba(255,255,255,.08);
+    border-radius: 18px;
+    padding: 25px;
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   OWNER
+========================================================= */
+
+.owner-warning {
+    max-width: 700px;
+    margin: auto;
+    background: rgba(255,170,0,.15);
+    border: 1px solid rgba(255,170,0,.4);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.owner-card {
+    max-width: 600px;
+    margin: 20px auto;
+    background: rgba(255,255,255,.08);
+    padding: 25px;
+    border-radius: 18px;
+}
+
+.owner-card label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+.owner-card input,
+.owner-card select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 12px;
+}
+
+.owner-card button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 10px;
+}
+
+.owner-card .danger {
+    background: #ff4444;
+    color: white;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+#toast {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(0,0,0,.9);
+    color: white;
+    padding: 14px 22px;
+    border-radius: 12px;
+    transition: .3s;
+    opacity: 0;
+    z-index: 1000;
+}
+
+#toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .topbar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .topbar h1 {
+        font-size: 22px;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .menu-grid button {
+        min-height: 115px;
+        font-size: 30px;
+    }
+
+    .difficulty-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .game-header {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .game-card {
+        padding: 20px 12px;
+    }
+
+    .answers {
+        grid-template-columns: 1fr;
+    }
+
+    .answers button {
+        padding: 16px 10px;
+    }
+
+    .shop-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    #inventoryList {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #countryList {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .game-actions {
+        flex-direction: column;
+    }
+
+    .game-actions button {
+        width: 100%;
+    }
+}
+
+
+@media (max-width: 400px) {
+
+    .menu-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .shop-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #inventoryList {
+        grid-template-columns: 1fr;
+    }
+
+}
