@@ -2,19 +2,25 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <meta name="theme-color" content="#07111f">
+    <meta
+        name="theme-color"
+        content="#07111f"
+    >
 
     <title>Asia Country Guessing Game</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
@@ -26,9 +32,11 @@
 
     <header class="header">
 
-        <div class="header-title">
+        <div>
 
-            <h1>🌏 Asia Country Guessing Game</h1>
+            <h1>
+                🌏 Asia Country Guessing Game
+            </h1>
 
             <p class="subtitle">
                 Test your knowledge of Asia!
@@ -36,18 +44,25 @@
 
         </div>
 
+
         <div class="header-profile">
 
-            <span>
-                👤 <strong id="headerProfile">Guest</strong>
+            <span id="headerProfile">
+                Guest
             </span>
 
             <span>
-                🪙 <strong id="headerCoins">0</strong>
+                🪙
+                <strong id="headerCoins">
+                    0
+                </strong>
             </span>
 
             <span>
-                Lv.<strong id="headerLevel">1</strong>
+                Lv.
+                <strong id="headerLevel">
+                    1
+                </strong>
             </span>
 
         </div>
@@ -55,20 +70,22 @@
     </header>
 
 
+
     <!-- =====================================================
          HOME
     ====================================================== -->
 
-    <main id="homeScreen" class="screen active">
+    <main
+        id="mainMenu"
+        class="screen active"
+    >
 
-        <div class="card hero-card">
+        <div class="card">
 
-            <h2>🌏 Asia Country Guessing Game</h2>
+            <h2>
+                🏠 Main Menu
+            </h2>
 
-            <p>
-                Guess Asian countries, capitals, currencies
-                and regions.
-            </p>
 
             <div class="menu-buttons">
 
@@ -92,7 +109,7 @@
                     📖 Game Rules
                 </button>
 
-                <button onclick="openUpdateLog()">
+                <button onclick="showUpdateLog()">
                     📝 Update Log
                 </button>
 
@@ -103,10 +120,20 @@
 
         <div class="card">
 
-            <h2>📊 Current Profile</h2>
+            <h2>
+                📊 Current Profile
+            </h2>
 
             <div id="mainProfileInfo">
-                No profile selected.
+
+                <p>
+                    No profile selected.
+                </p>
+
+                <p>
+                    Create a profile to start playing.
+                </p>
+
             </div>
 
         </div>
@@ -114,49 +141,62 @@
     </main>
 
 
+
     <!-- =====================================================
          DIFFICULTY
     ====================================================== -->
 
-    <section id="difficultyScreen" class="screen">
+    <section
+        id="difficultyScreen"
+        class="screen hidden"
+    >
 
-        <div class="card difficulty-card">
+        <div class="card">
 
-            <h2>🎯 Select Difficulty</h2>
+            <h2>
+                🎯 Select Difficulty
+            </h2>
+
 
             <button
-                class="difficulty easy"
                 onclick="startGame(1)"
+                class="difficulty-button easy"
             >
+
                 🟢 Easy
 
                 <small>
                     Capital questions
                 </small>
+
             </button>
 
 
             <button
-                class="difficulty normal"
                 onclick="startGame(2)"
+                class="difficulty-button normal"
             >
+
                 🟡 Normal
 
                 <small>
-                    Capital + Country questions
+                    Capital + Currency
                 </small>
+
             </button>
 
 
             <button
-                class="difficulty hard"
                 onclick="startGame(3)"
+                class="difficulty-button hard"
             >
+
                 🔴 Hard
 
                 <small>
                     All question types
                 </small>
+
             </button>
 
 
@@ -164,7 +204,9 @@
                 class="secondary"
                 onclick="goHome()"
             >
+
                 ← Back
+
             </button>
 
         </div>
@@ -172,57 +214,101 @@
     </section>
 
 
+
     <!-- =====================================================
          GAME
     ====================================================== -->
 
-    <section id="gameScreen" class="screen">
+    <section
+        id="gameScreen"
+        class="screen hidden"
+    >
 
         <div class="game-top">
 
             <div>
-                ❓ Question
+
+                Question
+
                 <strong id="questionNumber">
-                    0/10
+                    1/10
                 </strong>
+
             </div>
 
+
             <div>
+
                 ❤️
-                <strong id="lives">3</strong>
+
+                <strong id="lives">
+                    3
+                </strong>
+
             </div>
 
+
             <div>
+
                 🔥
-                <strong id="combo">0</strong>
+
+                <strong id="combo">
+                    0
+                </strong>
+
             </div>
 
         </div>
+
 
 
         <div class="stats-bar">
 
             <span>
+
                 ⭐ Score:
-                <strong id="score">0</strong>
+
+                <strong id="score">
+                    0
+                </strong>
+
             </span>
 
-            <span>
-                ✨ XP:
-                <strong id="gameXP">0</strong>
-            </span>
 
             <span>
-                🪙 Coins:
-                <strong id="gameCoins">0</strong>
+
+                XP:
+
+                <strong id="xp">
+                    0
+                </strong>
+
             </span>
 
+
             <span>
-                🏆 Lv.
-                <strong id="gameLevel">1</strong>
+
+                🪙
+
+                <strong id="coins">
+                    0
+                </strong>
+
+            </span>
+
+
+            <span>
+
+                Lv.
+
+                <strong id="level">
+                    1
+                </strong>
+
             </span>
 
         </div>
+
 
 
         <div class="card question-card">
@@ -236,15 +322,15 @@
 
 
             <h2 id="questionText">
-                Choose the correct answer
+                Choose the correct answer.
             </h2>
 
 
             <div
-                id="questionValue"
+                id="questionInfo"
                 class="question-info"
             >
-                -
+                Question
             </div>
 
 
@@ -261,8 +347,17 @@
                     💡 Hint
                 </button>
 
-                <button onclick="openInventoryDuringGame()">
+
+                <button onclick="showInventoryDuringGame()">
                     🎒 Inventory
+                </button>
+
+
+                <button
+                    class="secondary"
+                    onclick="confirmExitGame()"
+                >
+                    🚪 Exit
                 </button>
 
             </div>
@@ -272,18 +367,24 @@
     </section>
 
 
+
     <!-- =====================================================
          PROFILE
     ====================================================== -->
 
-    <section id="profileScreen" class="screen">
+    <section
+        id="profileScreen"
+        class="screen hidden"
+    >
 
         <div class="card">
 
-            <h2>👤 Profile</h2>
+            <h2>
+                👤 Profile
+            </h2>
+
 
             <div id="profileInfo">
-                No profile.
             </div>
 
         </div>
@@ -291,40 +392,31 @@
 
         <div class="card">
 
-            <h2>➕ Create Profile</h2>
+            <h2>
+                👤 Profile Management
+            </h2>
+
 
             <input
                 id="profileName"
                 type="text"
-                maxlength="20"
                 placeholder="Enter profile name"
+                maxlength="20"
             >
 
-            <button onclick="createProfileFromInput()">
-                Create Profile
+
+            <button onclick="createProfile()">
+                ➕ Create Profile
             </button>
 
-        </div>
-
-
-        <div class="card">
-
-            <h2>👥 Profiles</h2>
-
-            <div id="profileList">
-            </div>
-
-        </div>
-
-
-        <div class="card">
 
             <button
                 class="danger"
                 onclick="deleteProfile()"
             >
-                🗑️ Delete Selected Profile
+                🗑️ Delete Current Profile
             </button>
+
 
             <button
                 class="secondary"
@@ -335,23 +427,47 @@
 
         </div>
 
+
+        <div class="card">
+
+            <h2>
+                📂 Profiles
+            </h2>
+
+
+            <div id="profileList">
+            </div>
+
+        </div>
+
     </section>
+
 
 
     <!-- =====================================================
          SHOP
     ====================================================== -->
 
-    <section id="shopScreen" class="screen">
+    <section
+        id="shopScreen"
+        class="screen hidden"
+    >
 
         <div class="card">
 
-            <h2>🛒 Shop</h2>
+            <h2>
+                🛒 Shop
+            </h2>
 
-            <p>
-                Your Coins:
-                <strong id="shopCoins">0</strong>
-                🪙
+
+            <p class="coin-display">
+
+                🪙 Coins:
+
+                <strong id="shopCoins">
+                    0
+                </strong>
+
             </p>
 
 
@@ -360,104 +476,146 @@
 
                 <div class="shop-item">
 
-                    <h3>💡 Hint</h3>
+                    <h3>
+                        💡 Hint
+                    </h3>
 
                     <p>
-                        Remove two incorrect answers.
+                        Remove two wrong answers.
                     </p>
 
-                    <strong>100 🪙</strong>
+                    <strong>
+                        100 🪙
+                    </strong>
 
-                    <button onclick="buyItem('hints',100)">
+                    <button
+                        onclick="buyItem('hints',100)"
+                    >
                         Buy
                     </button>
 
                 </div>
 
 
+
                 <div class="shop-item">
 
-                    <h3>❤️ Extra Life</h3>
+                    <h3>
+                        ❤️ Extra Life
+                    </h3>
 
                     <p>
                         Start a game with +1 life.
                     </p>
 
-                    <strong>250 🪙</strong>
+                    <strong>
+                        250 🪙
+                    </strong>
 
-                    <button onclick="buyItem('extraLives',250)">
+                    <button
+                        onclick="buyItem('extraLives',250)"
+                    >
                         Buy
                     </button>
 
                 </div>
 
 
+
                 <div class="shop-item">
 
-                    <h3>✨ Double XP</h3>
+                    <h3>
+                        ✨ Double XP
+                    </h3>
 
                     <p>
-                        Double XP from one correct answer.
+                        Double XP from one answer.
                     </p>
 
-                    <strong>500 🪙</strong>
+                    <strong>
+                        500 🪙
+                    </strong>
 
-                    <button onclick="buyItem('doubleXP',500)">
+                    <button
+                        onclick="buyItem('doubleXP',500)"
+                    >
                         Buy
                     </button>
 
                 </div>
 
 
+
                 <div class="shop-item">
 
-                    <h3>📈 Score Boost</h3>
+                    <h3>
+                        📈 Score Boost
+                    </h3>
 
                     <p>
-                        Increase one score reward by 25%.
+                        Increase one score reward.
                     </p>
 
-                    <strong>500 🪙</strong>
+                    <strong>
+                        500 🪙
+                    </strong>
 
-                    <button onclick="buyItem('scoreBoost',500)">
+                    <button
+                        onclick="buyItem('scoreBoost',500)"
+                    >
                         Buy
                     </button>
 
                 </div>
 
 
+
                 <div class="shop-item">
 
-                    <h3>🔄 Second Chance</h3>
+                    <h3>
+                        🔄 Second Chance
+                    </h3>
 
                     <p>
                         Prevent one life loss.
                     </p>
 
-                    <strong>750 🪙</strong>
+                    <strong>
+                        750 🪙
+                    </strong>
 
-                    <button onclick="buyItem('secondChance',750)">
+                    <button
+                        onclick="buyItem('secondChance',750)"
+                    >
                         Buy
                     </button>
 
                 </div>
+
 
 
                 <div class="shop-item">
 
-                    <h3>🍀 Lucky Answer</h3>
+                    <h3>
+                        🍀 Lucky Answer
+                    </h3>
 
                     <p>
-                        Turn one wrong answer into a correct answer.
+                        Turn one wrong answer into correct.
                     </p>
 
-                    <strong>1500 🪙</strong>
+                    <strong>
+                        1500 🪙
+                    </strong>
 
-                    <button onclick="buyItem('luckyAnswer',1500)">
+                    <button
+                        onclick="buyItem('luckyAnswer',1500)"
+                    >
                         Buy
                     </button>
 
                 </div>
+
 
             </div>
 
@@ -472,20 +630,28 @@
         </div>
 
     </section>
+
 
 
     <!-- =====================================================
          DATABASE
     ====================================================== -->
 
-    <section id="countriesScreen" class="screen">
+    <section
+        id="countriesScreen"
+        class="screen hidden"
+    >
 
         <div class="card">
 
-            <h2>🌏 Country Database</h2>
+            <h2>
+                🌏 Country Database
+            </h2>
+
 
             <div id="countryList">
             </div>
+
 
             <button
                 class="secondary"
@@ -499,45 +665,76 @@
     </section>
 
 
+
     <!-- =====================================================
          RULES
     ====================================================== -->
 
-    <section id="rulesScreen" class="screen">
+    <section
+        id="rulesScreen"
+        class="screen hidden"
+    >
 
         <div class="card">
 
-            <h2>📖 Game Rules</h2>
+            <h2>
+                📖 Game Rules
+            </h2>
 
-            <ol class="rules-list">
 
-                <li>Each game contains 10 questions.</li>
+            <ol>
 
-                <li>You start with 3 lives.</li>
+                <li>
+                    Each game contains 10 questions.
+                </li>
 
-                <li>Correct answers give Score, XP and Coins.</li>
+                <li>
+                    You start with 3 lives.
+                </li>
 
-                <li>Correct answers increase your Combo.</li>
+                <li>
+                    Correct answers give Score, XP and Coins.
+                </li>
 
-                <li>Wrong answers reset your Combo.</li>
+                <li>
+                    Combo increases your score reward.
+                </li>
 
-                <li>Hint removes two wrong answers.</li>
+                <li>
+                    Losing all lives ends the game.
+                </li>
 
-                <li>Extra Life gives +1 starting life.</li>
+                <li>
+                    Hint removes two incorrect answers.
+                </li>
 
-                <li>Double XP doubles one XP reward.</li>
+                <li>
+                    Extra Life gives one additional life.
+                </li>
 
-                <li>Score Boost increases one score reward.</li>
+                <li>
+                    Double XP doubles one XP reward.
+                </li>
 
-                <li>Second Chance prevents one life loss.</li>
+                <li>
+                    Score Boost increases one score reward.
+                </li>
 
-                <li>Lucky Answer saves one wrong answer.</li>
+                <li>
+                    Second Chance prevents one life loss.
+                </li>
 
-                <li>Coins can be spent in the Shop.</li>
+                <li>
+                    Lucky Answer saves one wrong answer.
+                </li>
 
-                <li>XP increases your Level.</li>
+                <li>
+                    Coins can be spent in the Shop.
+                </li>
 
-                <li>Your Level determines your Rank.</li>
+                <li>
+                    XP increases your Level.
+                </li>
 
             </ol>
 
@@ -554,20 +751,29 @@
     </section>
 
 
+
     <!-- =====================================================
          UPDATE LOG
     ====================================================== -->
 
-    <section id="updateScreen" class="screen">
+    <section
+        id="updateScreen"
+        class="screen hidden"
+    >
 
         <div class="card">
 
-            <h2>📝 Update Log</h2>
+            <h2>
+                📝 Update Log
+            </h2>
 
 
             <div class="update">
 
-                <h3>🚀 Version 1.0</h3>
+                <h3>
+                    🚀 Version 1.0
+                </h3>
+
 
                 <p class="date">
                     Initial Web Release
@@ -576,45 +782,81 @@
 
                 <ul>
 
-                    <li>🌏 Added Asian country database.</li>
+                    <li>
+                        🌏 Added Asian country database.
+                    </li>
 
-                    <li>🎮 Added complete guessing game.</li>
+                    <li>
+                        🎮 Added complete guessing game.
+                    </li>
 
-                    <li>🎯 Added Easy / Normal / Hard.</li>
+                    <li>
+                        🎯 Added Easy / Normal / Hard.
+                    </li>
 
-                    <li>🧠 Added multiple question types.</li>
+                    <li>
+                        🧠 Added multiple question types.
+                    </li>
 
-                    <li>❤️ Added Life system.</li>
+                    <li>
+                        ❤️ Added Life system.
+                    </li>
 
-                    <li>🔥 Added Combo system.</li>
+                    <li>
+                        🔥 Added Combo system.
+                    </li>
 
-                    <li>⭐ Added XP system.</li>
+                    <li>
+                        ⭐ Added XP and Level system.
+                    </li>
 
-                    <li>🏆 Added Level and Rank system.</li>
+                    <li>
+                        🏆 Added Rank system.
+                    </li>
 
-                    <li>🪙 Added Coins.</li>
+                    <li>
+                        🪙 Added Coins.
+                    </li>
 
-                    <li>🛒 Added Shop.</li>
+                    <li>
+                        🛒 Added Shop.
+                    </li>
 
-                    <li>🎒 Added Inventory.</li>
+                    <li>
+                        🎒 Added Inventory.
+                    </li>
 
-                    <li>💡 Added Hint.</li>
+                    <li>
+                        💡 Added Hint.
+                    </li>
 
-                    <li>✨ Added Double XP.</li>
+                    <li>
+                        ✨ Added Double XP.
+                    </li>
 
-                    <li>📈 Added Score Boost.</li>
+                    <li>
+                        📈 Added Score Boost.
+                    </li>
 
-                    <li>🔄 Added Second Chance.</li>
+                    <li>
+                        🔄 Added Second Chance.
+                    </li>
 
-                    <li>🍀 Added Lucky Answer.</li>
+                    <li>
+                        🍀 Added Lucky Answer.
+                    </li>
 
-                    <li>📊 Added game statistics.</li>
+                    <li>
+                        💾 Added automatic browser saving.
+                    </li>
 
-                    <li>💾 Added automatic browser saving.</li>
+                    <li>
+                        📱 Added mobile support.
+                    </li>
 
-                    <li>📱 Added mobile support.</li>
-
-                    <li>🔐 Added hidden Owner Mode.</li>
+                    <li>
+                        🔐 Added hidden Owner access.
+                    </li>
 
                 </ul>
 
@@ -633,19 +875,24 @@
     </section>
 
 
+
     <!-- =====================================================
          RESULT
     ====================================================== -->
 
-    <section id="resultScreen" class="screen">
+    <section
+        id="resultScreen"
+        class="screen hidden"
+    >
 
         <div class="card result-card">
 
-            <h2>🏆 Game Over</h2>
+            <h2>
+                🏆 Game Over
+            </h2>
 
 
             <div id="resultInfo">
-
             </div>
 
 
@@ -666,88 +913,6 @@
     </section>
 
 
-    <!-- =====================================================
-         OWNER PANEL
-         NOT SHOWN IN NORMAL MENU
-    ====================================================== -->
-
-    <section id="ownerScreen" class="screen">
-
-        <div class="card owner-card">
-
-            <h2>👑 Owner Panel</h2>
-
-            <p class="owner-warning">
-                ⚠️ Owner Mode
-            </p>
-
-
-            <label>
-                Select Profile
-            </label>
-
-            <select id="ownerProfile">
-            </select>
-
-
-            <label>
-                Amount
-            </label>
-
-            <input
-                id="ownerAmount"
-                type="number"
-                min="0"
-                value="1000"
-            >
-
-
-            <div class="owner-grid">
-
-                <button onclick="ownerCoins()">
-                    🪙 Give Coins
-                </button>
-
-                <button onclick="ownerXP()">
-                    ✨ Give XP
-                </button>
-
-                <button onclick="ownerLevel()">
-                    🏆 Set Level
-                </button>
-
-                <button onclick="ownerMaxItems()">
-                    🎁 Max Items
-                </button>
-
-                <button
-                    class="danger"
-                    onclick="ownerReset()"
-                >
-                    🔄 Reset Profile
-                </button>
-
-                <button
-                    class="danger"
-                    onclick="ownerDeleteAll()"
-                >
-                    🗑️ Delete All Profiles
-                </button>
-
-            </div>
-
-
-            <button
-                class="secondary"
-                onclick="goHome()"
-            >
-                ← Exit Owner Mode
-            </button>
-
-        </div>
-
-    </section>
-
 
     <!-- =====================================================
          INVENTORY MODAL
@@ -760,10 +925,14 @@
 
         <div class="modal-content">
 
-            <h2>🎒 Inventory</h2>
+            <h2>
+                🎒 Inventory
+            </h2>
+
 
             <div id="inventoryInfo">
             </div>
+
 
             <button onclick="closeInventory()">
                 Close
@@ -772,6 +941,7 @@
         </div>
 
     </div>
+
 
 
     <!-- =====================================================
@@ -787,16 +957,21 @@
 </div>
 
 
+
 <footer>
 
-    Asia Country Guessing Game
-    <br>
-    Version 1.0
+    <p>
+        Asia Country Guessing Game
+        <br>
+        Version 1.0
+    </p>
 
 </footer>
+
 
 
 <script src="game.js"></script>
 
 </body>
+
 </html>
