@@ -1,11 +1,12 @@
 // ============================================================
 // ASIA COUNTRY GUESSING GAME
-// WEB EDITION v1.0
+// WEB EDITION
+// VERSION 1.0
 // ============================================================
 
 
 // ============================================================
-// COUNTRY DATA
+// COUNTRY DATABASE
 // ============================================================
 
 const countries = [
@@ -77,21 +78,65 @@ const countries = [
 const STORAGE_KEY =
     "asia_country_game_profiles_v1";
 
-const CURRENT_KEY =
-    "asia_country_game_current_v1";
+const CURRENT_PROFILE_KEY =
+    "asia_current_profile_v1";
 
-let profiles = loadProfiles();
 
-let currentProfile =
-    Number(
-        localStorage.getItem(CURRENT_KEY)
+// ============================================================
+// LOAD DATA SAFELY
+// ============================================================
+
+let profiles = [];
+
+try {
+
+    const saved =
+        localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+
+        profiles =
+            JSON.parse(saved);
+
+        if (!Array.isArray(profiles)) {
+
+            profiles = [];
+
+        }
+
+    }
+
+}
+catch (error) {
+
+    console.error(
+        "Could not load profiles:",
+        error
     );
 
-if (
-    !Number.isInteger(currentProfile) ||
-    currentProfile < 0 ||
-    !profiles[currentProfile]
-) {
+    profiles = [];
+
+}
+
+
+let currentProfile = -1;
+
+try {
+
+    const savedCurrent =
+        localStorage.getItem(
+            CURRENT_PROFILE_KEY
+        );
+
+    if (savedCurrent !== null) {
+
+        currentProfile =
+            Number(savedCurrent);
+
+    }
+
+}
+catch (error) {
 
     currentProfile = -1;
 
@@ -99,7 +144,7 @@ if (
 
 
 // ============================================================
-// PROFILE
+// PROFILE DEFAULT
 // ============================================================
 
 function newProfile(name) {
@@ -109,93 +154,69 @@ function newProfile(name) {
         name: name,
 
         level: 1,
-
         xp: 0,
 
         highScore: 0,
 
         totalGames: 0,
-
         totalCorrect: 0,
-
         totalWrong: 0,
-
         totalQuestions: 0,
 
         bestCombo: 0,
 
         coins: 500,
+        totalCoinsEarned: 500,
 
         hints: 1,
-
         extraLives: 0,
-
         doubleXP: 0,
-
         scoreBoost: 0,
-
         secondChance: 0,
-
-        luckyAnswer: 0,
-
-        totalCoinsEarned: 500
+        luckyAnswer: 0
 
     };
 
 }
 
 
-function loadProfiles() {
+// ============================================================
+// SAVE
+// ============================================================
+
+function save() {
 
     try {
 
-        const data =
-            localStorage.getItem(STORAGE_KEY);
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(profiles)
+        );
 
-        if (!data)
-            return [];
-
-        const parsed =
-            JSON.parse(data);
-
-        if (!Array.isArray(parsed))
-            return [];
-
-        return parsed;
+        localStorage.setItem(
+            CURRENT_PROFILE_KEY,
+            String(currentProfile)
+        );
 
     }
     catch (error) {
 
         console.error(
-            "Could not load profiles:",
+            "Save error:",
             error
         );
 
-        return [];
-
     }
 
-}
-
-
-function save() {
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(profiles)
-    );
-
-    localStorage.setItem(
-        CURRENT_KEY,
-        String(currentProfile)
-    );
-
     updateHeader();
-
-    updateHomeProfile();
+    updateMainProfile();
 
 }
 
+
+// ============================================================
+// CURRENT PROFILE
+// ============================================================
 
 function getProfile() {
 
@@ -219,20 +240,24 @@ function getProfile() {
 
 function showScreen(id) {
 
-    document
-        .querySelectorAll(".screen")
-        .forEach(screen => {
+    const screens =
+        document.querySelectorAll(
+            ".screen"
+        );
+
+    screens.forEach(
+        screen => {
 
             screen.classList.remove(
                 "active"
             );
 
-        });
+        }
+    );
 
 
     const target =
         document.getElementById(id);
-
 
     if (!target) {
 
@@ -253,37 +278,21 @@ function showScreen(id) {
         behavior: "smooth"
     });
 
+
     updateHeader();
 
 }
 
 
+// ============================================================
+// HOME
+// ============================================================
+
 function goHome() {
 
     showScreen("homeScreen");
 
-}
-
-
-function goHomeConfirm() {
-
-    if (
-        game.question > 0 &&
-        game.question <= game.totalQuestions &&
-        game.lives > 0
-    ) {
-
-        const answer =
-            confirm(
-                "Exit the current game?"
-            );
-
-        if (!answer)
-            return;
-
-    }
-
-    goHome();
+    updateMainProfile();
 
 }
 
@@ -294,7 +303,6 @@ function goHomeConfirm() {
 
 let toastTimer = null;
 
-
 function toast(message) {
 
     const element =
@@ -303,7 +311,9 @@ function toast(message) {
     if (!element)
         return;
 
-    element.textContent = message;
+
+    element.textContent =
+        message;
 
     element.classList.add("show");
 
@@ -312,13 +322,16 @@ function toast(message) {
 
 
     toastTimer =
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            element.classList.remove(
-                "show"
-            );
+                element.classList.remove(
+                    "show"
+                );
 
-        }, 2200);
+            },
+            2200
+        );
 
 }
 
@@ -329,72 +342,78 @@ function toast(message) {
 
 function updateHeader() {
 
-    const p = getProfile();
+    const p =
+        getProfile();
+
+
+    const name =
+        document.getElementById(
+            "topName"
+        );
+
+    const level =
+        document.getElementById(
+            "topLevel"
+        );
+
+    const coins =
+        document.getElementById(
+            "topCoins"
+        );
 
 
     if (!p) {
 
-        document.getElementById(
-            "topName"
-        ).textContent = "Guest";
+        name.textContent =
+            "Guest";
 
-        document.getElementById(
-            "topLevel"
-        ).textContent = "1";
+        level.textContent =
+            "1";
 
-        document.getElementById(
-            "topCoins"
-        ).textContent = "0";
+        coins.textContent =
+            "0";
 
         return;
 
     }
 
 
-    document.getElementById(
-        "topName"
-    ).textContent = p.name;
+    name.textContent =
+        p.name;
 
+    level.textContent =
+        p.level;
 
-    document.getElementById(
-        "topLevel"
-    ).textContent = p.level;
-
-
-    document.getElementById(
-        "topCoins"
-    ).textContent = p.coins;
+    coins.textContent =
+        p.coins;
 
 }
 
 
 // ============================================================
-// HOME PROFILE
+// MAIN PROFILE
 // ============================================================
 
-function updateHomeProfile() {
+function updateMainProfile() {
 
-    const element =
+    const container =
         document.getElementById(
-            "homeProfileInfo"
+            "mainProfileInfo"
         );
 
+    if (!container)
+        return;
 
-    const p = getProfile();
+
+    const p =
+        getProfile();
 
 
     if (!p) {
 
-        element.innerHTML = `
-
-            <p>
-                No profile selected.
-            </p>
-
-            <button onclick="openProfileMenu()">
-                👤 Create Profile
-            </button>
-
+        container.innerHTML = `
+            <p>No profile selected.</p>
+            <p>Create a profile to start playing.</p>
         `;
 
         return;
@@ -403,50 +422,163 @@ function updateHomeProfile() {
 
 
     const accuracy =
-        p.totalQuestions === 0
-            ? 0
-            : Math.round(
+        p.totalQuestions > 0
+        ? Math.round(
+            (
                 p.totalCorrect /
-                p.totalQuestions *
-                100
-            );
+                p.totalQuestions
+            ) * 100
+        )
+        : 0;
 
 
-    element.innerHTML = `
+    container.innerHTML = `
 
-        <p>
-            👤 <strong>
-                ${escapeHTML(p.name)}
-            </strong>
-        </p>
+        <div class="result-stat">
+            <span>👤 Name</span>
+            <strong>${escapeHTML(p.name)}</strong>
+        </div>
 
-        <p>
-            🏆 Level:
+        <div class="result-stat">
+            <span>🏆 Rank</span>
+            <strong>${getRank(p.level)}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>⭐ Level</span>
             <strong>${p.level}</strong>
-            (${getRank(p.level)})
-        </p>
+        </div>
 
-        <p>
-            ⭐ XP:
+        <div class="result-stat">
+            <span>✨ XP</span>
             <strong>${p.xp}</strong>
-        </p>
+        </div>
 
-        <p>
-            🪙 Coins:
+        <div class="result-stat">
+            <span>💰 Coins</span>
             <strong>${p.coins}</strong>
-        </p>
+        </div>
 
-        <p>
-            🏆 High Score:
-            <strong>${p.highScore}</strong>
-        </p>
+        <div class="result-stat">
+            <span>🎮 Games</span>
+            <strong>${p.totalGames}</strong>
+        </div>
 
-        <p>
-            🎯 Accuracy:
+        <div class="result-stat">
+            <span>🎯 Accuracy</span>
             <strong>${accuracy}%</strong>
-        </p>
+        </div>
+
+        <div class="result-stat">
+            <span>🏅 High Score</span>
+            <strong>${p.highScore}</strong>
+        </div>
 
     `;
+
+}
+
+
+// ============================================================
+// LEVEL
+// ============================================================
+
+function calculateLevel(xp) {
+
+    return Math.floor(
+        xp / 500
+    ) + 1;
+
+}
+
+
+function getRank(level) {
+
+    if (level < 3)
+        return "Beginner";
+
+    if (level < 5)
+        return "Explorer";
+
+    if (level < 8)
+        return "Traveler";
+
+    if (level < 12)
+        return "Expert";
+
+    if (level < 20)
+        return "Master";
+
+    return "Legend";
+
+}
+
+
+// ============================================================
+// XP
+// ============================================================
+
+function addXP(amount) {
+
+    const p =
+        getProfile();
+
+    if (!p)
+        return;
+
+
+    const oldLevel =
+        p.level;
+
+
+    p.xp += amount;
+
+
+    p.level =
+        calculateLevel(
+            p.xp
+        );
+
+
+    if (p.level > oldLevel) {
+
+        const levels =
+            p.level - oldLevel;
+
+        const reward =
+            levels * 500;
+
+
+        p.coins += reward;
+
+        p.totalCoinsEarned += reward;
+
+
+        toast(
+            `🎉 LEVEL UP! Level ${p.level}! +${reward} Coins`
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// COINS
+// ============================================================
+
+function addCoins(amount) {
+
+    const p =
+        getProfile();
+
+    if (!p)
+        return;
+
+
+    p.coins += amount;
+
+    p.totalCoinsEarned += amount;
 
 }
 
@@ -459,95 +591,16 @@ function openProfileMenu() {
 
     renderProfiles();
 
-    showScreen("profileScreen");
-
-}
-
-
-function renderProfiles() {
-
-    const container =
-        document.getElementById(
-            "profileList"
-        );
-
-
-    container.innerHTML = "";
-
-
-    if (profiles.length === 0) {
-
-        container.innerHTML = `
-
-            <p>
-                No profiles yet.
-            </p>
-
-        `;
-
-        return;
-
-    }
-
-
-    profiles.forEach(
-        (profile,index) => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "profile-item" +
-                (
-                    index === currentProfile
-                        ? " selected"
-                        : ""
-                );
-
-
-            div.innerHTML = `
-
-                <div>
-
-                    <strong>
-                        ${escapeHTML(
-                            profile.name
-                        )}
-                    </strong>
-
-                    <br>
-
-                    Level ${profile.level}
-
-                    |
-
-                    ${profile.xp} XP
-
-                    |
-
-                    🪙 ${profile.coins}
-
-                </div>
-
-                <button
-                    onclick="selectProfile(${index})"
-                >
-                    Select
-                </button>
-
-            `;
-
-
-            container.appendChild(div);
-
-        }
+    showScreen(
+        "profileScreen"
     );
 
 }
 
+
+// ============================================================
+// CREATE PROFILE
+// ============================================================
 
 function createProfileFromInput() {
 
@@ -557,7 +610,7 @@ function createProfileFromInput() {
         );
 
 
-    const name =
+    let name =
         input.value.trim();
 
 
@@ -567,12 +620,17 @@ function createProfileFromInput() {
             "Enter a profile name."
         );
 
+        input.focus();
+
         return;
 
     }
 
 
     createProfile(name);
+
+
+    input.value = "";
 
 }
 
@@ -621,16 +679,6 @@ function createProfile(name) {
     renderProfiles();
 
 
-    const input =
-        document.getElementById(
-            "profileNameInput"
-        );
-
-
-    if (input)
-        input.value = "";
-
-
     toast(
         `Welcome, ${name}!`
     );
@@ -638,13 +686,29 @@ function createProfile(name) {
 }
 
 
+// ============================================================
+// SELECT PROFILE
+// ============================================================
+
 function selectProfile(index) {
 
-    if (!profiles[index])
+    index =
+        Number(index);
+
+
+    if (
+        index < 0 ||
+        index >= profiles.length
+    ) {
+
         return;
 
+    }
 
-    currentProfile = index;
+
+    currentProfile =
+        index;
+
 
     save();
 
@@ -658,15 +722,16 @@ function selectProfile(index) {
 }
 
 
-function deleteCurrentProfile() {
+// ============================================================
+// DELETE PROFILE
+// ============================================================
 
-    const p = getProfile();
+function deleteProfile() {
 
-
-    if (!p) {
+    if (!getProfile()) {
 
         toast(
-            "No profile selected."
+            "Select a profile first."
         );
 
         return;
@@ -674,14 +739,19 @@ function deleteCurrentProfile() {
     }
 
 
-    const answer =
-        confirm(
-            `Delete profile "${p.name}"?`
-        );
+    const name =
+        getProfile().name;
 
 
-    if (!answer)
+    if (
+        !confirm(
+            `Delete ${name}?`
+        )
+    ) {
+
         return;
+
+    }
 
 
     profiles.splice(
@@ -690,13 +760,17 @@ function deleteCurrentProfile() {
     );
 
 
-    if (profiles.length === 0) {
+    if (
+        profiles.length === 0
+    ) {
 
-        currentProfile = -1;
+        currentProfile =
+            -1;
 
     }
     else if (
-        currentProfile >= profiles.length
+        currentProfile >=
+        profiles.length
     ) {
 
         currentProfile =
@@ -718,97 +792,100 @@ function deleteCurrentProfile() {
 
 
 // ============================================================
-// LEVEL
+// RENDER PROFILES
 // ============================================================
 
-function calculateLevel(xp) {
+function renderProfiles() {
 
-    return Math.floor(
-        xp / 500
-    ) + 1;
-
-}
-
-
-function getRank(level) {
-
-    if (level < 3)
-        return "Beginner";
-
-    if (level < 5)
-        return "Explorer";
-
-    if (level < 8)
-        return "Traveler";
-
-    if (level < 12)
-        return "Expert";
-
-    if (level < 20)
-        return "Master";
-
-    return "Legend";
-
-}
-
-
-function addXP(amount) {
-
-    const p = getProfile();
-
-    if (!p)
-        return;
-
-
-    const oldLevel =
-        p.level;
-
-
-    p.xp += amount;
-
-    p.level =
-        calculateLevel(p.xp);
-
-
-    if (p.level > oldLevel) {
-
-        const levelUps =
-            p.level - oldLevel;
-
-
-        const reward =
-            levelUps * 500;
-
-
-        p.coins += reward;
-
-        p.totalCoinsEarned += reward;
-
-
-        toast(
-            `🎉 LEVEL UP! Level ${p.level}! +${reward} Coins`
+    const container =
+        document.getElementById(
+            "profileList"
         );
+
+
+    container.innerHTML = "";
+
+
+    if (
+        profiles.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>No profiles yet.</p>";
+
+        return;
 
     }
 
+
+    profiles.forEach(
+        (p,index) => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "profile-item" +
+                (
+                    index === currentProfile
+                    ? " selected"
+                    : ""
+                );
+
+
+            div.innerHTML = `
+
+                <div>
+
+                    <strong>
+                        ${escapeHTML(p.name)}
+                    </strong>
+
+                    <br>
+
+                    Lv.${p.level}
+                    |
+                    ${p.xp} XP
+                    |
+                    🪙 ${p.coins}
+
+                </div>
+
+                <button
+                    onclick="selectProfile(${index})">
+
+                    ${index === currentProfile
+                        ? "Selected"
+                        : "Select"}
+
+                </button>
+
+            `;
+
+
+            container.appendChild(div);
+
+        }
+    );
+
 }
 
 
 // ============================================================
-// COINS
+// ESCAPE HTML
 // ============================================================
 
-function addCoins(amount) {
+function escapeHTML(text) {
 
-    const p = getProfile();
-
-    if (!p)
-        return;
-
-
-    p.coins += amount;
-
-    p.totalCoinsEarned += amount;
+    return String(text)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
 
 }
 
@@ -834,14 +911,17 @@ function openShop() {
 
     updateShop();
 
-    showScreen("shopScreen");
+    showScreen(
+        "shopScreen"
+    );
 
 }
 
 
 function updateShop() {
 
-    const p = getProfile();
+    const p =
+        getProfile();
 
     if (!p)
         return;
@@ -849,30 +929,23 @@ function updateShop() {
 
     document.getElementById(
         "shopCoins"
-    ).textContent = p.coins;
+    ).textContent =
+        p.coins;
 
 }
 
 
-function buyItem(item, price) {
+function buyItem(
+    item,
+    price
+) {
 
-    const p = getProfile();
+    const p =
+        getProfile();
+
 
     if (!p)
         return;
-
-
-    if (
-        typeof p[item] !== "number"
-    ) {
-
-        toast(
-            "Item error."
-        );
-
-        return;
-
-    }
 
 
     if (p.coins < price) {
@@ -898,6 +971,110 @@ function buyItem(item, price) {
 
     toast(
         "🛒 Item purchased!"
+    );
+
+}
+
+
+// ============================================================
+// INVENTORY
+// ============================================================
+
+function openInventory() {
+
+    if (!getProfile()) {
+
+        toast(
+            "Create/select a profile first."
+        );
+
+        openProfileMenu();
+
+        return;
+
+    }
+
+
+    renderInventory();
+
+    showScreen(
+        "inventoryScreen"
+    );
+
+}
+
+
+function renderInventory() {
+
+    const p =
+        getProfile();
+
+
+    const container =
+        document.getElementById(
+            "inventoryList"
+        );
+
+
+    container.innerHTML = `
+
+        <div class="inventory-item">
+            <span>💡 Hint</span>
+            <strong>${p.hints}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>❤️ Extra Life</span>
+            <strong>${p.extraLives}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>✨ Double XP</span>
+            <strong>${p.doubleXP}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>📈 Score Boost</span>
+            <strong>${p.scoreBoost}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>🔄 Second Chance</span>
+            <strong>${p.secondChance}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>🍀 Lucky Answer</span>
+            <strong>${p.luckyAnswer}</strong>
+        </div>
+
+    `;
+
+}
+
+
+function openInventoryDuringGame() {
+
+    if (!getProfile())
+        return;
+
+
+    renderInventory();
+
+
+    const p =
+        getProfile();
+
+
+    alert(
+        "🎒 INVENTORY\n\n" +
+
+        `💡 Hint: ${p.hints}\n` +
+        `❤️ Extra Life: ${p.extraLives}\n` +
+        `✨ Double XP: ${p.doubleXP}\n` +
+        `📈 Score Boost: ${p.scoreBoost}\n` +
+        `🔄 Second Chance: ${p.secondChance}\n` +
+        `🍀 Lucky Answer: ${p.luckyAnswer}`
     );
 
 }
@@ -974,7 +1151,9 @@ function startGameMenu() {
 
 function startGame(difficulty) {
 
-    const p = getProfile();
+    const p =
+        getProfile();
+
 
     if (!p) {
 
@@ -989,10 +1168,13 @@ function startGame(difficulty) {
     }
 
 
+    difficulty =
+        Number(difficulty);
+
+
     if (
-        difficulty !== 1 &&
-        difficulty !== 2 &&
-        difficulty !== 3
+        difficulty < 1 ||
+        difficulty > 3
     ) {
 
         difficulty = 1;
@@ -1072,9 +1254,6 @@ function startGame(difficulty) {
 
 function nextQuestion() {
 
-    game.locked = false;
-
-
     if (
         game.question >=
         game.totalQuestions
@@ -1102,6 +1281,8 @@ function nextQuestion() {
 
     game.hintUsed = false;
 
+    game.locked = false;
+
 
     let correct;
 
@@ -1126,9 +1307,8 @@ function nextQuestion() {
         correct;
 
 
-    const options = [
-        correct
-    ];
+    const options =
+        [correct];
 
 
     while (
@@ -1153,29 +1333,7 @@ function nextQuestion() {
     }
 
 
-    for (
-        let i = options.length - 1;
-        i > 0;
-        i--
-    ) {
-
-        const j =
-            Math.floor(
-                Math.random() *
-                (i + 1)
-            );
-
-
-        [
-            options[i],
-            options[j]
-        ] =
-        [
-            options[j],
-            options[i]
-        ];
-
-    }
+    shuffle(options);
 
 
     game.options =
@@ -1217,6 +1375,41 @@ function nextQuestion() {
 
 
 // ============================================================
+// SHUFFLE
+// ============================================================
+
+function shuffle(array) {
+
+    for (
+        let i = array.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+
+        [
+            array[i],
+            array[j]
+        ] =
+        [
+            array[j],
+            array[i]
+        ];
+
+    }
+
+
+    return array;
+
+}
+
+
+// ============================================================
 // RENDER QUESTION
 // ============================================================
 
@@ -1231,7 +1424,7 @@ function renderQuestion() {
     document.getElementById(
         "questionNumber"
     ).textContent =
-        `${game.question}/${game.totalQuestions}`;
+        `${game.question}/10`;
 
 
     document.getElementById(
@@ -1252,35 +1445,26 @@ function renderQuestion() {
         game.score;
 
 
-    const p = getProfile();
+    const p =
+        getProfile();
 
 
-    if (p) {
-
-        document.getElementById(
-            "gameXP"
-        ).textContent =
-            p.xp;
+    document.getElementById(
+        "gameXP"
+    ).textContent =
+        p ? p.xp : 0;
 
 
-        document.getElementById(
-            "gameCoins"
-        ).textContent =
-            p.coins;
+    document.getElementById(
+        "gameCoins"
+    ).textContent =
+        p ? p.coins : 0;
 
 
-        document.getElementById(
-            "gameLevel"
-        ).textContent =
-            p.level;
-
-
-        document.getElementById(
-            "hintCount"
-        ).textContent =
-            p.hints;
-
-    }
+    document.getElementById(
+        "gameLevel"
+    ).textContent =
+        p ? p.level : 1;
 
 
     let title = "";
@@ -1360,7 +1544,7 @@ function renderQuestion() {
 
 
     game.options.forEach(
-        (countryIndex,position) => {
+        (index, position) => {
 
             const button =
                 document.createElement(
@@ -1373,9 +1557,7 @@ function renderQuestion() {
 
 
             button.textContent =
-                `${position + 1}. ${
-                    countries[countryIndex][0]
-                }`;
+                `${position + 1}. ${countries[index][0]}`;
 
 
             button.onclick =
@@ -1408,13 +1590,6 @@ function answerQuestion(position) {
         return;
 
 
-    if (
-        position < 0 ||
-        position >= game.options.length
-    )
-        return;
-
-
     const selected =
         game.options[position];
 
@@ -1434,7 +1609,8 @@ function answerQuestion(position) {
     }
 
 
-    const p = getProfile();
+    const p =
+        getProfile();
 
 
     if (
@@ -1454,11 +1630,6 @@ function answerQuestion(position) {
 
             save();
 
-            toast(
-                "🍀 Lucky Answer activated!"
-            );
-
-
             correctAnswer(true);
 
             return;
@@ -1474,7 +1645,7 @@ function answerQuestion(position) {
 
 
 // ============================================================
-// CORRECT
+// CORRECT ANSWER
 // ============================================================
 
 function correctAnswer(
@@ -1488,10 +1659,8 @@ function correctAnswer(
     game.locked = true;
 
 
-    const p = getProfile();
-
-    if (!p)
-        return;
+    const p =
+        getProfile();
 
 
     game.combo++;
@@ -1515,23 +1684,16 @@ function correctAnswer(
 
     if (
         game.difficulty === 1
-    ) {
-
+    )
         baseScore = 100;
 
-    }
     else if (
         game.difficulty === 2
-    ) {
-
+    )
         baseScore = 150;
 
-    }
-    else {
-
+    else
         baseScore = 200;
-
-    }
 
 
     let comboBonus = 0;
@@ -1626,23 +1788,13 @@ function correctAnswer(
     save();
 
 
-    renderQuestionStats();
+    const message =
+        savedByLucky
+        ? `🍀 Lucky! +${gained} points, +${gainedXP} XP`
+        : `✅ Correct! +${gained} points, +${gainedXP} XP, +${coinReward} Coins`;
 
 
-    if (savedByLucky) {
-
-        toast(
-            `🍀 Lucky! +${gained} points, +${gainedXP} XP`
-        );
-
-    }
-    else {
-
-        toast(
-            `✅ Correct! +${gained} points, +${gainedXP} XP, +${coinReward} Coins`
-        );
-
-    }
+    toast(message);
 
 
     setTimeout(
@@ -1654,7 +1806,7 @@ function correctAnswer(
 
 
 // ============================================================
-// WRONG
+// WRONG ANSWER
 // ============================================================
 
 function wrongAnswer() {
@@ -1666,11 +1818,8 @@ function wrongAnswer() {
     game.locked = true;
 
 
-    const p = getProfile();
-
-
-    if (!p)
-        return;
+    const p =
+        getProfile();
 
 
     if (
@@ -1752,62 +1901,6 @@ function wrongAnswer() {
 
 
 // ============================================================
-// GAME STATS
-// ============================================================
-
-function renderQuestionStats() {
-
-    const p = getProfile();
-
-    if (!p)
-        return;
-
-
-    document.getElementById(
-        "score"
-    ).textContent =
-        game.score;
-
-
-    document.getElementById(
-        "combo"
-    ).textContent =
-        game.combo;
-
-
-    document.getElementById(
-        "lives"
-    ).textContent =
-        game.lives;
-
-
-    document.getElementById(
-        "gameXP"
-    ).textContent =
-        p.xp;
-
-
-    document.getElementById(
-        "gameCoins"
-    ).textContent =
-        p.coins;
-
-
-    document.getElementById(
-        "gameLevel"
-    ).textContent =
-        p.level;
-
-
-    document.getElementById(
-        "hintCount"
-    ).textContent =
-        p.hints;
-
-}
-
-
-// ============================================================
 // HINT
 // ============================================================
 
@@ -1817,16 +1910,15 @@ function useHint() {
         return;
 
 
-    const p = getProfile();
+    const p =
+        getProfile();
 
 
     if (!p)
         return;
 
 
-    if (
-        game.hintUsed
-    ) {
+    if (game.hintUsed) {
 
         toast(
             "Hint already used."
@@ -1837,9 +1929,7 @@ function useHint() {
     }
 
 
-    if (
-        p.hints <= 0
-    ) {
+    if (p.hints <= 0) {
 
         toast(
             "You don't have any Hint."
@@ -1860,41 +1950,35 @@ function useHint() {
 
     if (
         game.score < 0
-    )
+    ) {
+
         game.score = 0;
+
+    }
 
 
     const buttons =
-        document.querySelectorAll(
-            ".answer-button"
+        Array.from(
+            document.querySelectorAll(
+                "#answers button"
+            )
         );
 
 
-    const wrongButtons = [];
-
-
-    buttons.forEach(
-        (button,index) => {
-
-            if (
+    const wrongButtons =
+        buttons.filter(
+            (button,index) =>
                 game.options[index] !==
                 game.currentCountry
-            ) {
+        );
 
-                wrongButtons.push(
-                    button
-                );
 
-            }
-
-        }
+    shuffle(
+        wrongButtons
     );
 
 
     wrongButtons
-        .sort(
-            () => Math.random() - .5
-        )
         .slice(0,2)
         .forEach(
             button => {
@@ -1909,44 +1993,15 @@ function useHint() {
 
     save();
 
-    renderQuestionStats();
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        game.score;
 
 
     toast(
         "💡 Hint used! -25 points"
-    );
-
-}
-
-
-// ============================================================
-// INVENTORY
-// ============================================================
-
-function openInventoryDuringGame() {
-
-    const p = getProfile();
-
-    if (!p)
-        return;
-
-
-    alert(
-
-        "🎒 INVENTORY\n\n" +
-
-        `💡 Hint: ${p.hints}\n` +
-
-        `❤️ Extra Life: ${p.extraLives}\n` +
-
-        `✨ Double XP: ${p.doubleXP}\n` +
-
-        `🚀 Score Boost: ${p.scoreBoost}\n` +
-
-        `🔄 Second Chance: ${p.secondChance}\n` +
-
-        `🍀 Lucky Answer: ${p.luckyAnswer}`
-
     );
 
 }
@@ -1958,33 +2013,26 @@ function openInventoryDuringGame() {
 
 function finishGame() {
 
-    const p = getProfile();
+    const p =
+        getProfile();
+
 
     if (!p)
         return;
 
 
-    game.locked = true;
-
-
-    const perfect =
-        game.correct ===
-        game.totalQuestions;
-
-
     const completionReward =
         100 +
-
         (
-            perfect
-                ? 250
-                : 0
+            game.correct ===
+            game.totalQuestions
+            ? 250
+            : 0
         ) +
-
         (
             game.difficulty === 3
-                ? 100
-                : 0
+            ? 100
+            : 0
         );
 
 
@@ -2007,7 +2055,8 @@ function finishGame() {
     }
 
 
-    let newHighScore = false;
+    let newHighScore =
+        false;
 
 
     if (
@@ -2018,7 +2067,8 @@ function finishGame() {
         p.highScore =
             game.score;
 
-        newHighScore = true;
+        newHighScore =
+            true;
 
     }
 
@@ -2035,7 +2085,10 @@ function finishGame() {
             "🏆 NEW HIGH SCORE!";
 
     }
-    else if (perfect) {
+    else if (
+        game.correct ===
+        game.totalQuestions
+    ) {
 
         message =
             "🎉 PERFECT GAME!";
@@ -2053,9 +2106,9 @@ function finishGame() {
         "resultInfo"
     ).innerHTML = `
 
-        <h3>
+        <div class="result-message">
             ${message}
-        </h3>
+        </div>
 
         <div class="result-stat">
             <span>⭐ Score</span>
@@ -2101,7 +2154,32 @@ function finishGame() {
 
 
 // ============================================================
-// DATABASE
+// QUIT GAME
+// ============================================================
+
+function confirmQuitGame() {
+
+    if (game.locked)
+        return;
+
+
+    if (
+        confirm(
+            "Quit this game?\nYour current game progress will be lost."
+        )
+    ) {
+
+        game.locked = true;
+
+        goHome();
+
+    }
+
+}
+
+
+// ============================================================
+// COUNTRY DATABASE
 // ============================================================
 
 function openCountries() {
@@ -2113,6 +2191,12 @@ function openCountries() {
 
 
     container.innerHTML = "";
+
+
+    document.getElementById(
+        "countryCount"
+    ).textContent =
+        countries.length;
 
 
     countries.forEach(
@@ -2195,568 +2279,30 @@ function openUpdateLog() {
 
 
 // ============================================================
-// ESCAPE HTML
+// INFO
 // ============================================================
 
-function escapeHTML(text) {
+function openInfo() {
 
-    return String(text)
-
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
-}
-
-
-// ============================================================
-// KEYBOARD CONTROL
-// ============================================================
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        const key =
-            event.key.toLowerCase();
-
-
-        // Don't activate shortcuts
-        // while typing.
-
-        if (
-            event.target.tagName ===
-            "INPUT" ||
-            event.target.tagName ===
-            "TEXTAREA"
-        ) {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                event.target.blur();
-
-            }
-
-            return;
-
-        }
-
-
-        const activeScreen =
-            document.querySelector(
-                ".screen.active"
-            );
-
-
-        if (!activeScreen)
-            return;
-
-
-        // GAME ANSWERS
-
-        if (
-            activeScreen.id ===
-            "gameScreen"
-        ) {
-
-            if (
-                ["1","2","3","4"]
-                .includes(event.key)
-            ) {
-
-                const position =
-                    Number(event.key) - 1;
-
-
-                answerQuestion(
-                    position
-                );
-
-
-                return;
-
-            }
-
-
-            if (key === "h") {
-
-                useHint();
-
-                return;
-
-            }
-
-
-            if (key === "i") {
-
-                openInventoryDuringGame();
-
-                return;
-
-            }
-
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                goHomeConfirm();
-
-                return;
-
-            }
-
-
-            return;
-
-        }
-
-
-        // HOME
-
-        if (
-            activeScreen.id ===
-            "homeScreen"
-        ) {
-
-            if (key === "1") {
-
-                startGameMenu();
-
-            }
-            else if (key === "2") {
-
-                startGame(2);
-
-            }
-            else if (key === "3") {
-
-                startGame(3);
-
-            }
-            else if (key === "p") {
-
-                openProfileMenu();
-
-            }
-            else if (key === "s") {
-
-                openShop();
-
-            }
-            else if (key === "d") {
-
-                openCountries();
-
-            }
-            else if (key === "r") {
-
-                openRules();
-
-            }
-            else if (key === "u") {
-
-                openUpdateLog();
-
-            }
-
-        }
-        else {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                goHome();
-
-            }
-
-        }
-
-    }
-);
-
-
-// ============================================================
-// OWNER PANEL
-// ============================================================
-//
-// IMPORTANT:
-//
-// The Owner Panel is intentionally NOT shown
-// anywhere in the normal HTML interface.
-//
-// Layer 1:
-// Secret keyboard combination.
-//
-// Layer 2:
-// Owner password.
-//
-// This is only client-side protection.
-// It is NOT real server security.
-// Do NOT put sensitive secrets here.
-//
-// ============================================================
-
-const OWNER_PASSWORD =
-    "CHANGE_THIS_OWNER_PASSWORD";
-
-
-let ownerUnlocked = false;
-
-
-function openOwnerPanel() {
-
-    // Layer 1
-
-    const code =
-        prompt(
-            "OWNER ACCESS\n\nEnter owner password:"
-        );
-
-
-    if (
-        code !== OWNER_PASSWORD
-    ) {
-
-        toast(
-            "❌ Access denied."
-        );
-
-        return;
-
-    }
-
-
-    // Layer 2
-
-    const confirmation =
-        prompt(
-            "SECOND SECURITY LAYER\n\nType OWNER to continue:"
-        );
-
-
-    if (
-        confirmation !== "OWNER"
-    ) {
-
-        toast(
-            "❌ Second security check failed."
-        );
-
-        return;
-
-    }
-
-
-    ownerUnlocked = true;
-
-
-    ownerMenu();
-
-}
-
-
-function ownerMenu() {
-
-    if (!ownerUnlocked)
-        return;
-
-
-    const action =
-        prompt(
-
-            "OWNER PANEL\n\n" +
-
-            "1 = Give Coins\n" +
-
-            "2 = Give XP\n" +
-
-            "3 = Max Items\n" +
-
-            "4 = Reset Profile\n" +
-
-            "5 = Delete ALL Profiles\n" +
-
-            "0 = Exit"
-
-        );
-
-
-    if (action === "1") {
-
-        ownerGiveCoins();
-
-    }
-    else if (action === "2") {
-
-        ownerGiveXP();
-
-    }
-    else if (action === "3") {
-
-        ownerMaxItems();
-
-    }
-    else if (action === "4") {
-
-        ownerResetProfile();
-
-    }
-    else if (action === "5") {
-
-        ownerDeleteAll();
-
-    }
-
-}
-
-
-function ownerGiveCoins() {
-
-    const p = getProfile();
-
-    if (!p)
-        return;
-
-
-    const amount =
-        Number(
-            prompt(
-                "Coins to add:"
-            )
-        );
-
-
-    if (
-        !Number.isFinite(amount) ||
-        amount < 0
-    ) {
-
-        toast(
-            "Invalid amount."
-        );
-
-        return;
-
-    }
-
-
-    const value =
-        Math.floor(amount);
-
-
-    p.coins += value;
-
-    p.totalCoinsEarned += value;
-
-
-    save();
-
-
-    toast(
-        `👑 +${value} Coins`
-    );
-
-}
-
-
-function ownerGiveXP() {
-
-    const p = getProfile();
-
-    if (!p)
-        return;
-
-
-    const amount =
-        Number(
-            prompt(
-                "XP to add:"
-            )
-        );
-
-
-    if (
-        !Number.isFinite(amount) ||
-        amount < 0
-    ) {
-
-        toast(
-            "Invalid amount."
-        );
-
-        return;
-
-    }
-
-
-    p.xp +=
-        Math.floor(amount);
-
-
-    p.level =
-        calculateLevel(
-            p.xp
-        );
-
-
-    save();
-
-
-    toast(
-        "👑 XP added."
-    );
-
-}
-
-
-function ownerMaxItems() {
-
-    const p = getProfile();
-
-    if (!p)
-        return;
-
-
-    p.hints = 100;
-
-    p.extraLives = 100;
-
-    p.doubleXP = 100;
-
-    p.scoreBoost = 100;
-
-    p.secondChance = 100;
-
-    p.luckyAnswer = 100;
-
-
-    save();
-
-
-    toast(
-        "👑 All items set to 100."
-    );
-
-}
-
-
-function ownerResetProfile() {
-
-    const p = getProfile();
-
-    if (!p)
-        return;
-
-
-    if (
-        !confirm(
-            `Reset ${p.name}?`
-        )
-    )
-        return;
-
-
-    const name =
-        p.name;
-
-
-    profiles[currentProfile] =
-        newProfile(name);
-
-
-    save();
-
-
-    toast(
-        "👑 Profile reset."
-    );
-
-}
-
-
-function ownerDeleteAll() {
-
-    if (
-        !confirm(
-            "DELETE ALL PROFILES?"
-        )
-    )
-        return;
-
-
-    profiles = [];
-
-    currentProfile = -1;
-
-
-    save();
-
-
-    ownerUnlocked = false;
-
-
-    goHome();
-
-
-    toast(
-        "All profiles deleted."
+    showScreen(
+        "infoScreen"
     );
 
 }
 
 
 // ============================================================
-// SECRET OWNER KEY
+// OWNER SECURITY
 // ============================================================
 //
-// Ctrl + Shift + O
+// Owner Panel is intentionally NOT displayed anywhere.
 //
-// The panel is not displayed as a button.
+// This version does not pretend that browser JavaScript can
+// securely verify a computer's public IP.
+//
+// If an Owner Panel is added later, authentication should be
+// moved to a backend/server.
 // ============================================================
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.ctrlKey &&
-            event.shiftKey &&
-            event.key.toLowerCase() === "o"
-        ) {
-
-            event.preventDefault();
-
-            openOwnerPanel();
-
-        }
-
-    }
-);
 
 
 // ============================================================
@@ -2765,11 +2311,27 @@ document.addEventListener(
 
 function initialize() {
 
+    if (
+        currentProfile >= 0 &&
+        !profiles[currentProfile]
+    ) {
+
+        currentProfile = -1;
+
+        save();
+
+    }
+
+
     updateHeader();
 
-    updateHomeProfile();
+    updateMainProfile();
 
 }
 
+
+// ============================================================
+// START
+// ============================================================
 
 initialize();
