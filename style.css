@@ -1,30 +1,92 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 body {
-    font-family: Arial, sans-serif;
+    margin: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     background:
-        radial-gradient(circle at top, #243b55, #141e30);
+        linear-gradient(
+            135deg,
+            #07111f,
+            #102b46,
+            #07111f
+        );
+
     color: white;
+
     min-height: 100vh;
 }
 
+
 button,
-input,
-select {
+input {
     font: inherit;
 }
 
+
 button {
     cursor: pointer;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 14px 18px;
+
+    margin: 6px 0;
+
+    background: #1677ff;
+
+    color: white;
+
+    font-weight: bold;
+
+    transition:
+        transform 0.15s,
+        opacity 0.15s;
 }
+
+
+button:hover {
+    transform: translateY(-2px);
+
+    opacity: 0.9;
+}
+
+
+button:active {
+    transform: scale(0.97);
+}
+
+
+button.secondary {
+    background: #4b5563;
+}
+
+
+button.danger {
+    background: #dc2626;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
 
 #app {
     width: 100%;
-    min-height: 100vh;
+
+    min-height: calc(100vh - 80px);
 }
 
 
@@ -32,31 +94,55 @@ button {
    HEADER
 ========================================================= */
 
-.topbar {
-    min-height: 80px;
-    padding: 15px 5%;
-    background: rgba(0,0,0,.35);
+.header {
+    width: 100%;
+
+    padding: 18px 5%;
+
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
     gap: 20px;
-    border-bottom: 1px solid rgba(255,255,255,.15);
+
+    background:
+        rgba(5, 15, 30, 0.9);
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.1);
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 10;
 }
 
-.topbar h1 {
+
+.header h1 {
+    margin: 0;
+
     font-size: 26px;
 }
 
-.topbar p {
-    opacity: .7;
-    margin-top: 4px;
+
+.subtitle {
+    margin: 5px 0 0;
+
+    color: #b9c8d8;
 }
 
-#topProfile {
+
+.header-profile {
     display: flex;
-    align-items: center;
+
     gap: 15px;
-    flex-wrap: wrap;
+
+    align-items: center;
+
+    font-weight: bold;
 }
 
 
@@ -64,95 +150,102 @@ button {
    SCREEN
 ========================================================= */
 
-main {
-    width: min(1100px, 94%);
-    margin: auto;
-    padding: 30px 0 60px;
-}
-
 .screen {
-    display: none;
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 30px 20px;
 }
 
-.screen.active {
-    display: block;
+
+.hidden {
+    display: none !important;
 }
 
 
 /* =========================================================
-   HOME
+   CARD
 ========================================================= */
 
-.hero {
-    text-align: center;
-    padding: 35px 10px;
-}
+.card {
+    background:
+        rgba(15, 31, 50, 0.94);
 
-.hero h2 {
-    font-size: clamp(28px, 5vw, 48px);
-    margin-bottom: 12px;
-}
+    border:
+        1px solid rgba(255,255,255,0.1);
 
-.hero p {
-    opacity: .75;
-    font-size: 18px;
-}
-
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-}
-
-.menu-grid button,
-.difficulty-grid button,
-.shop-grid button {
-    min-height: 140px;
-    border: 1px solid rgba(255,255,255,.15);
     border-radius: 18px;
-    background: rgba(255,255,255,.08);
-    color: white;
-    transition: .2s;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+
+    padding: 25px;
+
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,0.25);
+}
+
+
+.card h2 {
+    margin-top: 0;
+}
+
+
+/* =========================================================
+   MAIN MENU
+========================================================= */
+
+.menu-buttons {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 10px;
 }
 
-.menu-grid button {
-    font-size: 38px;
-}
 
-.menu-grid button span {
+.menu-buttons button {
+    min-height: 60px;
+
     font-size: 16px;
-    font-weight: bold;
-}
-
-.menu-grid button:hover,
-.difficulty-grid button:hover,
-.shop-grid button:hover {
-    transform: translateY(-4px);
-    background: rgba(255,255,255,.15);
 }
 
 
 /* =========================================================
-   TITLES
+   PROFILE
 ========================================================= */
 
-.screen h2 {
-    text-align: center;
-    margin: 25px 0;
-    font-size: 32px;
+#profileInfo,
+#mainProfileInfo {
+    line-height: 1.8;
 }
 
-.back {
-    border: none;
-    background: rgba(255,255,255,.1);
-    color: white;
-    padding: 10px 18px;
+
+input {
+    width: 100%;
+
+    padding: 14px;
+
     border-radius: 10px;
+
+    border: 1px solid #64748b;
+
+    background: #0f1f32;
+
+    color: white;
+
+    margin-bottom: 10px;
+
+    outline: none;
+}
+
+
+input:focus {
+    border-color: #1677ff;
 }
 
 
@@ -160,18 +253,33 @@ main {
    DIFFICULTY
 ========================================================= */
 
-.difficulty-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+#difficultyScreen .card {
+    max-width: 600px;
+
+    margin:
+        40px auto;
 }
 
-.difficulty-grid button strong {
-    font-size: 24px;
+
+#difficultyScreen button {
+    width: 100%;
+
+    display: block;
+
+    min-height: 65px;
+
+    text-align: left;
+
+    font-size: 17px;
 }
 
-.difficulty-grid small {
-    opacity: .7;
+
+#difficultyScreen small {
+    display: block;
+
+    color: #cbd5e1;
+
+    margin-top: 5px;
 }
 
 
@@ -179,83 +287,284 @@ main {
    GAME
 ========================================================= */
 
-.game-header {
+.game-top {
+    max-width: 1100px;
+
+    margin: 25px auto 10px;
+
+    padding: 0 20px;
+
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
     gap: 10px;
-    margin-bottom: 20px;
 }
 
-.game-header div {
-    background: rgba(255,255,255,.08);
-    padding: 15px;
-    text-align: center;
+
+.game-top div {
+    background:
+        rgba(15,31,50,0.9);
+
+    padding: 14px;
+
     border-radius: 12px;
+
+    text-align: center;
+
+    font-weight: bold;
 }
 
-.game-card {
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.15);
-    border-radius: 22px;
-    padding: 30px;
+
+.stats-bar {
+    max-width: 1100px;
+
+    margin: 10px auto;
+
+    padding: 0 20px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 10px;
+}
+
+
+.stats-bar span {
+    background:
+        rgba(15,31,50,0.9);
+
+    padding: 12px;
+
+    border-radius: 10px;
+
     text-align: center;
 }
 
-#questionType {
-    opacity: .65;
-    margin-bottom: 15px;
+
+.question-card {
+    max-width: 1100px;
+
+    margin:
+        20px auto;
 }
+
+
+.question-type {
+    color: #60a5fa;
+
+    font-weight: bold;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+}
+
 
 #questionText {
-    font-size: 25px;
+    font-size: 27px;
+
+    margin:
+        20px 0 10px;
 }
 
-.question-value {
-    font-size: 30px;
-    font-weight: bold;
-    margin: 25px 0;
+
+.question-info {
+    font-size: 20px;
+
+    padding: 20px;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    border-radius: 12px;
+
+    margin-bottom: 20px;
+
+    text-align: center;
 }
+
+
+/* =========================================================
+   ANSWERS
+========================================================= */
 
 .answers {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
 
-.answers button {
-    border: none;
-    border-radius: 14px;
-    padding: 18px;
-    background: rgba(255,255,255,.1);
-    color: white;
-    transition: .2s;
-}
+    grid-template-columns:
+        repeat(2, 1fr);
 
-.answers button:hover {
-    background: rgba(255,255,255,.2);
-}
-
-.answers button.removed {
-    opacity: .25;
-    pointer-events: none;
-}
-
-.game-actions {
-    margin-top: 25px;
-    display: flex;
-    justify-content: center;
     gap: 12px;
 }
 
-.game-actions button,
-.primary,
-.profile-actions button {
-    border: none;
-    padding: 13px 20px;
+
+.answer-button {
+    min-height: 70px;
+
+    font-size: 18px;
+
+    background: #193a5c;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.08);
+}
+
+
+.answer-button.correct {
+    background: #15803d;
+}
+
+
+.answer-button.wrong {
+    background: #b91c1c;
+}
+
+
+.answer-button.removed {
+    opacity: 0.25;
+
+    pointer-events: none;
+}
+
+
+.game-tools {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+
+.game-tools button {
+    flex: 1;
+}
+
+
+/* =========================================================
+   SHOP
+========================================================= */
+
+.shop-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+}
+
+
+.shop-item {
+    background:
+        rgba(255,255,255,0.05);
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.08);
+}
+
+
+.shop-item h3 {
+    margin-top: 0;
+}
+
+
+.shop-item p {
+    color: #cbd5e1;
+
+    min-height: 45px;
+}
+
+
+.shop-item button {
+    width: 100%;
+}
+
+
+/* =========================================================
+   DATABASE
+========================================================= */
+
+#countryDatabase {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+    max-height: 650px;
+
+    overflow-y: auto;
+}
+
+
+.country-card {
+    background:
+        rgba(255,255,255,0.05);
+
+    padding: 15px;
+
     border-radius: 12px;
-    background: #ffffff;
-    color: #141e30;
-    font-weight: bold;
+}
+
+
+.country-card h3 {
+    margin-top: 0;
+
+    color: #60a5fa;
+}
+
+
+.country-card p {
+    margin: 5px 0;
+
+    color: #dbeafe;
+}
+
+
+/* =========================================================
+   UPDATE LOG
+========================================================= */
+
+.update {
+    background:
+        rgba(255,255,255,0.05);
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    border-left:
+        4px solid #1677ff;
+}
+
+
+.update h3 {
+    margin-top: 0;
+
+    font-size: 24px;
+}
+
+
+.date {
+    color: #94a3b8;
+}
+
+
+.update li {
+    margin:
+        10px 0;
 }
 
 
@@ -264,223 +573,122 @@ main {
 ========================================================= */
 
 .result-card {
-    max-width: 500px;
-    margin: auto;
-    background: rgba(255,255,255,.08);
-    padding: 30px;
-    border-radius: 20px;
     text-align: center;
-}
 
-.result-card p {
-    margin-top: 15px;
-    opacity: .7;
-}
-
-.result-card strong {
-    display: block;
-    font-size: 30px;
-}
-
-.result-card + button,
-.primary {
-    display: block;
-    margin: 25px auto;
-}
-
-
-/* =========================================================
-   PROFILE
-========================================================= */
-
-#profileList {
-    display: grid;
-    gap: 12px;
-}
-
-.profile-item {
-    background: rgba(255,255,255,.08);
-    padding: 18px;
-    border-radius: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-
-.profile-item.selected {
-    border: 2px solid white;
-}
-
-.profile-actions {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-}
-
-
-/* =========================================================
-   SHOP
-========================================================= */
-
-.coins-display {
-    text-align: center;
-    font-size: 25px;
-    margin-bottom: 25px;
-}
-
-.shop-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-}
-
-.shop-grid button {
-    min-height: 130px;
-    font-size: 24px;
-}
-
-.shop-grid small {
-    font-size: 14px;
-    opacity: .7;
-}
-
-
-/* =========================================================
-   INVENTORY
-========================================================= */
-
-#inventoryList {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-}
-
-.inventory-item {
-    background: rgba(255,255,255,.08);
-    padding: 25px;
-    text-align: center;
-    border-radius: 15px;
-}
-
-.inventory-item strong {
-    display: block;
-    font-size: 25px;
-    margin-top: 8px;
-}
-
-
-/* =========================================================
-   COUNTRY DATABASE
-========================================================= */
-
-#countryList {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-}
-
-.country-card {
-    background: rgba(255,255,255,.08);
-    padding: 20px;
-    border-radius: 15px;
-}
-
-.country-card h3 {
-    margin-bottom: 10px;
-}
-
-.country-card p {
-    opacity: .8;
-    margin: 5px 0;
-}
-
-
-/* =========================================================
-   INFO / RULES
-========================================================= */
-
-.info-card {
-    background: rgba(255,255,255,.08);
-    border-radius: 18px;
-    padding: 25px;
-    line-height: 1.8;
-}
-
-
-/* =========================================================
-   OWNER
-========================================================= */
-
-.owner-warning {
     max-width: 700px;
-    margin: auto;
-    background: rgba(255,170,0,.15);
-    border: 1px solid rgba(255,170,0,.4);
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
+
+    margin:
+        60px auto;
 }
 
-.owner-card {
-    max-width: 600px;
-    margin: 20px auto;
-    background: rgba(255,255,255,.08);
-    padding: 25px;
-    border-radius: 18px;
-}
 
-.owner-card label {
-    display: block;
-    margin-top: 12px;
-    margin-bottom: 6px;
-}
+.result-stat {
+    display: flex;
 
-.owner-card input,
-.owner-card select {
-    width: 100%;
+    justify-content: space-between;
+
     padding: 12px;
-    border-radius: 10px;
-    border: none;
-    margin-bottom: 12px;
-}
 
-.owner-card button {
-    width: 100%;
-    padding: 13px;
-    margin-top: 8px;
-    border: none;
-    border-radius: 10px;
-}
-
-.owner-card .danger {
-    background: #ff4444;
-    color: white;
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.1);
 }
 
 
 /* =========================================================
-   TOAST
+   MODAL
 ========================================================= */
 
-#toast {
+.modal {
     position: fixed;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: rgba(0,0,0,.9);
-    color: white;
-    padding: 14px 22px;
-    border-radius: 12px;
-    transition: .3s;
-    opacity: 0;
-    z-index: 1000;
+
+    inset: 0;
+
+    background:
+        rgba(0,0,0,0.75);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 100;
 }
 
-#toast.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
+
+.modal-content {
+    width: 90%;
+
+    max-width: 500px;
+
+    background:
+        #10233a;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,0.5);
+}
+
+
+.inventory-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 10px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.1);
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message {
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 30px;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        #10233a;
+
+    padding: 15px 25px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,0.4);
+
+    z-index: 200;
+
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    text-align: center;
+
+    color: #94a3b8;
+
+    padding: 20px;
 }
 
 
@@ -490,88 +698,120 @@ main {
 
 @media (max-width: 700px) {
 
-    .topbar {
+    .header {
+        padding: 15px;
+
         flex-direction: column;
-        text-align: center;
+
+        align-items: flex-start;
     }
 
-    .topbar h1 {
-        font-size: 22px;
+
+    .header h1 {
+        font-size: 21px;
     }
 
-    .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+
+    .header-profile {
+        width: 100%;
+
+        justify-content:
+            space-between;
     }
 
-    .menu-grid button {
-        min-height: 115px;
-        font-size: 30px;
+
+    .screen {
+        padding:
+            15px;
     }
 
-    .difficulty-grid {
+
+    .menu-buttons {
         grid-template-columns: 1fr;
     }
 
-    .game-header {
-        grid-template-columns: repeat(2, 1fr);
+
+    .game-top {
+        padding:
+            0 15px;
     }
 
-    .game-card {
-        padding: 20px 12px;
+
+    .stats-bar {
+        padding:
+            0 15px;
+
+        grid-template-columns:
+            repeat(2, 1fr);
     }
+
 
     .answers {
         grid-template-columns: 1fr;
     }
 
-    .answers button {
-        padding: 16px 10px;
+
+    .question-card {
+        padding: 18px;
     }
+
+
+    #questionText {
+        font-size: 22px;
+    }
+
+
+    .question-info {
+        font-size: 18px;
+    }
+
 
     .shop-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    #inventoryList {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    #countryList {
         grid-template-columns: 1fr;
     }
 
-    .profile-item {
-        flex-direction: column;
-        text-align: center;
+
+    #countryDatabase {
+        grid-template-columns: 1fr;
+
+        max-height:
+            none;
     }
 
-    .profile-actions {
+
+    .game-tools {
         flex-direction: column;
     }
 
-    .game-actions {
-        flex-direction: column;
+
+    button {
+        min-height: 50px;
     }
 
-    .game-actions button {
-        width: 100%;
-    }
 }
 
 
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
 @media (max-width: 400px) {
 
-    .menu-grid {
-        grid-template-columns: 1fr 1fr;
+    .game-top {
+        grid-template-columns:
+            1fr 1fr 1fr;
+
+        font-size: 13px;
     }
 
-    .shop-grid {
-        grid-template-columns: 1fr;
+
+    .stats-bar {
+        font-size: 13px;
     }
 
-    #inventoryList {
-        grid-template-columns: 1fr;
+
+    .card {
+        padding: 17px;
     }
 
 }
