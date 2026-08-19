@@ -6,13 +6,22 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
+
     margin: 0;
+
+    min-height: 100vh;
 
     font-family:
         Arial,
         Helvetica,
         sans-serif;
+
+    color: white;
 
     background:
         linear-gradient(
@@ -22,19 +31,21 @@ body {
             #07111f
         );
 
-    color: white;
-
-    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
 }
 
 
 button,
-input {
+input,
+select {
+
     font: inherit;
+
 }
 
 
 button {
+
     cursor: pointer;
 
     border: none;
@@ -43,7 +54,7 @@ button {
 
     padding: 14px 18px;
 
-    margin: 6px 0;
+    margin: 5px 0;
 
     background: #1677ff;
 
@@ -52,30 +63,63 @@ button {
     font-weight: bold;
 
     transition:
-        transform 0.15s,
-        opacity 0.15s;
+        transform .15s,
+        opacity .15s,
+        background .15s;
+
+    touch-action: manipulation;
+
 }
 
 
 button:hover {
+
     transform: translateY(-2px);
 
-    opacity: 0.9;
+    opacity: .9;
+
 }
 
 
 button:active {
-    transform: scale(0.97);
+
+    transform: scale(.97);
+
 }
 
 
 button.secondary {
-    background: #4b5563;
+
+    background: #475569;
+
 }
 
 
 button.danger {
+
     background: #dc2626;
+
+}
+
+
+button.owner-button {
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+}
+
+
+button:disabled {
+
+    opacity: .5;
+
+    cursor: not-allowed;
+
 }
 
 
@@ -84,9 +128,32 @@ button.danger {
 ========================================================= */
 
 #app {
+
     width: 100%;
 
-    min-height: calc(100vh - 80px);
+    min-height:
+        calc(100vh - 80px);
+
+}
+
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+.screen {
+
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 30px 20px;
+
 }
 
 
@@ -95,74 +162,71 @@ button.danger {
 ========================================================= */
 
 .header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 50;
+
     width: 100%;
 
-    padding: 18px 5%;
+    padding:
+        18px 5%;
 
     display: flex;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
     align-items: center;
 
     gap: 20px;
 
     background:
-        rgba(5, 15, 30, 0.9);
+        rgba(5,15,30,.95);
 
     border-bottom:
-        1px solid rgba(255,255,255,0.1);
+        1px solid
+        rgba(255,255,255,.1);
 
-    position: sticky;
+    backdrop-filter:
+        blur(12px);
 
-    top: 0;
-
-    z-index: 10;
 }
 
 
-.header h1 {
+.header-title h1 {
+
     margin: 0;
 
     font-size: 26px;
+
 }
 
 
 .subtitle {
-    margin: 5px 0 0;
+
+    margin:
+        5px 0 0;
 
     color: #b9c8d8;
+
 }
 
 
 .header-profile {
-    display: flex;
 
-    gap: 15px;
+    display: flex;
 
     align-items: center;
 
+    gap: 15px;
+
     font-weight: bold;
-}
 
+    white-space: nowrap;
 
-/* =========================================================
-   SCREEN
-========================================================= */
-
-.screen {
-    width: 100%;
-
-    max-width: 1100px;
-
-    margin: auto;
-
-    padding: 30px 20px;
-}
-
-
-.hidden {
-    display: none !important;
 }
 
 
@@ -171,11 +235,13 @@ button.danger {
 ========================================================= */
 
 .card {
+
     background:
-        rgba(15, 31, 50, 0.94);
+        rgba(15,31,50,.94);
 
     border:
-        1px solid rgba(255,255,255,0.1);
+        1px solid
+        rgba(255,255,255,.1);
 
     border-radius: 18px;
 
@@ -185,12 +251,15 @@ button.danger {
 
     box-shadow:
         0 15px 40px
-        rgba(0,0,0,0.25);
+        rgba(0,0,0,.25);
+
 }
 
 
 .card h2 {
+
     margin-top: 0;
+
 }
 
 
@@ -199,19 +268,23 @@ button.danger {
 ========================================================= */
 
 .menu-buttons {
+
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2,1fr);
 
     gap: 10px;
+
 }
 
 
 .menu-buttons button {
+
     min-height: 60px;
 
     font-size: 16px;
+
 }
 
 
@@ -219,33 +292,123 @@ button.danger {
    PROFILE
 ========================================================= */
 
-#profileInfo,
-#mainProfileInfo {
+#mainProfileInfo,
+#profileInfo {
+
     line-height: 1.8;
+
 }
 
 
-input {
+.profile-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+.profile-stat {
+
+    background:
+        rgba(255,255,255,.05);
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+}
+
+
+input,
+select {
+
     width: 100%;
 
     padding: 14px;
 
     border-radius: 10px;
 
-    border: 1px solid #64748b;
+    border:
+        1px solid
+        #64748b;
 
-    background: #0f1f32;
+    background:
+        #0f1f32;
 
     color: white;
 
     margin-bottom: 10px;
 
     outline: none;
+
 }
 
 
-input:focus {
-    border-color: #1677ff;
+input:focus,
+select:focus {
+
+    border-color:
+        #1677ff;
+
+}
+
+
+select option {
+
+    background: #10233a;
+
+}
+
+
+.profile-list {
+
+    margin-top: 20px;
+
+}
+
+
+.profile-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    margin-bottom: 10px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,.05);
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+}
+
+
+.profile-item.selected {
+
+    border-color:
+        #1677ff;
+
+    background:
+        rgba(22,119,255,.15);
+
 }
 
 
@@ -253,33 +416,67 @@ input:focus {
    DIFFICULTY
 ========================================================= */
 
-#difficultyScreen .card {
+.difficulty-card {
+
     max-width: 600px;
 
     margin:
         40px auto;
+
 }
 
 
-#difficultyScreen button {
+.difficulty {
+
     width: 100%;
 
     display: block;
 
-    min-height: 65px;
+    min-height: 70px;
 
     text-align: left;
 
     font-size: 17px;
+
 }
 
 
-#difficultyScreen small {
+.difficulty span {
+
     display: block;
+
+}
+
+
+.difficulty small {
+
+    display: block;
+
+    margin-top: 5px;
 
     color: #cbd5e1;
 
-    margin-top: 5px;
+}
+
+
+.difficulty.easy {
+
+    background: #15803d;
+
+}
+
+
+.difficulty.normal {
+
+    background: #ca8a04;
+
+}
+
+
+.difficulty.hard {
+
+    background: #dc2626;
+
 }
 
 
@@ -288,24 +485,29 @@ input:focus {
 ========================================================= */
 
 .game-top {
+
     max-width: 1100px;
 
-    margin: 25px auto 10px;
+    margin:
+        25px auto 10px;
 
-    padding: 0 20px;
+    padding:
+        0 20px;
 
     display: grid;
 
     grid-template-columns:
-        1fr 1fr 1fr;
+        repeat(3,1fr);
 
     gap: 10px;
+
 }
 
 
 .game-top div {
+
     background:
-        rgba(15,31,50,0.9);
+        rgba(15,31,50,.9);
 
     padding: 14px;
 
@@ -314,77 +516,96 @@ input:focus {
     text-align: center;
 
     font-weight: bold;
+
 }
 
 
 .stats-bar {
+
     max-width: 1100px;
 
     margin: 10px auto;
 
-    padding: 0 20px;
+    padding:
+        0 20px;
 
     display: grid;
 
     grid-template-columns:
-        repeat(4, 1fr);
+        repeat(4,1fr);
 
     gap: 10px;
+
 }
 
 
 .stats-bar span {
+
     background:
-        rgba(15,31,50,0.9);
+        rgba(15,31,50,.9);
 
     padding: 12px;
 
     border-radius: 10px;
 
     text-align: center;
+
 }
 
 
 .question-card {
+
     max-width: 1100px;
 
     margin:
         20px auto;
+
 }
 
 
 .question-type {
-    color: #60a5fa;
+
+    color:
+        #60a5fa;
 
     font-weight: bold;
 
-    text-transform: uppercase;
+    text-transform:
+        uppercase;
 
-    letter-spacing: 1px;
+    letter-spacing:
+        1px;
+
 }
 
 
 #questionText {
+
     font-size: 27px;
 
     margin:
         20px 0 10px;
+
 }
 
 
 .question-info {
-    font-size: 20px;
+
+    font-size: 21px;
 
     padding: 20px;
 
     background:
-        rgba(255,255,255,0.05);
+        rgba(255,255,255,.05);
 
     border-radius: 12px;
 
     margin-bottom: 20px;
 
     text-align: center;
+
+    font-weight: bold;
+
 }
 
 
@@ -393,56 +614,81 @@ input:focus {
 ========================================================= */
 
 .answers {
+
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2,1fr);
 
     gap: 12px;
+
 }
 
 
 .answer-button {
+
     min-height: 70px;
 
     font-size: 18px;
 
-    background: #193a5c;
+    background:
+        #193a5c;
 
     border:
         1px solid
-        rgba(255,255,255,0.08);
+        rgba(255,255,255,.08);
+
+}
+
+
+.answer-button:hover {
+
+    background:
+        #24527d;
+
 }
 
 
 .answer-button.correct {
-    background: #15803d;
+
+    background:
+        #15803d;
+
 }
 
 
 .answer-button.wrong {
-    background: #b91c1c;
+
+    background:
+        #b91c1c;
+
 }
 
 
 .answer-button.removed {
-    opacity: 0.25;
+
+    opacity: .25;
 
     pointer-events: none;
+
 }
 
 
 .game-tools {
+
     display: flex;
 
     gap: 10px;
 
     margin-top: 20px;
+
 }
 
 
 .game-tools button {
+
     flex: 1;
+
 }
 
 
@@ -450,19 +696,29 @@ input:focus {
    SHOP
 ========================================================= */
 
+.shop-balance {
+
+    font-size: 20px;
+
+}
+
+
 .shop-grid {
+
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3,1fr);
 
     gap: 15px;
+
 }
 
 
 .shop-item {
+
     background:
-        rgba(255,255,255,0.05);
+        rgba(255,255,255,.05);
 
     padding: 20px;
 
@@ -470,24 +726,67 @@ input:focus {
 
     border:
         1px solid
-        rgba(255,255,255,0.08);
+        rgba(255,255,255,.08);
+
 }
 
 
 .shop-item h3 {
+
     margin-top: 0;
+
 }
 
 
 .shop-item p {
-    color: #cbd5e1;
+
+    color:
+        #cbd5e1;
 
     min-height: 45px;
+
 }
 
 
 .shop-item button {
+
     width: 100%;
+
+}
+
+
+/* =========================================================
+   INVENTORY
+========================================================= */
+
+.inventory-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 10px;
+
+}
+
+
+.inventory-item {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    background:
+        rgba(255,255,255,.05);
+
+    padding: 16px;
+
+    border-radius: 12px;
+
 }
 
 
@@ -495,41 +794,73 @@ input:focus {
    DATABASE
 ========================================================= */
 
-#countryDatabase {
+.database-count {
+
+    color:
+        #94a3b8;
+
+}
+
+
+.country-list {
+
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2,1fr);
 
     gap: 10px;
 
     max-height: 650px;
 
     overflow-y: auto;
+
 }
 
 
 .country-card {
+
     background:
-        rgba(255,255,255,0.05);
+        rgba(255,255,255,.05);
 
     padding: 15px;
 
     border-radius: 12px;
+
 }
 
 
 .country-card h3 {
+
     margin-top: 0;
 
-    color: #60a5fa;
+    color:
+        #60a5fa;
+
 }
 
 
 .country-card p {
+
     margin: 5px 0;
 
-    color: #dbeafe;
+    color:
+        #dbeafe;
+
+}
+
+
+/* =========================================================
+   RULES
+========================================================= */
+
+.rules-list li {
+
+    margin:
+        12px 0;
+
+    line-height: 1.6;
+
 }
 
 
@@ -538,33 +869,45 @@ input:focus {
 ========================================================= */
 
 .update {
+
     background:
-        rgba(255,255,255,0.05);
+        rgba(255,255,255,.05);
 
     padding: 20px;
 
     border-radius: 14px;
 
     border-left:
-        4px solid #1677ff;
+        4px solid
+        #1677ff;
+
 }
 
 
 .update h3 {
+
     margin-top: 0;
 
     font-size: 24px;
+
 }
 
 
 .date {
-    color: #94a3b8;
+
+    color:
+        #94a3b8;
+
 }
 
 
 .update li {
+
     margin:
         10px 0;
+
+    line-height: 1.5;
+
 }
 
 
@@ -573,86 +916,97 @@ input:focus {
 ========================================================= */
 
 .result-card {
+
     text-align: center;
 
     max-width: 700px;
 
     margin:
         60px auto;
+
+}
+
+
+#highScoreMessage {
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    color:
+        #facc15;
+
+    margin:
+        15px 0;
+
+}
+
+
+.result-info {
+
+    margin:
+        20px 0;
+
 }
 
 
 .result-stat {
+
     display: flex;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
+
+    padding: 13px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.1);
+
+}
+
+
+/* =========================================================
+   OWNER
+========================================================= */
+
+.warning {
+
+    background:
+        rgba(220,38,38,.15);
+
+    border:
+        1px solid
+        rgba(220,38,38,.3);
 
     padding: 12px;
 
-    border-bottom:
-        1px solid
-        rgba(255,255,255,0.1);
+    border-radius: 10px;
+
+}
+
+
+.owner-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 10px;
+
+    margin:
+        15px 0;
+
 }
 
 
 /* =========================================================
-   MODAL
+   TOAST
 ========================================================= */
 
-.modal {
-    position: fixed;
+.toast {
 
-    inset: 0;
-
-    background:
-        rgba(0,0,0,0.75);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    z-index: 100;
-}
-
-
-.modal-content {
-    width: 90%;
-
-    max-width: 500px;
-
-    background:
-        #10233a;
-
-    border-radius: 18px;
-
-    padding: 25px;
-
-    box-shadow:
-        0 20px 60px
-        rgba(0,0,0,0.5);
-}
-
-
-.inventory-row {
-    display: flex;
-
-    justify-content: space-between;
-
-    padding: 10px;
-
-    border-bottom:
-        1px solid
-        rgba(255,255,255,0.1);
-}
-
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-.message {
     position: fixed;
 
     left: 50%;
@@ -660,22 +1014,46 @@ input:focus {
     bottom: 30px;
 
     transform:
-        translateX(-50%);
+        translate(-50%,120px);
 
     background:
         #10233a;
 
-    padding: 15px 25px;
+    color: white;
+
+    padding:
+        15px 25px;
 
     border-radius: 12px;
 
     box-shadow:
         0 10px 30px
-        rgba(0,0,0,0.4);
+        rgba(0,0,0,.4);
 
     z-index: 200;
 
     font-weight: bold;
+
+    opacity: 0;
+
+    transition:
+        .3s;
+
+    max-width:
+        90%;
+
+    text-align: center;
+
+}
+
+
+.toast.show {
+
+    opacity: 1;
+
+    transform:
+        translate(-50%,0);
+
 }
 
 
@@ -684,11 +1062,14 @@ input:focus {
 ========================================================= */
 
 footer {
+
     text-align: center;
 
-    color: #94a3b8;
+    color:
+        #94a3b8;
 
     padding: 20px;
+
 }
 
 
@@ -699,93 +1080,169 @@ footer {
 @media (max-width: 700px) {
 
     .header {
+
         padding: 15px;
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        align-items: flex-start;
+        align-items:
+            flex-start;
+
     }
 
 
-    .header h1 {
+    .header-title h1 {
+
         font-size: 21px;
+
     }
 
 
     .header-profile {
+
         width: 100%;
 
         justify-content:
             space-between;
+
+        gap: 5px;
+
+        font-size: 13px;
+
     }
 
 
     .screen {
+
         padding:
             15px;
+
+    }
+
+
+    .card {
+
+        padding: 18px;
+
     }
 
 
     .menu-buttons {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
+
     }
 
 
     .game-top {
+
         padding:
             0 15px;
+
     }
 
 
     .stats-bar {
+
         padding:
             0 15px;
 
         grid-template-columns:
-            repeat(2, 1fr);
+            repeat(2,1fr);
+
     }
 
 
     .answers {
-        grid-template-columns: 1fr;
-    }
 
+        grid-template-columns:
+            1fr;
 
-    .question-card {
-        padding: 18px;
     }
 
 
     #questionText {
+
         font-size: 22px;
+
     }
 
 
     .question-info {
+
         font-size: 18px;
+
     }
 
 
     .shop-grid {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
+
     }
 
 
-    #countryDatabase {
-        grid-template-columns: 1fr;
+    .country-list {
+
+        grid-template-columns:
+            1fr;
 
         max-height:
             none;
+
+    }
+
+
+    .inventory-list {
+
+        grid-template-columns:
+            1fr;
+
     }
 
 
     .game-tools {
-        flex-direction: column;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .profile-stats {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .owner-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .profile-item {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
     }
 
 
     button {
+
         min-height: 50px;
+
     }
 
 }
@@ -798,20 +1255,30 @@ footer {
 @media (max-width: 400px) {
 
     .game-top {
-        grid-template-columns:
-            1fr 1fr 1fr;
 
         font-size: 13px;
+
     }
 
 
     .stats-bar {
+
         font-size: 13px;
+
     }
 
 
     .card {
-        padding: 17px;
+
+        padding: 16px;
+
+    }
+
+
+    .header-profile {
+
+        font-size: 12px;
+
     }
 
 }
