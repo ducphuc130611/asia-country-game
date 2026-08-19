@@ -1,5 +1,5 @@
 /* =========================================================
-   RESET
+   GLOBAL
 ========================================================= */
 
 * {
@@ -11,6 +11,7 @@ html {
 }
 
 body {
+
     margin: 0;
 
     font-family:
@@ -31,18 +32,13 @@ body {
     min-height: 100vh;
 }
 
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
 button,
-input,
-select {
+input {
     font: inherit;
 }
 
 button {
+
     cursor: pointer;
 
     border: none;
@@ -65,20 +61,24 @@ button {
 }
 
 button:hover {
+
     transform: translateY(-2px);
 
     opacity: 0.9;
 }
 
 button:active {
+
     transform: scale(0.97);
 }
 
 button.secondary {
+
     background: #4b5563;
 }
 
 button.danger {
+
     background: #dc2626;
 }
 
@@ -88,7 +88,11 @@ button.danger {
 ========================================================= */
 
 #app {
-    min-height: calc(100vh - 90px);
+
+    width: 100%;
+
+    min-height:
+        calc(100vh - 80px);
 }
 
 
@@ -97,20 +101,23 @@ button.danger {
 ========================================================= */
 
 .header {
+
     width: 100%;
 
-    padding: 18px 5%;
+    padding:
+        18px 5%;
 
     display: flex;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
     align-items: center;
 
     gap: 20px;
 
     background:
-        rgba(5, 15, 30, 0.95);
+        rgba(5,15,30,0.95);
 
     border-bottom:
         1px solid
@@ -124,18 +131,23 @@ button.danger {
 }
 
 .header h1 {
+
     margin: 0;
 
     font-size: 26px;
 }
 
 .subtitle {
-    margin: 5px 0 0;
 
-    color: #b9c8d8;
+    margin:
+        5px 0 0;
+
+    color:
+        #b9c8d8;
 }
 
 .header-profile {
+
     display: flex;
 
     gap: 15px;
@@ -153,19 +165,22 @@ button.danger {
 ========================================================= */
 
 .screen {
-    display: none;
 
     width: 100%;
 
-    max-width: 1100px;
+    max-width:
+        1100px;
 
-    margin: auto;
+    margin:
+        auto;
 
-    padding: 30px 20px;
+    padding:
+        30px 20px;
 }
 
-.screen.active {
-    display: block;
+.hidden {
+
+    display: none !important;
 }
 
 
@@ -174,18 +189,22 @@ button.danger {
 ========================================================= */
 
 .card {
+
     background:
-        rgba(15, 31, 50, 0.95);
+        rgba(15,31,50,0.94);
 
     border:
         1px solid
         rgba(255,255,255,0.1);
 
-    border-radius: 18px;
+    border-radius:
+        18px;
 
-    padding: 25px;
+    padding:
+        25px;
 
-    margin-bottom: 20px;
+    margin-bottom:
+        20px;
 
     box-shadow:
         0 15px 40px
@@ -193,58 +212,86 @@ button.danger {
 }
 
 .card h2 {
+
     margin-top: 0;
 }
 
 
 /* =========================================================
-   HOME
-========================================================= */
-
-.hero-card {
-    text-align: center;
-}
-
-.hero-card p {
-    color: #cbd5e1;
-
-    font-size: 17px;
-}
-
-
-/* =========================================================
-   MENU
+   MAIN MENU
 ========================================================= */
 
 .menu-buttons {
+
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2,1fr);
 
-    gap: 12px;
-
-    margin-top: 25px;
+    gap: 10px;
 }
 
 .menu-buttons button {
-    min-height: 65px;
 
-    font-size: 16px;
+    min-height:
+        60px;
+
+    font-size:
+        16px;
 }
 
 
 /* =========================================================
-   INPUT
+   PROFILE
 ========================================================= */
 
-input,
-select {
+#profileInfo,
+#mainProfileInfo {
+
+    line-height:
+        1.8;
+}
+
+.profile-item {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding:
+        15px;
+
+    margin:
+        10px 0;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    border-radius:
+        12px;
+}
+
+.profile-item.selected {
+
+    border:
+        2px solid
+        #1677ff;
+}
+
+input {
+
     width: 100%;
 
-    padding: 14px;
+    padding:
+        14px;
 
-    border-radius: 10px;
+    border-radius:
+        10px;
 
     border:
         1px solid
@@ -253,17 +300,20 @@ select {
     background:
         #0f1f32;
 
-    color: white;
+    color:
+        white;
 
-    margin:
-        6px 0 12px;
+    margin-bottom:
+        10px;
 
-    outline: none;
+    outline:
+        none;
 }
 
-input:focus,
-select:focus {
-    border-color: #1677ff;
+input:focus {
+
+    border-color:
+        #1677ff;
 }
 
 
@@ -271,132 +321,172 @@ select:focus {
    DIFFICULTY
 ========================================================= */
 
-.difficulty-card {
-    max-width: 600px;
+#difficultyScreen .card {
+
+    max-width:
+        600px;
 
     margin:
         40px auto;
 }
 
-.difficulty {
+.difficulty-button {
+
     width: 100%;
 
     display: block;
 
-    min-height: 70px;
+    min-height:
+        65px;
 
-    text-align: left;
+    text-align:
+        left;
 
-    font-size: 17px;
+    font-size:
+        17px;
 }
 
-.difficulty small {
+.difficulty-button small {
+
     display: block;
 
-    color: #cbd5e1;
+    color:
+        #cbd5e1;
 
-    margin-top: 5px;
+    margin-top:
+        5px;
 }
 
 
 /* =========================================================
-   GAME TOP
+   GAME
 ========================================================= */
 
 .game-top {
-    width: 100%;
+
+    max-width:
+        1100px;
+
+    margin:
+        25px auto 10px;
+
+    padding:
+        0 20px;
 
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3,1fr);
 
-    gap: 10px;
-
-    margin-bottom: 10px;
+    gap:
+        10px;
 }
 
 .game-top div {
+
     background:
-        rgba(15,31,50,0.95);
+        rgba(15,31,50,0.9);
 
-    padding: 14px;
+    padding:
+        14px;
 
-    border-radius: 12px;
+    border-radius:
+        12px;
 
-    text-align: center;
+    text-align:
+        center;
 
-    font-weight: bold;
+    font-weight:
+        bold;
 }
 
-
-/* =========================================================
-   STATS
-========================================================= */
-
 .stats-bar {
+
+    max-width:
+        1100px;
+
+    margin:
+        10px auto;
+
+    padding:
+        0 20px;
+
     display: grid;
 
     grid-template-columns:
-        repeat(4, 1fr);
+        repeat(4,1fr);
 
-    gap: 10px;
-
-    margin-bottom: 20px;
+    gap:
+        10px;
 }
 
 .stats-bar span {
+
     background:
-        rgba(15,31,50,0.95);
+        rgba(15,31,50,0.9);
 
-    padding: 12px;
+    padding:
+        12px;
 
-    border-radius: 10px;
+    border-radius:
+        10px;
 
-    text-align: center;
+    text-align:
+        center;
 }
 
-
-/* =========================================================
-   QUESTION
-========================================================= */
-
 .question-card {
-    margin-top: 20px;
+
+    max-width:
+        1100px;
+
+    margin:
+        20px auto;
 }
 
 .question-type {
-    color: #60a5fa;
 
-    font-weight: bold;
+    color:
+        #60a5fa;
 
-    text-transform: uppercase;
+    font-weight:
+        bold;
 
-    letter-spacing: 1px;
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1px;
 }
 
 #questionText {
-    font-size: 27px;
+
+    font-size:
+        27px;
 
     margin:
         20px 0 10px;
 }
 
 .question-info {
-    font-size: 22px;
 
-    padding: 22px;
+    font-size:
+        20px;
+
+    padding:
+        20px;
 
     background:
         rgba(255,255,255,0.05);
 
-    border-radius: 12px;
+    border-radius:
+        12px;
 
-    margin-bottom: 20px;
+    margin-bottom:
+        20px;
 
-    text-align: center;
-
-    font-weight: bold;
+    text-align:
+        center;
 }
 
 
@@ -405,20 +495,23 @@ select:focus {
 ========================================================= */
 
 .answers {
+
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2,1fr);
 
-    gap: 12px;
+    gap:
+        12px;
 }
 
 .answer-button {
-    width: 100%;
 
-    min-height: 70px;
+    min-height:
+        70px;
 
-    font-size: 18px;
+    font-size:
+        18px;
 
     background:
         #193a5c;
@@ -426,64 +519,45 @@ select:focus {
     border:
         1px solid
         rgba(255,255,255,0.08);
+
+    width: 100%;
+}
+
+.answer-button.correct {
+
+    background:
+        #15803d;
+}
+
+.answer-button.wrong {
+
+    background:
+        #b91c1c;
 }
 
 .answer-button.removed {
-    opacity: 0.25;
 
-    pointer-events: none;
+    opacity:
+        0.25;
+
+    pointer-events:
+        none;
 }
 
-
-/* =========================================================
-   GAME TOOLS
-========================================================= */
-
 .game-tools {
+
     display: flex;
 
-    gap: 10px;
+    gap:
+        10px;
 
-    margin-top: 20px;
+    margin-top:
+        20px;
 }
 
 .game-tools button {
+
     flex: 1;
-}
-
-
-/* =========================================================
-   PROFILE
-========================================================= */
-
-.profile-item {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 15px;
-
-    margin:
-        10px 0;
-
-    border-radius: 12px;
-
-    background:
-        rgba(255,255,255,0.05);
-}
-
-.profile-item.selected {
-    border:
-        2px solid
-        #1677ff;
-}
-
-.profile-item button {
-    min-width: 90px;
 }
 
 
@@ -491,22 +565,33 @@ select:focus {
    SHOP
 ========================================================= */
 
+.coin-display {
+
+    font-size:
+        20px;
+}
+
 .shop-grid {
+
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3,1fr);
 
-    gap: 15px;
+    gap:
+        15px;
 }
 
 .shop-item {
+
     background:
         rgba(255,255,255,0.05);
 
-    padding: 20px;
+    padding:
+        20px;
 
-    border-radius: 14px;
+    border-radius:
+        14px;
 
     border:
         1px solid
@@ -514,17 +599,24 @@ select:focus {
 }
 
 .shop-item h3 {
-    margin-top: 0;
+
+    margin-top:
+        0;
 }
 
 .shop-item p {
-    color: #cbd5e1;
 
-    min-height: 50px;
+    color:
+        #cbd5e1;
+
+    min-height:
+        45px;
 }
 
 .shop-item button {
-    width: 100%;
+
+    width:
+        100%;
 }
 
 
@@ -533,50 +625,50 @@ select:focus {
 ========================================================= */
 
 #countryList {
+
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2,1fr);
 
-    gap: 10px;
+    gap:
+        10px;
 
-    max-height: 650px;
+    max-height:
+        650px;
 
-    overflow-y: auto;
-
-    margin-bottom: 20px;
+    overflow-y:
+        auto;
 }
 
 .country-card {
+
     background:
         rgba(255,255,255,0.05);
 
-    padding: 15px;
+    padding:
+        15px;
 
-    border-radius: 12px;
+    border-radius:
+        12px;
 }
 
 .country-card h3 {
-    margin-top: 0;
 
-    color: #60a5fa;
+    margin-top:
+        0;
+
+    color:
+        #60a5fa;
 }
 
 .country-card p {
-    margin: 5px 0;
 
-    color: #dbeafe;
-}
+    margin:
+        5px 0;
 
-
-/* =========================================================
-   RULES
-========================================================= */
-
-.rules-list {
-    line-height: 1.8;
-
-    color: #dbeafe;
+    color:
+        #dbeafe;
 }
 
 
@@ -585,12 +677,15 @@ select:focus {
 ========================================================= */
 
 .update {
+
     background:
         rgba(255,255,255,0.05);
 
-    padding: 20px;
+    padding:
+        20px;
 
-    border-radius: 14px;
+    border-radius:
+        14px;
 
     border-left:
         4px solid
@@ -598,16 +693,22 @@ select:focus {
 }
 
 .update h3 {
-    margin-top: 0;
 
-    font-size: 24px;
+    margin-top:
+        0;
+
+    font-size:
+        24px;
 }
 
 .date {
-    color: #94a3b8;
+
+    color:
+        #94a3b8;
 }
 
 .update li {
+
     margin:
         10px 0;
 }
@@ -618,24 +719,43 @@ select:focus {
 ========================================================= */
 
 .result-card {
-    max-width: 700px;
+
+    text-align:
+        center;
+
+    max-width:
+        700px;
 
     margin:
         60px auto;
-
-    text-align: center;
 }
 
 .result-stat {
-    display: flex;
 
-    justify-content: space-between;
+    display:
+        flex;
 
-    padding: 14px;
+    justify-content:
+        space-between;
+
+    padding:
+        12px;
 
     border-bottom:
         1px solid
         rgba(255,255,255,0.1);
+}
+
+.result-highlight {
+
+    font-size:
+        22px;
+
+    margin:
+        20px 0;
+
+    color:
+        #60a5fa;
 }
 
 
@@ -644,41 +764,65 @@ select:focus {
 ========================================================= */
 
 .modal {
-    position: fixed;
 
-    inset: 0;
+    position:
+        fixed;
+
+    inset:
+        0;
 
     background:
         rgba(0,0,0,0.75);
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    justify-content: center;
+    justify-content:
+        center;
 
-    z-index: 100;
-}
-
-.modal.hidden {
-    display: none;
+    z-index:
+        100;
 }
 
 .modal-content {
-    width: 90%;
 
-    max-width: 500px;
+    width:
+        90%;
+
+    max-width:
+        500px;
 
     background:
         #10233a;
 
-    border-radius: 18px;
+    border-radius:
+        18px;
 
-    padding: 25px;
+    padding:
+        25px;
 
     box-shadow:
         0 20px 60px
         rgba(0,0,0,0.5);
+}
+
+.inventory-row {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    padding:
+        10px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.1);
 }
 
 
@@ -687,11 +831,15 @@ select:focus {
 ========================================================= */
 
 .toast {
-    position: fixed;
 
-    left: 50%;
+    position:
+        fixed;
 
-    bottom: 30px;
+    left:
+        50%;
+
+    bottom:
+        30px;
 
     transform:
         translateX(-50%);
@@ -702,55 +850,44 @@ select:focus {
     padding:
         15px 25px;
 
-    border-radius: 12px;
+    border-radius:
+        12px;
 
     box-shadow:
         0 10px 30px
         rgba(0,0,0,0.4);
 
-    z-index: 200;
+    z-index:
+        200;
 
-    font-weight: bold;
+    font-weight:
+        bold;
 
-    opacity: 0;
+    opacity:
+        0;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 
     transition:
-        opacity 0.2s;
+        opacity 0.2s,
+        transform 0.2s;
+
+    max-width:
+        90%;
+
+    text-align:
+        center;
 }
 
 .toast.show {
-    opacity: 1;
-}
 
+    opacity:
+        1;
 
-/* =========================================================
-   OWNER
-========================================================= */
-
-.owner-card {
-    border:
-        2px solid
-        #f59e0b;
-}
-
-.owner-warning {
-    color: #fbbf24;
-
-    font-weight: bold;
-}
-
-.owner-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 10px;
-
-    margin:
-        15px 0;
+    transform:
+        translateX(-50%)
+        translateY(-5px);
 }
 
 
@@ -759,11 +896,15 @@ select:focus {
 ========================================================= */
 
 footer {
-    text-align: center;
 
-    color: #94a3b8;
+    text-align:
+        center;
 
-    padding: 20px;
+    color:
+        #94a3b8;
+
+    padding:
+        20px;
 }
 
 
@@ -771,110 +912,155 @@ footer {
    MOBILE
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (max-width:700px) {
 
     .header {
-        padding: 15px;
 
-        flex-direction: column;
+        padding:
+            15px;
 
-        align-items: flex-start;
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
     }
 
     .header h1 {
-        font-size: 21px;
+
+        font-size:
+            21px;
     }
 
     .header-profile {
-        width: 100%;
+
+        width:
+            100%;
 
         justify-content:
             space-between;
 
-        font-size: 13px;
+        gap:
+            8px;
+
+        font-size:
+            14px;
     }
 
     .screen {
+
         padding:
             15px;
     }
 
     .menu-buttons {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
     }
 
     .game-top {
-        grid-template-columns:
-            repeat(3, 1fr);
 
-        font-size: 13px;
+        padding:
+            0 15px;
     }
 
     .stats-bar {
-        grid-template-columns:
-            repeat(2, 1fr);
 
-        font-size: 13px;
+        padding:
+            0 15px;
+
+        grid-template-columns:
+            repeat(2,1fr);
     }
 
     .answers {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .question-card {
+
+        padding:
+            18px;
     }
 
     #questionText {
-        font-size: 22px;
+
+        font-size:
+            22px;
     }
 
     .question-info {
-        font-size: 18px;
+
+        font-size:
+            18px;
     }
 
     .shop-grid {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
     }
 
     #countryList {
-        grid-template-columns: 1fr;
 
-        max-height: none;
+        grid-template-columns:
+            1fr;
+
+        max-height:
+            none;
     }
 
     .game-tools {
-        flex-direction: column;
+
+        flex-direction:
+            column;
     }
 
     .profile-item {
-        flex-direction: column;
 
-        align-items: stretch;
-    }
+        flex-direction:
+            column;
 
-    .owner-grid {
-        grid-template-columns: 1fr;
+        align-items:
+            stretch;
     }
 
     button {
-        min-height: 50px;
+
+        min-height:
+            50px;
     }
 }
 
 
 /* =========================================================
-   SMALL PHONES
+   VERY SMALL PHONES
 ========================================================= */
 
-@media (max-width: 400px) {
-
-    .card {
-        padding: 17px;
-    }
+@media (max-width:400px) {
 
     .game-top {
-        font-size: 12px;
+
+        grid-template-columns:
+            repeat(3,1fr);
+
+        font-size:
+            13px;
     }
 
     .stats-bar {
-        font-size: 12px;
+
+        font-size:
+            13px;
+    }
+
+    .card {
+
+        padding:
+            17px;
     }
 
 }
