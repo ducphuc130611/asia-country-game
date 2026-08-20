@@ -1,26 +1,1083 @@
 // ============================================================
 // ASIA COUNTRY GUESSING GAME
-// VERSION 2.0
-// GAME ENGINE
+// WEB EDITION
+// VERSION 1.0
 // ============================================================
-//
-// IMPORTANT
-// ------------------------------------------------------------
-// countries.js đã chứa toàn bộ dữ liệu quốc gia.
-//
-// country object:
-// {
-//     name: "...",
-//     capital: "...",
-//     currency: "...",
-//     region: "..."
-// }
-//
-// KHÔNG tạo lại country data ở đây.
-// KHÔNG ghi đè countries.
-// KHÔNG xóa profile.
-// KHÔNG reset localStorage.
+
+
 // ============================================================
+// COUNTRY DATABASE
+// ============================================================
+
+const countries = [
+
+    ["Vietnam","Hanoi","Dong","Southeast Asia"],
+    ["Thailand","Bangkok","Baht","Southeast Asia"],
+    ["Laos","Vientiane","Kip","Southeast Asia"],
+    ["Cambodia","Phnom Penh","Riel","Southeast Asia"],
+    ["Myanmar","Naypyidaw","Kyat","Southeast Asia"],
+    ["Malaysia","Kuala Lumpur","Ringgit","Southeast Asia"],
+    ["Singapore","Singapore","Dollar","Southeast Asia"],
+    ["Indonesia","Jakarta","Rupiah","Southeast Asia"],
+    ["Philippines","Manila","Peso","Southeast Asia"],
+    ["Brunei","Bandar Seri Begawan","Dollar","Southeast Asia"],
+    ["Timor-Leste","Dili","Dollar","Southeast Asia"],
+
+    ["China","Beijing","Yuan","East Asia"],
+    ["Japan","Tokyo","Yen","East Asia"],
+    ["South Korea","Seoul","Won","East Asia"],
+    ["North Korea","Pyongyang","Won","East Asia"],
+    ["Mongolia","Ulaanbaatar","Tugrik","East Asia"],
+    ["Taiwan","Taipei","Dollar","East Asia"],
+
+    ["India","New Delhi","Rupee","South Asia"],
+    ["Pakistan","Islamabad","Rupee","South Asia"],
+    ["Bangladesh","Dhaka","Taka","South Asia"],
+    ["Nepal","Kathmandu","Rupee","South Asia"],
+    ["Bhutan","Thimphu","Ngultrum","South Asia"],
+    ["Sri Lanka","Sri Jayawardenepura Kotte","Rupee","South Asia"],
+    ["Maldives","Male","Rufiyaa","South Asia"],
+    ["Afghanistan","Kabul","Afghani","South Asia"],
+
+    ["Iran","Tehran","Rial","West Asia"],
+    ["Iraq","Baghdad","Dinar","West Asia"],
+    ["Saudi Arabia","Riyadh","Riyal","West Asia"],
+    ["United Arab Emirates","Abu Dhabi","Dirham","West Asia"],
+    ["Qatar","Doha","Riyal","West Asia"],
+    ["Kuwait","Kuwait City","Dinar","West Asia"],
+    ["Bahrain","Manama","Dinar","West Asia"],
+    ["Oman","Muscat","Rial","West Asia"],
+    ["Yemen","Sanaa","Rial","West Asia"],
+    ["Jordan","Amman","Dinar","West Asia"],
+    ["Lebanon","Beirut","Pound","West Asia"],
+    ["Syria","Damascus","Pound","West Asia"],
+    ["Israel","Jerusalem","Shekel","West Asia"],
+    ["Turkey","Ankara","Lira","West Asia"],
+    ["Palestine","Ramallah","Shekel","West Asia"],
+    ["Cyprus","Nicosia","Euro","West Asia"],
+
+    ["Kazakhstan","Astana","Tenge","Central Asia"],
+    ["Uzbekistan","Tashkent","Som","Central Asia"],
+    ["Turkmenistan","Ashgabat","Manat","Central Asia"],
+    ["Kyrgyzstan","Bishkek","Som","Central Asia"],
+    ["Tajikistan","Dushanbe","Somoni","Central Asia"],
+
+    ["Azerbaijan","Baku","Manat","Caucasus"],
+    ["Armenia","Yerevan","Dram","Caucasus"],
+    ["Georgia","Tbilisi","Lari","Caucasus"],
+
+    ["Russia","Moscow","Ruble","North Asia"]
+
+];
+
+
+// ============================================================
+// STORAGE
+// ============================================================
+
+const STORAGE_KEY =
+    "asia_country_game_profiles_v1";
+
+const CURRENT_PROFILE_KEY =
+    "asia_current_profile_v1";
+
+
+// ============================================================
+// LOAD DATA SAFELY
+// ============================================================
+
+let profiles = [];
+
+try {
+
+    const saved =
+        localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+
+        profiles =
+            JSON.parse(saved);
+
+        if (!Array.isArray(profiles)) {
+
+            profiles = [];
+
+        }
+
+    }
+
+}
+catch (error) {
+
+    console.error(
+        "Could not load profiles:",
+        error
+    );
+
+    profiles = [];
+
+}
+
+
+let currentProfile = -1;
+
+try {
+
+    const savedCurrent =
+        localStorage.getItem(
+            CURRENT_PROFILE_KEY
+        );
+
+    if (savedCurrent !== null) {
+
+        currentProfile =
+            Number(savedCurrent);
+
+    }
+
+}
+catch (error) {
+
+    currentProfile = -1;
+
+}
+
+
+// ============================================================
+// PROFILE DEFAULT
+// ============================================================
+
+function newProfile(name) {
+
+    return {
+
+        name: name,
+
+        level: 1,
+        xp: 0,
+
+        highScore: 0,
+
+        totalGames: 0,
+        totalCorrect: 0,
+        totalWrong: 0,
+        totalQuestions: 0,
+
+        bestCombo: 0,
+
+        coins: 500,
+        totalCoinsEarned: 500,
+
+        hints: 1,
+        extraLives: 0,
+        doubleXP: 0,
+        scoreBoost: 0,
+        secondChance: 0,
+        luckyAnswer: 0
+
+    };
+
+}
+
+
+// ============================================================
+// SAVE
+// ============================================================
+
+function save() {
+
+    try {
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(profiles)
+        );
+
+        localStorage.setItem(
+            CURRENT_PROFILE_KEY,
+            String(currentProfile)
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Save error:",
+            error
+        );
+
+    }
+
+    updateHeader();
+    updateMainProfile();
+
+}
+
+
+// ============================================================
+// CURRENT PROFILE
+// ============================================================
+
+function getProfile() {
+
+    if (
+        currentProfile < 0 ||
+        !profiles[currentProfile]
+    ) {
+
+        return null;
+
+    }
+
+    return profiles[currentProfile];
+
+}
+
+
+// ============================================================
+// SCREEN SYSTEM
+// ============================================================
+
+function showScreen(id) {
+
+    const screens =
+        document.querySelectorAll(
+            ".screen"
+        );
+
+    screens.forEach(
+        screen => {
+
+            screen.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+
+    const target =
+        document.getElementById(id);
+
+    if (!target) {
+
+        console.error(
+            "Screen not found:",
+            id
+        );
+
+        return;
+
+    }
+
+
+    target.classList.add("active");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+
+    updateHeader();
+
+}
+
+
+// ============================================================
+// HOME
+// ============================================================
+
+function goHome() {
+
+    showScreen("homeScreen");
+
+    updateMainProfile();
+
+}
+
+
+// ============================================================
+// TOAST
+// ============================================================
+
+let toastTimer = null;
+
+function toast(message) {
+
+    const element =
+        document.getElementById("toast");
+
+    if (!element)
+        return;
+
+
+    element.textContent =
+        message;
+
+    element.classList.add("show");
+
+
+    clearTimeout(toastTimer);
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                element.classList.remove(
+                    "show"
+                );
+
+            },
+            2200
+        );
+
+}
+
+
+// ============================================================
+// HEADER
+// ============================================================
+
+function updateHeader() {
+
+    const p =
+        getProfile();
+
+
+    const name =
+        document.getElementById(
+            "topName"
+        );
+
+    const level =
+        document.getElementById(
+            "topLevel"
+        );
+
+    const coins =
+        document.getElementById(
+            "topCoins"
+        );
+
+
+    if (!p) {
+
+        name.textContent =
+            "Guest";
+
+        level.textContent =
+            "1";
+
+        coins.textContent =
+            "0";
+
+        return;
+
+    }
+
+
+    name.textContent =
+        p.name;
+
+    level.textContent =
+        p.level;
+
+    coins.textContent =
+        p.coins;
+
+}
+
+
+// ============================================================
+// MAIN PROFILE
+// ============================================================
+
+function updateMainProfile() {
+
+    const container =
+        document.getElementById(
+            "mainProfileInfo"
+        );
+
+    if (!container)
+        return;
+
+
+    const p =
+        getProfile();
+
+
+    if (!p) {
+
+        container.innerHTML = `
+            <p>No profile selected.</p>
+            <p>Create a profile to start playing.</p>
+        `;
+
+        return;
+
+    }
+
+
+    const accuracy =
+        p.totalQuestions > 0
+        ? Math.round(
+            (
+                p.totalCorrect /
+                p.totalQuestions
+            ) * 100
+        )
+        : 0;
+
+
+    container.innerHTML = `
+
+        <div class="result-stat">
+            <span>👤 Name</span>
+            <strong>${escapeHTML(p.name)}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🏆 Rank</span>
+            <strong>${getRank(p.level)}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>⭐ Level</span>
+            <strong>${p.level}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>✨ XP</span>
+            <strong>${p.xp}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>💰 Coins</span>
+            <strong>${p.coins}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🎮 Games</span>
+            <strong>${p.totalGames}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🎯 Accuracy</span>
+            <strong>${accuracy}%</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🏅 High Score</span>
+            <strong>${p.highScore}</strong>
+        </div>
+
+    `;
+
+}
+
+
+// ============================================================
+// LEVEL
+// ============================================================
+
+function calculateLevel(xp) {
+
+    return Math.floor(
+        xp / 500
+    ) + 1;
+
+}
+
+
+function getRank(level) {
+
+    if (level < 3)
+        return "Beginner";
+
+    if (level < 5)
+        return "Explorer";
+
+    if (level < 8)
+        return "Traveler";
+
+    if (level < 12)
+        return "Expert";
+
+    if (level < 20)
+        return "Master";
+
+    return "Legend";
+
+}
+
+
+// ============================================================
+// XP
+// ============================================================
+
+function addXP(amount) {
+
+    const p =
+        getProfile();
+
+    if (!p)
+        return;
+
+
+    const oldLevel =
+        p.level;
+
+
+    p.xp += amount;
+
+
+    p.level =
+        calculateLevel(
+            p.xp
+        );
+
+
+    if (p.level > oldLevel) {
+
+        const levels =
+            p.level - oldLevel;
+
+        const reward =
+            levels * 500;
+
+
+        p.coins += reward;
+
+        p.totalCoinsEarned += reward;
+
+
+        toast(
+            `🎉 LEVEL UP! Level ${p.level}! +${reward} Coins`
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// COINS
+// ============================================================
+
+function addCoins(amount) {
+
+    const p =
+        getProfile();
+
+    if (!p)
+        return;
+
+
+    p.coins += amount;
+
+    p.totalCoinsEarned += amount;
+
+}
+
+
+// ============================================================
+// PROFILE MENU
+// ============================================================
+
+function openProfileMenu() {
+
+    renderProfiles();
+
+    showScreen(
+        "profileScreen"
+    );
+
+}
+
+
+// ============================================================
+// CREATE PROFILE
+// ============================================================
+
+function createProfileFromInput() {
+
+    const input =
+        document.getElementById(
+            "profileNameInput"
+        );
+
+
+    let name =
+        input.value.trim();
+
+
+    if (!name) {
+
+        toast(
+            "Enter a profile name."
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    createProfile(name);
+
+
+    input.value = "";
+
+}
+
+
+function createProfile(name) {
+
+    if (profiles.length >= 20) {
+
+        toast(
+            "Maximum 20 profiles."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        profiles.some(
+            p =>
+                p.name.toLowerCase() ===
+                name.toLowerCase()
+        )
+    ) {
+
+        toast(
+            "Profile already exists."
+        );
+
+        return;
+
+    }
+
+
+    profiles.push(
+        newProfile(name)
+    );
+
+
+    currentProfile =
+        profiles.length - 1;
+
+
+    save();
+
+    renderProfiles();
+
+
+    toast(
+        `Welcome, ${name}!`
+    );
+
+}
+
+
+// ============================================================
+// SELECT PROFILE
+// ============================================================
+
+function selectProfile(index) {
+
+    index =
+        Number(index);
+
+
+    if (
+        index < 0 ||
+        index >= profiles.length
+    ) {
+
+        return;
+
+    }
+
+
+    currentProfile =
+        index;
+
+
+    save();
+
+    renderProfiles();
+
+
+    toast(
+        `Selected: ${profiles[index].name}`
+    );
+
+}
+
+
+// ============================================================
+// DELETE PROFILE
+// ============================================================
+
+function deleteProfile() {
+
+    if (!getProfile()) {
+
+        toast(
+            "Select a profile first."
+        );
+
+        return;
+
+    }
+
+
+    const name =
+        getProfile().name;
+
+
+    if (
+        !confirm(
+            `Delete ${name}?`
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    profiles.splice(
+        currentProfile,
+        1
+    );
+
+
+    if (
+        profiles.length === 0
+    ) {
+
+        currentProfile =
+            -1;
+
+    }
+    else if (
+        currentProfile >=
+        profiles.length
+    ) {
+
+        currentProfile =
+            profiles.length - 1;
+
+    }
+
+
+    save();
+
+    renderProfiles();
+
+
+    toast(
+        "Profile deleted."
+    );
+
+}
+
+
+// ============================================================
+// RENDER PROFILES
+// ============================================================
+
+function renderProfiles() {
+
+    const container =
+        document.getElementById(
+            "profileList"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (
+        profiles.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>No profiles yet.</p>";
+
+        return;
+
+    }
+
+
+    profiles.forEach(
+        (p,index) => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "profile-item" +
+                (
+                    index === currentProfile
+                    ? " selected"
+                    : ""
+                );
+
+
+            div.innerHTML = `
+
+                <div>
+
+                    <strong>
+                        ${escapeHTML(p.name)}
+                    </strong>
+
+                    <br>
+
+                    Lv.${p.level}
+                    |
+                    ${p.xp} XP
+                    |
+                    🪙 ${p.coins}
+
+                </div>
+
+                <button
+                    onclick="selectProfile(${index})">
+
+                    ${index === currentProfile
+                        ? "Selected"
+                        : "Select"}
+
+                </button>
+
+            `;
+
+
+            container.appendChild(div);
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+// ============================================================
+// SHOP
+// ============================================================
+
+function openShop() {
+
+    if (!getProfile()) {
+
+        toast(
+            "Create/select a profile first."
+        );
+
+        openProfileMenu();
+
+        return;
+
+    }
+
+
+    updateShop();
+
+    showScreen(
+        "shopScreen"
+    );
+
+}
+
+
+function updateShop() {
+
+    const p =
+        getProfile();
+
+    if (!p)
+        return;
+
+
+    document.getElementById(
+        "shopCoins"
+    ).textContent =
+        p.coins;
+
+}
+
+
+function buyItem(
+    item,
+    price
+) {
+
+    const p =
+        getProfile();
+
+
+    if (!p)
+        return;
+
+
+    if (p.coins < price) {
+
+        toast(
+            "Not enough Coins."
+        );
+
+        return;
+
+    }
+
+
+    p.coins -= price;
+
+    p[item]++;
+
+
+    save();
+
+    updateShop();
+
+
+    toast(
+        "🛒 Item purchased!"
+    );
+
+}
+
+
+// ============================================================
+// INVENTORY
+// ============================================================
+
+function openInventory() {
+
+    if (!getProfile()) {
+
+        toast(
+            "Create/select a profile first."
+        );
+
+        openProfileMenu();
+
+        return;
+
+    }
+
+
+    renderInventory();
+
+    showScreen(
+        "inventoryScreen"
+    );
+
+}
+
+
+function renderInventory() {
+
+    const p =
+        getProfile();
+
+
+    const container =
+        document.getElementById(
+            "inventoryList"
+        );
+
+
+    container.innerHTML = `
+
+        <div class="inventory-item">
+            <span>💡 Hint</span>
+            <strong>${p.hints}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>❤️ Extra Life</span>
+            <strong>${p.extraLives}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>✨ Double XP</span>
+            <strong>${p.doubleXP}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>📈 Score Boost</span>
+            <strong>${p.scoreBoost}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>🔄 Second Chance</span>
+            <strong>${p.secondChance}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>🍀 Lucky Answer</span>
+            <strong>${p.luckyAnswer}</strong>
+        </div>
+
+    `;
+
+}
+
+
+function openInventoryDuringGame() {
+
+    if (!getProfile())
+        return;
+
+
+    renderInventory();
+
+
+    const p =
+        getProfile();
+
+
+    alert(
+        "🎒 INVENTORY\n\n" +
+
+        `💡 Hint: ${p.hints}\n` +
+        `❤️ Extra Life: ${p.extraLives}\n` +
+        `✨ Double XP: ${p.doubleXP}\n` +
+        `📈 Score Boost: ${p.scoreBoost}\n` +
+        `🔄 Second Chance: ${p.secondChance}\n` +
+        `🍀 Lucky Answer: ${p.luckyAnswer}`
+    );
+
+}
 
 
 // ============================================================
@@ -28,8 +1085,6 @@
 // ============================================================
 
 let game = {
-
-    active: false,
 
     difficulty: 1,
 
@@ -49,220 +1104,87 @@ let game = {
 
     wrong: 0,
 
-    usedQuestions: [],
+    used: [],
 
     currentCountry: -1,
 
     options: [],
 
-    questionType: 1,
+    type: 1,
 
     hintUsed: false,
 
-    locked: false,
-
-    finished: false
+    locked: false
 
 };
 
 
 // ============================================================
-// PROFILE SAFETY
+// START GAME MENU
 // ============================================================
 
-function prepareProfile(profile) {
+function startGameMenu() {
 
-    if (!profile) {
-        return null;
-    }
+    if (!getProfile()) {
 
-    // --------------------------------------------------------
-    // Chỉ bổ sung field còn thiếu.
-    // KHÔNG reset dữ liệu cũ.
-    // --------------------------------------------------------
-
-    const defaults = {
-
-        level: 1,
-
-        xp: 0,
-
-        highScore: 0,
-
-        totalGames: 0,
-
-        totalCorrect: 0,
-
-        totalWrong: 0,
-
-        totalQuestions: 0,
-
-        bestCombo: 0,
-
-        coins: 0,
-
-        totalCoinsEarned: 0,
-
-        hints: 0,
-
-        extraLives: 0,
-
-        doubleXP: 0,
-
-        scoreBoost: 0,
-
-        secondChance: 0,
-
-        luckyAnswer: 0,
-
-        achievements: [],
-
-        mastery: {},
-
-        dailyStreak: 0,
-
-        lastDailyChallenge: null
-
-    };
-
-
-    Object.keys(defaults).forEach(
-        key => {
-
-            if (
-                typeof profile[key] ===
-                "undefined"
-            ) {
-
-                profile[key] =
-                    defaults[key];
-
-            }
-
-        }
-    );
-
-
-    return profile;
-
-}
-
-
-// ============================================================
-// COUNTRY HELPERS
-// ============================================================
-
-function getCountryName(country) {
-
-    if (!country)
-        return "";
-
-    return String(
-        country.name || ""
-    );
-
-}
-
-
-function getCountryCapital(country) {
-
-    if (!country)
-        return "";
-
-    return String(
-        country.capital || ""
-    );
-
-}
-
-
-function getCountryCurrency(country) {
-
-    if (!country)
-        return "";
-
-    return String(
-        country.currency || ""
-    );
-
-}
-
-
-function getCountryRegion(country) {
-
-    if (!country)
-        return "";
-
-    return String(
-        country.region || ""
-    );
-
-}
-
-
-// ============================================================
-// CHECK COUNTRY DATABASE
-// ============================================================
-
-function validateCountries() {
-
-    if (
-        typeof countries ===
-        "undefined"
-    ) {
-
-        console.error(
-            "countries.js has not been loaded."
+        toast(
+            "Create/select a profile first."
         );
 
-        return false;
+        openProfileMenu();
+
+        return;
 
     }
+
+
+    showScreen(
+        "difficultyScreen"
+    );
+
+}
+
+
+// ============================================================
+// START GAME
+// ============================================================
+
+function startGame(difficulty) {
+
+    const p =
+        getProfile();
+
+
+    if (!p) {
+
+        toast(
+            "Create/select a profile first."
+        );
+
+        openProfileMenu();
+
+        return;
+
+    }
+
+
+    difficulty =
+        Number(difficulty);
 
 
     if (
-        !Array.isArray(countries)
+        difficulty < 1 ||
+        difficulty > 3
     ) {
 
-        console.error(
-            "countries must be an array."
-        );
-
-        return false;
+        difficulty = 1;
 
     }
 
-
-    if (
-        countries.length === 0
-    ) {
-
-        console.error(
-            "Country database is empty."
-        );
-
-        return false;
-
-    }
-
-
-    return true;
-
-}
-
-
-// ============================================================
-// RESET GAME
-// ============================================================
-
-function resetGame(difficulty) {
 
     game = {
 
-        active: true,
-
-        difficulty:
-            Number(difficulty),
+        difficulty: difficulty,
 
         question: 0,
 
@@ -280,160 +1202,46 @@ function resetGame(difficulty) {
 
         wrong: 0,
 
-        usedQuestions: [],
+        used: [],
 
         currentCountry: -1,
 
         options: [],
 
-        questionType: 1,
+        type: 1,
 
         hintUsed: false,
 
-        locked: false,
-
-        finished: false
+        locked: false
 
     };
 
-}
 
-
-// ============================================================
-// START GAME
-// ============================================================
-
-function startGame(difficulty) {
-
-    if (!validateCountries()) {
-
-        if (
-            typeof toast ===
-            "function"
-        ) {
-
-            toast(
-                "Country database could not be loaded."
-            );
-
-        }
-
-        return;
-
-    }
-
-
-    if (
-        typeof getProfile !==
-        "function"
-    ) {
-
-        console.error(
-            "getProfile() is not available."
-        );
-
-        return;
-
-    }
-
-
-    const profile =
-        prepareProfile(
-            getProfile()
-        );
-
-
-    if (!profile) {
-
-        if (
-            typeof toast ===
-            "function"
-        ) {
-
-            toast(
-                "Create/select a profile first."
-            );
-
-        }
-
-
-        if (
-            typeof openProfileMenu ===
-            "function"
-        ) {
-
-            openProfileMenu();
-
-        }
-
-
-        return;
-
-    }
-
-
-    difficulty =
-        Number(difficulty);
-
-
-    if (
-        !Number.isFinite(
-            difficulty
-        ) ||
-        difficulty < 1 ||
-        difficulty > 3
-    ) {
-
-        difficulty = 1;
-
-    }
-
-
-    resetGame(
-        difficulty
-    );
-
-
-    // --------------------------------------------------------
-    // EXTRA LIFE
-    // --------------------------------------------------------
-
-    if (
-        Number(profile.extraLives) > 0
-    ) {
+    if (p.extraLives > 0) {
 
         const use =
             confirm(
-                `You have ${profile.extraLives} Extra Life(s).\nUse one?`
+                `You have ${p.extraLives} Extra Life(s).\nUse one?`
             );
 
 
         if (use) {
 
-            profile.extraLives--;
+            p.extraLives--;
 
             game.lives++;
 
-            safeSave();
+            save();
 
         }
 
     }
 
 
-    if (
-        typeof showScreen ===
-        "function"
-    ) {
+    showScreen(
+        "gameScreen"
+    );
 
-        showScreen(
-            "gameScreen"
-        );
-
-    }
-
-
-    updateGameProfileStats();
 
     nextQuestion();
 
@@ -445,11 +1253,6 @@ function startGame(difficulty) {
 // ============================================================
 
 function nextQuestion() {
-
-    if (!game.active) {
-        return;
-    }
-
 
     if (
         game.question >=
@@ -481,60 +1284,83 @@ function nextQuestion() {
     game.locked = false;
 
 
-    generateQuestion();
-
-    renderQuestion();
-
-}
+    let correct;
 
 
-// ============================================================
-// GENERATE QUESTION
-// ============================================================
+    do {
 
-function generateQuestion() {
+        correct =
+            Math.floor(
+                Math.random() *
+                countries.length
+            );
 
-    if (!validateCountries()) {
-        return;
+    }
+    while (
+        game.used.includes(correct)
+    );
+
+
+    game.used.push(correct);
+
+    game.currentCountry =
+        correct;
+
+
+    const options =
+        [correct];
+
+
+    while (
+        options.length < 4
+    ) {
+
+        const random =
+            Math.floor(
+                Math.random() *
+                countries.length
+            );
+
+
+        if (
+            !options.includes(random)
+        ) {
+
+            options.push(random);
+
+        }
+
     }
 
 
-    // --------------------------------------------------------
-    // QUESTION TYPE
-    // --------------------------------------------------------
+    shuffle(options);
+
+
+    game.options =
+        options;
+
 
     if (
         game.difficulty === 1
     ) {
 
-        // EASY
-        // Capital -> Country
-
-        game.questionType = 1;
+        game.type = 1;
 
     }
-
     else if (
         game.difficulty === 2
     ) {
 
-        // NORMAL
-        // Capital / Country
-
-        game.questionType =
+        game.type =
             1 +
             Math.floor(
                 Math.random() * 2
             );
 
     }
-
     else {
 
-        // HARD
-        // Capital / Country / Currency / Region
-
-        game.questionType =
+        game.type =
             1 +
             Math.floor(
                 Math.random() * 4
@@ -543,404 +1369,7 @@ function generateQuestion() {
     }
 
 
-    // --------------------------------------------------------
-    // FIND CORRECT COUNTRY
-    // --------------------------------------------------------
-
-    let correct = -1;
-
-
-    const available =
-        [];
-
-
-    for (
-        let i = 0;
-        i < countries.length;
-        i++
-    ) {
-
-        if (
-            !game.usedQuestions
-                .includes(i)
-        ) {
-
-            available.push(i);
-
-        }
-
-    }
-
-
-    // Nếu đã dùng hết country
-    // thì cho phép dùng lại.
-
-    if (
-        available.length === 0
-    ) {
-
-        game.usedQuestions = [];
-
-        for (
-            let i = 0;
-            i < countries.length;
-            i++
-        ) {
-
-            available.push(i);
-
-        }
-
-    }
-
-
-    correct =
-        available[
-            Math.floor(
-                Math.random() *
-                available.length
-            )
-        ];
-
-
-    game.usedQuestions.push(
-        correct
-    );
-
-
-    game.currentCountry =
-        correct;
-
-
-    // --------------------------------------------------------
-    // GENERATE OPTIONS
-    // --------------------------------------------------------
-
-    game.options =
-        generateOptions(
-            correct,
-            game.questionType
-        );
-
-}
-
-
-// ============================================================
-// GENERATE OPTIONS
-// ============================================================
-
-function generateOptions(
-    correctIndex,
-    questionType
-) {
-
-    const options = [
-        correctIndex
-    ];
-
-
-    // --------------------------------------------------------
-    // CAPITAL / COUNTRY
-    // --------------------------------------------------------
-
-    if (
-        questionType === 1 ||
-        questionType === 2
-    ) {
-
-        while (
-            options.length < 4
-        ) {
-
-            const random =
-                Math.floor(
-                    Math.random() *
-                    countries.length
-                );
-
-
-            if (
-                !options.includes(
-                    random
-                )
-            ) {
-
-                options.push(
-                    random
-                );
-
-            }
-
-        }
-
-
-        shuffle(options);
-
-        return options;
-
-    }
-
-
-    // --------------------------------------------------------
-    // CURRENCY
-    // --------------------------------------------------------
-    //
-    // Đảm bảo 4 country có currency khác nhau.
-    // Tránh:
-    //
-    // India -> Rupee
-    // Pakistan -> Rupee
-    //
-    // khiến có 2 đáp án đúng.
-    // --------------------------------------------------------
-
-    if (
-        questionType === 3
-    ) {
-
-        const usedCurrencies = new Set();
-
-        usedCurrencies.add(
-            getCountryCurrency(
-                countries[
-                    correctIndex
-                ]
-            )
-        );
-
-
-        const candidates =
-            [];
-
-
-        for (
-            let i = 0;
-            i < countries.length;
-            i++
-        ) {
-
-            if (
-                i === correctIndex
-            ) {
-
-                continue;
-
-            }
-
-
-            const currency =
-                getCountryCurrency(
-                    countries[i]
-                );
-
-
-            if (
-                !usedCurrencies.has(
-                    currency
-                )
-            ) {
-
-                candidates.push(
-                    i
-                );
-
-                usedCurrencies.add(
-                    currency
-                );
-
-            }
-
-
-            if (
-                candidates.length >= 3
-            ) {
-
-                break;
-
-            }
-
-        }
-
-
-        // Fallback
-        // nếu database không đủ currency khác nhau.
-
-        if (
-            candidates.length < 3
-        ) {
-
-            for (
-                let i = 0;
-                i < countries.length;
-                i++
-            ) {
-
-                if (
-                    i === correctIndex ||
-                    options.includes(i)
-                ) {
-
-                    continue;
-
-                }
-
-
-                candidates.push(i);
-
-
-                if (
-                    candidates.length >= 3
-                ) {
-
-                    break;
-
-                }
-
-            }
-
-        }
-
-
-        options.push(
-            ...candidates.slice(0, 3)
-        );
-
-
-        shuffle(options);
-
-        return options;
-
-    }
-
-
-    // --------------------------------------------------------
-    // REGION
-    // --------------------------------------------------------
-    //
-    // Đảm bảo 4 country thuộc 4 region khác nhau.
-    // --------------------------------------------------------
-
-    if (
-        questionType === 4
-    ) {
-
-        const usedRegions =
-            new Set();
-
-
-        usedRegions.add(
-            getCountryRegion(
-                countries[
-                    correctIndex
-                ]
-            )
-        );
-
-
-        const candidates =
-            [];
-
-
-        for (
-            let i = 0;
-            i < countries.length;
-            i++
-        ) {
-
-            if (
-                i === correctIndex
-            ) {
-
-                continue;
-
-            }
-
-
-            const region =
-                getCountryRegion(
-                    countries[i]
-                );
-
-
-            if (
-                !usedRegions.has(
-                    region
-                )
-            ) {
-
-                candidates.push(
-                    i
-                );
-
-                usedRegions.add(
-                    region
-                );
-
-            }
-
-
-            if (
-                candidates.length >= 3
-            ) {
-
-                break;
-
-            }
-
-        }
-
-
-        if (
-            candidates.length < 3
-        ) {
-
-            for (
-                let i = 0;
-                i < countries.length;
-                i++
-            ) {
-
-                if (
-                    i === correctIndex ||
-                    options.includes(i)
-                ) {
-
-                    continue;
-
-                }
-
-
-                candidates.push(i);
-
-
-                if (
-                    candidates.length >= 3
-                ) {
-
-                    break;
-
-                }
-
-            }
-
-        }
-
-
-        options.push(
-            ...candidates.slice(0, 3)
-        );
-
-
-        shuffle(options);
-
-        return options;
-
-    }
-
-
-    shuffle(options);
-
-    return options;
+    renderQuestion();
 
 }
 
@@ -959,8 +1388,7 @@ function shuffle(array) {
 
         const j =
             Math.floor(
-                Math.random() *
-                (i + 1)
+                Math.random() * (i + 1)
             );
 
 
@@ -987,252 +1415,136 @@ function shuffle(array) {
 
 function renderQuestion() {
 
-    if (!validateCountries()) {
-        return;
-    }
-
-
-    const country =
+    const c =
         countries[
             game.currentCountry
         ];
 
 
-    if (!country) {
-
-        console.error(
-            "Invalid country index:",
-            game.currentCountry
-        );
-
-        return;
-
-    }
+    document.getElementById(
+        "questionNumber"
+    ).textContent =
+        `${game.question}/10`;
 
 
-    // --------------------------------------------------------
-    // TOP BAR
-    // --------------------------------------------------------
-
-    const questionNumber =
-        document.getElementById(
-            "questionNumber"
-        );
+    document.getElementById(
+        "lives"
+    ).textContent =
+        game.lives;
 
 
-    const lives =
-        document.getElementById(
-            "lives"
-        );
+    document.getElementById(
+        "combo"
+    ).textContent =
+        game.combo;
 
 
-    const combo =
-        document.getElementById(
-            "combo"
-        );
+    document.getElementById(
+        "score"
+    ).textContent =
+        game.score;
 
 
-    const score =
-        document.getElementById(
-            "score"
-        );
+    const p =
+        getProfile();
 
 
-    if (questionNumber) {
-
-        questionNumber.textContent =
-            `${game.question}/${game.totalQuestions}`;
-
-    }
+    document.getElementById(
+        "gameXP"
+    ).textContent =
+        p ? p.xp : 0;
 
 
-    if (lives) {
-
-        lives.textContent =
-            game.lives;
-
-    }
+    document.getElementById(
+        "gameCoins"
+    ).textContent =
+        p ? p.coins : 0;
 
 
-    if (combo) {
+    document.getElementById(
+        "gameLevel"
+    ).textContent =
+        p ? p.level : 1;
 
-        combo.textContent =
-            game.combo;
-
-    }
-
-
-    if (score) {
-
-        score.textContent =
-            game.score;
-
-    }
-
-
-    updateGameProfileStats();
-
-
-    // --------------------------------------------------------
-    // QUESTION DATA
-    // --------------------------------------------------------
 
     let title = "";
 
     let value = "";
 
 
-    switch (
-        game.questionType
+    if (
+        game.type === 1
     ) {
 
-        case 1:
+        title =
+            "Which country has this capital?";
 
-            title =
-                "Which country has this capital?";
+        value =
+            c[1];
 
-            value =
-                getCountryCapital(
-                    country
-                );
+    }
+    else if (
+        game.type === 2
+    ) {
 
-            break;
+        title =
+            "What is the capital of this country?";
 
+        value =
+            c[0];
 
-        case 2:
+    }
+    else if (
+        game.type === 3
+    ) {
 
-            title =
-                "What is the capital of this country?";
+        title =
+            "Which country uses this currency?";
 
-            value =
-                getCountryName(
-                    country
-                );
+        value =
+            c[2];
 
-            break;
+    }
+    else {
 
+        title =
+            "Which country belongs to this region?";
 
-        case 3:
-
-            title =
-                "Which country uses this currency?";
-
-            value =
-                getCountryCurrency(
-                    country
-                );
-
-            break;
-
-
-        case 4:
-
-            title =
-                "Which country belongs to this region?";
-
-            value =
-                getCountryRegion(
-                    country
-                );
-
-            break;
-
-
-        default:
-
-            title =
-                "Choose the correct answer:";
-
-            value = "";
-
-            break;
+        value =
+            c[3];
 
     }
 
 
-    const questionType =
-        document.getElementById(
-            "questionType"
-        );
+    document.getElementById(
+        "questionType"
+    ).textContent =
+        title;
 
 
-    const questionText =
-        document.getElementById(
-            "questionText"
-        );
+    document.getElementById(
+        "questionText"
+    ).textContent =
+        "Choose the correct answer:";
 
 
-    const questionValue =
-        document.getElementById(
-            "questionValue"
-        );
+    document.getElementById(
+        "questionValue"
+    ).textContent =
+        value;
 
 
-    if (questionType) {
-
-        questionType.textContent =
-            title;
-
-    }
-
-
-    if (questionText) {
-
-        questionText.textContent =
-            "Choose the correct answer:";
-
-    }
-
-
-    if (questionValue) {
-
-        questionValue.textContent =
-            value;
-
-    }
-
-
-    renderAnswers();
-
-}
-
-
-// ============================================================
-// RENDER ANSWERS
-// ============================================================
-
-function renderAnswers() {
-
-    const container =
+    const answers =
         document.getElementById(
             "answers"
         );
 
 
-    if (!container) {
-        return;
-    }
-
-
-    container.innerHTML = "";
+    answers.innerHTML = "";
 
 
     game.options.forEach(
-        (
-            countryIndex,
-            position
-        ) => {
-
-            const country =
-                countries[
-                    countryIndex
-                ];
-
-
-            if (!country) {
-                return;
-            }
-
+        (index, position) => {
 
             const button =
                 document.createElement(
@@ -1244,16 +1556,12 @@ function renderAnswers() {
                 "answer-button";
 
 
-            button.type =
-                "button";
-
-
             button.textContent =
-                `${position + 1}. ${getCountryName(country)}`;
+                `${position + 1}. ${countries[index][0]}`;
 
 
             button.onclick =
-                () => {
+                function() {
 
                     answerQuestion(
                         position
@@ -1262,7 +1570,7 @@ function renderAnswers() {
                 };
 
 
-            container.appendChild(
+            answers.appendChild(
                 button
             );
 
@@ -1273,220 +1581,13 @@ function renderAnswers() {
 
 
 // ============================================================
-// UPDATE GAME PROFILE STATS
+// ANSWER
 // ============================================================
 
-function updateGameProfileStats() {
+function answerQuestion(position) {
 
-    if (
-        typeof getProfile !==
-        "function"
-    ) {
-
+    if (game.locked)
         return;
-
-    }
-
-
-    const profile =
-        prepareProfile(
-            getProfile()
-        );
-
-
-    if (!profile) {
-        return;
-    }
-
-
-    const xp =
-        document.getElementById(
-            "gameXP"
-        );
-
-
-    const coins =
-        document.getElementById(
-            "gameCoins"
-        );
-
-
-    const level =
-        document.getElementById(
-            "gameLevel"
-        );
-
-
-    if (xp) {
-
-        xp.textContent =
-            profile.xp;
-
-    }
-
-
-    if (coins) {
-
-        coins.textContent =
-            profile.coins;
-
-    }
-
-
-    if (level) {
-
-        level.textContent =
-            profile.level;
-
-    }
-
-
-    // --------------------------------------------------------
-    // Optional HUD
-    // --------------------------------------------------------
-
-    const gameScore =
-        document.getElementById(
-            "score"
-        );
-
-
-    const gameLives =
-        document.getElementById(
-            "lives"
-        );
-
-
-    const gameCombo =
-        document.getElementById(
-            "combo"
-        );
-
-
-    if (gameScore) {
-
-        gameScore.textContent =
-            game.score;
-
-    }
-
-
-    if (gameLives) {
-
-        gameLives.textContent =
-            game.lives;
-
-    }
-
-
-    if (gameCombo) {
-
-        gameCombo.textContent =
-            game.combo;
-
-    }
-
-}
-
-
-// ============================================================
-// SAFE SAVE
-// ============================================================
-
-function safeSave() {
-
-    try {
-
-        if (
-            typeof save ===
-            "function"
-        ) {
-
-            save();
-
-        }
-
-    }
-    catch (error) {
-
-        console.error(
-            "Game save error:",
-            error
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// CHECK ACHIEVEMENTS
-// ============================================================
-
-function runAchievementCheck() {
-
-    try {
-
-        if (
-            typeof checkAchievements ===
-            "function"
-        ) {
-
-            checkAchievements();
-
-        }
-
-    }
-    catch (error) {
-
-        console.error(
-            "Achievement check error:",
-            error
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// ANSWER QUESTION
-// ============================================================
-
-function answerQuestion(
-    position
-) {
-
-    if (
-        game.locked ||
-        !game.active
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        !Number.isInteger(
-            position
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        position < 0 ||
-        position >=
-        game.options.length
-    ) {
-
-        return;
-
-    }
 
 
     const selected =
@@ -1508,19 +1609,13 @@ function answerQuestion(
     }
 
 
-    // --------------------------------------------------------
-    // LUCKY ANSWER
-    // --------------------------------------------------------
-
-    const profile =
-        prepareProfile(
-            getProfile()
-        );
+    const p =
+        getProfile();
 
 
     if (
-        profile &&
-        profile.luckyAnswer > 0
+        p &&
+        p.luckyAnswer > 0
     ) {
 
         const use =
@@ -1531,13 +1626,11 @@ function answerQuestion(
 
         if (use) {
 
-            profile.luckyAnswer--;
+            p.luckyAnswer--;
 
-            safeSave();
+            save();
 
-            correctAnswer(
-                true
-            );
+            correctAnswer(true);
 
             return;
 
@@ -1556,40 +1649,19 @@ function answerQuestion(
 // ============================================================
 
 function correctAnswer(
-    lucky = false
+    savedByLucky = false
 ) {
 
-    if (
-        game.locked ||
-        !game.active
-    ) {
-
+    if (game.locked)
         return;
-
-    }
 
 
     game.locked = true;
 
 
-    const profile =
-        prepareProfile(
-            getProfile()
-        );
+    const p =
+        getProfile();
 
-
-    if (!profile) {
-
-        game.locked = false;
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // COMBO
-    // --------------------------------------------------------
 
     game.combo++;
 
@@ -1607,34 +1679,22 @@ function correctAnswer(
     }
 
 
-    // --------------------------------------------------------
-    // BASE SCORE
-    // --------------------------------------------------------
-
-    let baseScore = 100;
+    let baseScore;
 
 
     if (
-        game.difficulty === 2
-    ) {
+        game.difficulty === 1
+    )
+        baseScore = 100;
 
+    else if (
+        game.difficulty === 2
+    )
         baseScore = 150;
 
-    }
-
-
-    if (
-        game.difficulty === 3
-    ) {
-
+    else
         baseScore = 200;
 
-    }
-
-
-    // --------------------------------------------------------
-    // COMBO BONUS
-    // --------------------------------------------------------
 
     let comboBonus = 0;
 
@@ -1654,12 +1714,8 @@ function correctAnswer(
         comboBonus;
 
 
-    // --------------------------------------------------------
-    // SCORE BOOST
-    // --------------------------------------------------------
-
     if (
-        profile.scoreBoost > 0
+        p.scoreBoost > 0
     ) {
 
         const use =
@@ -1670,7 +1726,7 @@ function correctAnswer(
 
         if (use) {
 
-            profile.scoreBoost--;
+            p.scoreBoost--;
 
             gained =
                 Math.floor(
@@ -1682,13 +1738,8 @@ function correctAnswer(
     }
 
 
-    game.score +=
-        gained;
+    game.score += gained;
 
-
-    // --------------------------------------------------------
-    // XP
-    // --------------------------------------------------------
 
     let gainedXP =
         50 +
@@ -1696,7 +1747,7 @@ function correctAnswer(
 
 
     if (
-        profile.doubleXP > 0
+        p.doubleXP > 0
     ) {
 
         const use =
@@ -1707,7 +1758,7 @@ function correctAnswer(
 
         if (use) {
 
-            profile.doubleXP--;
+            p.doubleXP--;
 
             gainedXP *= 2;
 
@@ -1716,197 +1767,38 @@ function correctAnswer(
     }
 
 
-    // --------------------------------------------------------
-    // ADD XP
-    // --------------------------------------------------------
+    addXP(gainedXP);
 
-    try {
-
-        if (
-            typeof addXP ===
-            "function"
-        ) {
-
-            addXP(
-                gainedXP
-            );
-
-        }
-        else {
-
-            // Fallback
-
-            profile.xp +=
-                gainedXP;
-
-
-            profile.level =
-                Math.floor(
-                    profile.xp / 500
-                ) + 1;
-
-        }
-
-    }
-    catch (error) {
-
-        console.error(
-            "XP error:",
-            error
-        );
-
-    }
-
-
-    // --------------------------------------------------------
-    // COINS
-    // --------------------------------------------------------
 
     const coinReward =
         20 +
         game.combo * 5;
 
 
-    try {
-
-        if (
-            typeof addCoins ===
-            "function"
-        ) {
-
-            addCoins(
-                coinReward
-            );
-
-        }
-        else {
-
-            profile.coins +=
-                coinReward;
-
-            profile.totalCoinsEarned +=
-                coinReward;
-
-        }
-
-    }
-    catch (error) {
-
-        console.error(
-            "Coin error:",
-            error
-        );
-
-    }
+    addCoins(
+        coinReward
+    );
 
 
-    // --------------------------------------------------------
-    // STATISTICS
-    // --------------------------------------------------------
+    p.totalCorrect++;
 
-    profile.totalCorrect++;
-
-    profile.totalQuestions++;
+    p.totalQuestions++;
 
 
-    // --------------------------------------------------------
-    // COUNTRY MASTERY
-    // --------------------------------------------------------
-
-    const country =
-        countries[
-            game.currentCountry
-        ];
+    save();
 
 
-    if (
-        country
-    ) {
-
-        const countryName =
-            getCountryName(
-                country
-            );
+    const message =
+        savedByLucky
+        ? `🍀 Lucky! +${gained} points, +${gainedXP} XP`
+        : `✅ Correct! +${gained} points, +${gainedXP} XP, +${coinReward} Coins`;
 
 
-        if (
-            profile.mastery &&
-            typeof profile.mastery ===
-            "object"
-        ) {
+    toast(message);
 
-            profile.mastery[
-                countryName
-            ] =
-                Math.min(
-                    100,
-                    (
-                        Number(
-                            profile.mastery[
-                                countryName
-                            ]
-                        ) || 0
-                    ) + 5
-                );
-
-            }
-
-        }
-
-    }
-
-
-    safeSave();
-
-    updateGameProfileStats();
-
-    runAchievementCheck();
-
-
-    // --------------------------------------------------------
-    // MESSAGE
-    // --------------------------------------------------------
-
-    if (lucky) {
-
-        if (
-            typeof toast ===
-            "function"
-        ) {
-
-            toast(
-                `🍀 Lucky! +${gained} points, +${gainedXP} XP`
-            );
-
-        }
-
-    }
-    else {
-
-        if (
-            typeof toast ===
-            "function"
-        ) {
-
-            toast(
-                `✅ Correct! +${gained} points, +${gainedXP} XP, +${coinReward} Coins`
-            );
-
-        }
-
-    }
-
-
-    // --------------------------------------------------------
-    // NEXT QUESTION
-    // --------------------------------------------------------
 
     setTimeout(
-        () => {
-
-            nextQuestion();
-
-        },
+        nextQuestion,
         900
     );
 
@@ -1919,40 +1811,19 @@ function correctAnswer(
 
 function wrongAnswer() {
 
-    if (
-        game.locked ||
-        !game.active
-    ) {
-
+    if (game.locked)
         return;
-
-    }
 
 
     game.locked = true;
 
 
-    const profile =
-        prepareProfile(
-            getProfile()
-        );
+    const p =
+        getProfile();
 
-
-    if (!profile) {
-
-        game.locked = false;
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // SECOND CHANCE
-    // --------------------------------------------------------
 
     if (
-        profile.secondChance > 0
+        p.secondChance > 0
     ) {
 
         const use =
@@ -1963,43 +1834,27 @@ function wrongAnswer() {
 
         if (use) {
 
-            profile.secondChance--;
+            p.secondChance--;
 
             game.wrong++;
 
             game.combo = 0;
 
+            p.totalWrong++;
 
-            profile.totalWrong++;
-
-            profile.totalQuestions++;
-
-
-            safeSave();
-
-            updateGameProfileStats();
-
-            runAchievementCheck();
+            p.totalQuestions++;
 
 
-            if (
-                typeof toast ===
-                "function"
-            ) {
+            save();
 
-                toast(
-                    "🔄 Second Chance activated!"
-                );
 
-            }
+            toast(
+                "🔄 Second Chance activated!"
+            );
 
 
             setTimeout(
-                () => {
-
-                    nextQuestion();
-
-                },
+                nextQuestion,
                 900
             );
 
@@ -2011,10 +1866,6 @@ function wrongAnswer() {
     }
 
 
-    // --------------------------------------------------------
-    // NORMAL WRONG ANSWER
-    // --------------------------------------------------------
-
     game.wrong++;
 
     game.combo = 0;
@@ -2022,48 +1873,27 @@ function wrongAnswer() {
     game.lives--;
 
 
-    profile.totalWrong++;
+    p.totalWrong++;
 
-    profile.totalQuestions++;
+    p.totalQuestions++;
 
 
-    safeSave();
-
-    updateGameProfileStats();
-
-    runAchievementCheck();
+    save();
 
 
     const correctCountry =
         countries[
             game.currentCountry
-        ];
+        ][0];
 
 
-    const correctName =
-        getCountryName(
-            correctCountry
-        );
-
-
-    if (
-        typeof toast ===
-        "function"
-    ) {
-
-        toast(
-            `❌ Wrong! Correct answer: ${correctName}`
-        );
-
-    }
+    toast(
+        `❌ Wrong! Correct answer: ${correctCountry}`
+    );
 
 
     setTimeout(
-        () => {
-
-            nextQuestion();
-
-        },
+        nextQuestion,
         1200
     );
 
@@ -2076,68 +1906,41 @@ function wrongAnswer() {
 
 function useHint() {
 
-    if (
-        game.locked ||
-        !game.active
-    ) {
-
+    if (game.locked)
         return;
 
-    }
+
+    const p =
+        getProfile();
 
 
-    const profile =
-        prepareProfile(
-            getProfile()
+    if (!p)
+        return;
+
+
+    if (game.hintUsed) {
+
+        toast(
+            "Hint already used."
         );
 
-
-    if (!profile) {
         return;
+
     }
 
 
-    if (
-        game.hintUsed
-    ) {
+    if (p.hints <= 0) {
 
-        if (
-            typeof toast ===
-            "function"
-        ) {
-
-            toast(
-                "Hint already used."
-            );
-
-        }
+        toast(
+            "You don't have any Hint."
+        );
 
         return;
 
     }
 
 
-    if (
-        Number(profile.hints) <= 0
-    ) {
-
-        if (
-            typeof toast ===
-            "function"
-        ) {
-
-            toast(
-                "You don't have any Hint."
-            );
-
-        }
-
-        return;
-
-    }
-
-
-    profile.hints--;
+    p.hints--;
 
     game.hintUsed = true;
 
@@ -2154,10 +1957,6 @@ function useHint() {
     }
 
 
-    // --------------------------------------------------------
-    // FIND WRONG BUTTONS
-    // --------------------------------------------------------
-
     const buttons =
         Array.from(
             document.querySelectorAll(
@@ -2168,17 +1967,9 @@ function useHint() {
 
     const wrongButtons =
         buttons.filter(
-            (
-                button,
-                index
-            ) => {
-
-                return (
-                    game.options[index] !==
-                    game.currentCountry
-                );
-
-            }
+            (button,index) =>
+                game.options[index] !==
+                game.currentCountry
         );
 
 
@@ -2188,7 +1979,7 @@ function useHint() {
 
 
     wrongButtons
-        .slice(0, 2)
+        .slice(0,2)
         .forEach(
             button => {
 
@@ -2196,30 +1987,22 @@ function useHint() {
                     "removed"
                 );
 
-                button.disabled =
-                    true;
-
             }
         );
 
 
-    safeSave();
-
-    updateGameProfileStats();
-
-    runAchievementCheck();
+    save();
 
 
-    if (
-        typeof toast ===
-        "function"
-    ) {
+    document.getElementById(
+        "score"
+    ).textContent =
+        game.score;
 
-        toast(
-            "💡 Hint used! -25 points"
-        );
 
-    }
+    toast(
+        "💡 Hint used! -25 points"
+    );
 
 }
 
@@ -2230,145 +2013,47 @@ function useHint() {
 
 function finishGame() {
 
-    if (
-        !game.active ||
-        game.finished
-    ) {
+    const p =
+        getProfile();
 
+
+    if (!p)
         return;
 
-    }
 
-
-    game.active = false;
-
-    game.locked = true;
-
-    game.finished = true;
-
-
-    const profile =
-        prepareProfile(
-            getProfile()
+    const completionReward =
+        100 +
+        (
+            game.correct ===
+            game.totalQuestions
+            ? 250
+            : 0
+        ) +
+        (
+            game.difficulty === 3
+            ? 100
+            : 0
         );
 
 
-    if (!profile) {
-        return;
-    }
+    addCoins(
+        completionReward
+    );
 
 
-    // --------------------------------------------------------
-    // COMPLETION REWARD
-    // --------------------------------------------------------
-
-    let completionReward =
-        100;
-
-
-    if (
-        game.correct ===
-        game.totalQuestions
-    ) {
-
-        completionReward +=
-            250;
-
-    }
-
-
-    if (
-        game.difficulty === 3
-    ) {
-
-        completionReward +=
-            100;
-
-    }
-
-
-    // --------------------------------------------------------
-    // COINS
-    // --------------------------------------------------------
-
-    try {
-
-        if (
-            typeof addCoins ===
-            "function"
-        ) {
-
-            addCoins(
-                completionReward
-            );
-
-        }
-        else {
-
-            profile.coins +=
-                completionReward;
-
-            profile.totalCoinsEarned +=
-                completionReward;
-
-        }
-
-    }
-    catch (error) {
-
-        console.error(
-            "Completion reward error:",
-            error
-        );
-
-    }
-
-
-    // --------------------------------------------------------
-    // GAME STATISTICS
-    // --------------------------------------------------------
-
-    profile.totalGames++;
+    p.totalGames++;
 
 
     if (
         game.bestCombo >
-        Number(profile.bestCombo)
+        p.bestCombo
     ) {
 
-        profile.bestCombo =
+        p.bestCombo =
             game.bestCombo;
 
     }
 
-
-    // --------------------------------------------------------
-    // LAST GAME DATA
-    // --------------------------------------------------------
-
-    profile.lastGameScore =
-        game.score;
-
-
-    profile.lastGameCorrect =
-        game.correct;
-
-
-    profile.lastGameWrong =
-        game.wrong;
-
-
-    profile.lastGameCombo =
-        game.bestCombo;
-
-
-    profile.lastGameDifficulty =
-        game.difficulty;
-
-
-    // --------------------------------------------------------
-    // HIGH SCORE
-    // --------------------------------------------------------
 
     let newHighScore =
         false;
@@ -2376,10 +2061,10 @@ function finishGame() {
 
     if (
         game.score >
-        Number(profile.highScore)
+        p.highScore
     ) {
 
-        profile.highScore =
+        p.highScore =
             game.score;
 
         newHighScore =
@@ -2388,36 +2073,18 @@ function finishGame() {
     }
 
 
-    // --------------------------------------------------------
-    // ACHIEVEMENTS
-    // --------------------------------------------------------
+    save();
 
-    runAchievementCheck();
-
-
-    // --------------------------------------------------------
-    // SAVE
-    // --------------------------------------------------------
-
-    safeSave();
-
-
-    // --------------------------------------------------------
-    // RESULT MESSAGE
-    // --------------------------------------------------------
 
     let message;
 
 
-    if (
-        newHighScore
-    ) {
+    if (newHighScore) {
 
         message =
             "🏆 NEW HIGH SCORE!";
 
     }
-
     else if (
         game.correct ===
         game.totalQuestions
@@ -2427,7 +2094,6 @@ function finishGame() {
             "🎉 PERFECT GAME!";
 
     }
-
     else {
 
         message =
@@ -2436,62 +2102,9 @@ function finishGame() {
     }
 
 
-    // --------------------------------------------------------
-    // RESULT UI
-    // --------------------------------------------------------
-
-    const result =
-        document.getElementById(
-            "resultInfo"
-        );
-
-
-    if (!result) {
-
-        if (
-            typeof goHome ===
-            "function"
-        ) {
-
-            goHome();
-
-        }
-
-        return;
-
-    }
-
-
-    let rank =
-        "Beginner";
-
-
-    try {
-
-        if (
-            typeof getRank ===
-            "function"
-        ) {
-
-            rank =
-                getRank(
-                    profile.level
-                );
-
-        }
-
-    }
-    catch (error) {
-
-        console.error(
-            "Rank error:",
-            error
-        );
-
-    }
-
-
-    result.innerHTML = `
+    document.getElementById(
+        "resultInfo"
+    ).innerHTML = `
 
         <div class="result-message">
             ${message}
@@ -2499,60 +2112,43 @@ function finishGame() {
 
         <div class="result-stat">
             <span>⭐ Score</span>
-            <strong>
-                ${game.score}
-            </strong>
+            <strong>${game.score}</strong>
         </div>
 
         <div class="result-stat">
             <span>✅ Correct</span>
-            <strong>
-                ${game.correct}
-            </strong>
+            <strong>${game.correct}</strong>
         </div>
 
         <div class="result-stat">
             <span>❌ Wrong</span>
-            <strong>
-                ${game.wrong}
-            </strong>
+            <strong>${game.wrong}</strong>
         </div>
 
         <div class="result-stat">
             <span>🔥 Best Combo</span>
-            <strong>
-                ${game.bestCombo}
-            </strong>
+            <strong>${game.bestCombo}</strong>
         </div>
 
         <div class="result-stat">
             <span>🪙 Coins</span>
-            <strong>
-                ${profile.coins}
-            </strong>
+            <strong>${p.coins}</strong>
         </div>
 
         <div class="result-stat">
             <span>🏆 Level</span>
             <strong>
-                ${profile.level}
-                (${rank})
+                ${p.level}
+                (${getRank(p.level)})
             </strong>
         </div>
 
     `;
 
 
-    if (
-        typeof showScreen ===
-        "function"
-    ) {
-
-        showScreen(
-            "resultScreen"
-        );
-
-    }
+    showScreen(
+        "resultScreen"
+    );
 
 }
 
@@ -2563,36 +2159,17 @@ function finishGame() {
 
 function confirmQuitGame() {
 
-    if (
-        !game.active ||
-        game.locked
-    ) {
-
+    if (game.locked)
         return;
 
-    }
 
-
-    const quit =
+    if (
         confirm(
             "Quit this game?\nYour current game progress will be lost."
-        );
-
-
-    if (!quit) {
-        return;
-    }
-
-
-    game.active = false;
-
-    game.locked = true;
-
-
-    if (
-        typeof goHome ===
-        "function"
+        )
     ) {
+
+        game.locked = true;
 
         goHome();
 
@@ -2602,133 +2179,159 @@ function confirmQuitGame() {
 
 
 // ============================================================
-// GET CURRENT GAME DATA
+// COUNTRY DATABASE
 // ============================================================
 
-function getGameState() {
+function openCountries() {
 
-    return {
-
-        active:
-            game.active,
-
-        difficulty:
-            game.difficulty,
-
-        question:
-            game.question,
-
-        totalQuestions:
-            game.totalQuestions,
-
-        score:
-            game.score,
-
-        lives:
-            game.lives,
-
-        combo:
-            game.combo,
-
-        bestCombo:
-            game.bestCombo,
-
-        correct:
-            game.correct,
-
-        wrong:
-            game.wrong,
-
-        currentCountry:
-            game.currentCountry,
-
-        questionType:
-            game.questionType,
-
-        options:
-            [...game.options],
-
-        hintUsed:
-            game.hintUsed,
-
-        locked:
-            game.locked
-
-    };
-
-}
+    const container =
+        document.getElementById(
+            "countryList"
+        );
 
 
-// ============================================================
-// DEBUG
-// ============================================================
-
-function debugGame() {
-
-    console.log(
-        "================ GAME STATE ================"
-    );
-
-    console.log(
-        game
-    );
-
-    console.log(
-        "============================================="
-    );
-
-}
+    container.innerHTML = "";
 
 
-// ============================================================
-// DEBUG COUNTRY DATABASE
-// ============================================================
-
-function debugCountries() {
-
-    if (
-        !validateCountries()
-    ) {
-
-        return;
-
-    }
-
-
-    console.log(
-        "========== COUNTRY DATABASE =========="
-    );
-
-
-    console.log(
-        "Total countries:",
-        countries.length
-    );
+    document.getElementById(
+        "countryCount"
+    ).textContent =
+        countries.length;
 
 
     countries.forEach(
-        (
-            country,
-            index
-        ) => {
+        (c,index) => {
 
-            console.log(
-                index + 1,
-                country.name,
-                "|",
-                country.capital,
-                "|",
-                country.currency,
-                "|",
-                country.region
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "country-card";
+
+
+            div.innerHTML = `
+
+                <h3>
+                    ${index + 1}.
+                    ${escapeHTML(c[0])}
+                </h3>
+
+                <p>
+                    🏛️ Capital:
+                    ${escapeHTML(c[1])}
+                </p>
+
+                <p>
+                    💰 Currency:
+                    ${escapeHTML(c[2])}
+                </p>
+
+                <p>
+                    🌏 Region:
+                    ${escapeHTML(c[3])}
+                </p>
+
+            `;
+
+
+            container.appendChild(
+                div
             );
 
         }
     );
 
 
-    console.log(
-        "======================================"
+    showScreen(
+        "countriesScreen"
     );
 
 }
+
+
+// ============================================================
+// RULES
+// ============================================================
+
+function openRules() {
+
+    showScreen(
+        "rulesScreen"
+    );
+
+}
+
+
+// ============================================================
+// UPDATE LOG
+// ============================================================
+
+function openUpdateLog() {
+
+    showScreen(
+        "updateScreen"
+    );
+
+}
+
+
+// ============================================================
+// INFO
+// ============================================================
+
+function openInfo() {
+
+    showScreen(
+        "infoScreen"
+    );
+
+}
+
+
+// ============================================================
+// OWNER SECURITY
+// ============================================================
+//
+// Owner Panel is intentionally NOT displayed anywhere.
+//
+// This version does not pretend that browser JavaScript can
+// securely verify a computer's public IP.
+//
+// If an Owner Panel is added later, authentication should be
+// moved to a backend/server.
+// ============================================================
+
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+
+function initialize() {
+
+    if (
+        currentProfile >= 0 &&
+        !profiles[currentProfile]
+    ) {
+
+        currentProfile = -1;
+
+        save();
+
+    }
+
+
+    updateHeader();
+
+    updateMainProfile();
+
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+initialize();
