@@ -1,1083 +1,8 @@
 // ============================================================
 // ASIA COUNTRY GUESSING GAME
-// WEB EDITION
-// VERSION 1.0
+// VERSION 2.0
+// GAME ENGINE
 // ============================================================
-
-
-// ============================================================
-// COUNTRY DATABASE
-// ============================================================
-
-const countries = [
-
-    ["Vietnam","Hanoi","Dong","Southeast Asia"],
-    ["Thailand","Bangkok","Baht","Southeast Asia"],
-    ["Laos","Vientiane","Kip","Southeast Asia"],
-    ["Cambodia","Phnom Penh","Riel","Southeast Asia"],
-    ["Myanmar","Naypyidaw","Kyat","Southeast Asia"],
-    ["Malaysia","Kuala Lumpur","Ringgit","Southeast Asia"],
-    ["Singapore","Singapore","Dollar","Southeast Asia"],
-    ["Indonesia","Jakarta","Rupiah","Southeast Asia"],
-    ["Philippines","Manila","Peso","Southeast Asia"],
-    ["Brunei","Bandar Seri Begawan","Dollar","Southeast Asia"],
-    ["Timor-Leste","Dili","Dollar","Southeast Asia"],
-
-    ["China","Beijing","Yuan","East Asia"],
-    ["Japan","Tokyo","Yen","East Asia"],
-    ["South Korea","Seoul","Won","East Asia"],
-    ["North Korea","Pyongyang","Won","East Asia"],
-    ["Mongolia","Ulaanbaatar","Tugrik","East Asia"],
-    ["Taiwan","Taipei","Dollar","East Asia"],
-
-    ["India","New Delhi","Rupee","South Asia"],
-    ["Pakistan","Islamabad","Rupee","South Asia"],
-    ["Bangladesh","Dhaka","Taka","South Asia"],
-    ["Nepal","Kathmandu","Rupee","South Asia"],
-    ["Bhutan","Thimphu","Ngultrum","South Asia"],
-    ["Sri Lanka","Sri Jayawardenepura Kotte","Rupee","South Asia"],
-    ["Maldives","Male","Rufiyaa","South Asia"],
-    ["Afghanistan","Kabul","Afghani","South Asia"],
-
-    ["Iran","Tehran","Rial","West Asia"],
-    ["Iraq","Baghdad","Dinar","West Asia"],
-    ["Saudi Arabia","Riyadh","Riyal","West Asia"],
-    ["United Arab Emirates","Abu Dhabi","Dirham","West Asia"],
-    ["Qatar","Doha","Riyal","West Asia"],
-    ["Kuwait","Kuwait City","Dinar","West Asia"],
-    ["Bahrain","Manama","Dinar","West Asia"],
-    ["Oman","Muscat","Rial","West Asia"],
-    ["Yemen","Sanaa","Rial","West Asia"],
-    ["Jordan","Amman","Dinar","West Asia"],
-    ["Lebanon","Beirut","Pound","West Asia"],
-    ["Syria","Damascus","Pound","West Asia"],
-    ["Israel","Jerusalem","Shekel","West Asia"],
-    ["Turkey","Ankara","Lira","West Asia"],
-    ["Palestine","Ramallah","Shekel","West Asia"],
-    ["Cyprus","Nicosia","Euro","West Asia"],
-
-    ["Kazakhstan","Astana","Tenge","Central Asia"],
-    ["Uzbekistan","Tashkent","Som","Central Asia"],
-    ["Turkmenistan","Ashgabat","Manat","Central Asia"],
-    ["Kyrgyzstan","Bishkek","Som","Central Asia"],
-    ["Tajikistan","Dushanbe","Somoni","Central Asia"],
-
-    ["Azerbaijan","Baku","Manat","Caucasus"],
-    ["Armenia","Yerevan","Dram","Caucasus"],
-    ["Georgia","Tbilisi","Lari","Caucasus"],
-
-    ["Russia","Moscow","Ruble","North Asia"]
-
-];
-
-
-// ============================================================
-// STORAGE
-// ============================================================
-
-const STORAGE_KEY =
-    "asia_country_game_profiles_v1";
-
-const CURRENT_PROFILE_KEY =
-    "asia_current_profile_v1";
-
-
-// ============================================================
-// LOAD DATA SAFELY
-// ============================================================
-
-let profiles = [];
-
-try {
-
-    const saved =
-        localStorage.getItem(STORAGE_KEY);
-
-    if (saved) {
-
-        profiles =
-            JSON.parse(saved);
-
-        if (!Array.isArray(profiles)) {
-
-            profiles = [];
-
-        }
-
-    }
-
-}
-catch (error) {
-
-    console.error(
-        "Could not load profiles:",
-        error
-    );
-
-    profiles = [];
-
-}
-
-
-let currentProfile = -1;
-
-try {
-
-    const savedCurrent =
-        localStorage.getItem(
-            CURRENT_PROFILE_KEY
-        );
-
-    if (savedCurrent !== null) {
-
-        currentProfile =
-            Number(savedCurrent);
-
-    }
-
-}
-catch (error) {
-
-    currentProfile = -1;
-
-}
-
-
-// ============================================================
-// PROFILE DEFAULT
-// ============================================================
-
-function newProfile(name) {
-
-    return {
-
-        name: name,
-
-        level: 1,
-        xp: 0,
-
-        highScore: 0,
-
-        totalGames: 0,
-        totalCorrect: 0,
-        totalWrong: 0,
-        totalQuestions: 0,
-
-        bestCombo: 0,
-
-        coins: 500,
-        totalCoinsEarned: 500,
-
-        hints: 1,
-        extraLives: 0,
-        doubleXP: 0,
-        scoreBoost: 0,
-        secondChance: 0,
-        luckyAnswer: 0
-
-    };
-
-}
-
-
-// ============================================================
-// SAVE
-// ============================================================
-
-function save() {
-
-    try {
-
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify(profiles)
-        );
-
-        localStorage.setItem(
-            CURRENT_PROFILE_KEY,
-            String(currentProfile)
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            "Save error:",
-            error
-        );
-
-    }
-
-    updateHeader();
-    updateMainProfile();
-
-}
-
-
-// ============================================================
-// CURRENT PROFILE
-// ============================================================
-
-function getProfile() {
-
-    if (
-        currentProfile < 0 ||
-        !profiles[currentProfile]
-    ) {
-
-        return null;
-
-    }
-
-    return profiles[currentProfile];
-
-}
-
-
-// ============================================================
-// SCREEN SYSTEM
-// ============================================================
-
-function showScreen(id) {
-
-    const screens =
-        document.querySelectorAll(
-            ".screen"
-        );
-
-    screens.forEach(
-        screen => {
-
-            screen.classList.remove(
-                "active"
-            );
-
-        }
-    );
-
-
-    const target =
-        document.getElementById(id);
-
-    if (!target) {
-
-        console.error(
-            "Screen not found:",
-            id
-        );
-
-        return;
-
-    }
-
-
-    target.classList.add("active");
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-
-
-    updateHeader();
-
-}
-
-
-// ============================================================
-// HOME
-// ============================================================
-
-function goHome() {
-
-    showScreen("homeScreen");
-
-    updateMainProfile();
-
-}
-
-
-// ============================================================
-// TOAST
-// ============================================================
-
-let toastTimer = null;
-
-function toast(message) {
-
-    const element =
-        document.getElementById("toast");
-
-    if (!element)
-        return;
-
-
-    element.textContent =
-        message;
-
-    element.classList.add("show");
-
-
-    clearTimeout(toastTimer);
-
-
-    toastTimer =
-        setTimeout(
-            () => {
-
-                element.classList.remove(
-                    "show"
-                );
-
-            },
-            2200
-        );
-
-}
-
-
-// ============================================================
-// HEADER
-// ============================================================
-
-function updateHeader() {
-
-    const p =
-        getProfile();
-
-
-    const name =
-        document.getElementById(
-            "topName"
-        );
-
-    const level =
-        document.getElementById(
-            "topLevel"
-        );
-
-    const coins =
-        document.getElementById(
-            "topCoins"
-        );
-
-
-    if (!p) {
-
-        name.textContent =
-            "Guest";
-
-        level.textContent =
-            "1";
-
-        coins.textContent =
-            "0";
-
-        return;
-
-    }
-
-
-    name.textContent =
-        p.name;
-
-    level.textContent =
-        p.level;
-
-    coins.textContent =
-        p.coins;
-
-}
-
-
-// ============================================================
-// MAIN PROFILE
-// ============================================================
-
-function updateMainProfile() {
-
-    const container =
-        document.getElementById(
-            "mainProfileInfo"
-        );
-
-    if (!container)
-        return;
-
-
-    const p =
-        getProfile();
-
-
-    if (!p) {
-
-        container.innerHTML = `
-            <p>No profile selected.</p>
-            <p>Create a profile to start playing.</p>
-        `;
-
-        return;
-
-    }
-
-
-    const accuracy =
-        p.totalQuestions > 0
-        ? Math.round(
-            (
-                p.totalCorrect /
-                p.totalQuestions
-            ) * 100
-        )
-        : 0;
-
-
-    container.innerHTML = `
-
-        <div class="result-stat">
-            <span>👤 Name</span>
-            <strong>${escapeHTML(p.name)}</strong>
-        </div>
-
-        <div class="result-stat">
-            <span>🏆 Rank</span>
-            <strong>${getRank(p.level)}</strong>
-        </div>
-
-        <div class="result-stat">
-            <span>⭐ Level</span>
-            <strong>${p.level}</strong>
-        </div>
-
-        <div class="result-stat">
-            <span>✨ XP</span>
-            <strong>${p.xp}</strong>
-        </div>
-
-        <div class="result-stat">
-            <span>💰 Coins</span>
-            <strong>${p.coins}</strong>
-        </div>
-
-        <div class="result-stat">
-            <span>🎮 Games</span>
-            <strong>${p.totalGames}</strong>
-        </div>
-
-        <div class="result-stat">
-            <span>🎯 Accuracy</span>
-            <strong>${accuracy}%</strong>
-        </div>
-
-        <div class="result-stat">
-            <span>🏅 High Score</span>
-            <strong>${p.highScore}</strong>
-        </div>
-
-    `;
-
-}
-
-
-// ============================================================
-// LEVEL
-// ============================================================
-
-function calculateLevel(xp) {
-
-    return Math.floor(
-        xp / 500
-    ) + 1;
-
-}
-
-
-function getRank(level) {
-
-    if (level < 3)
-        return "Beginner";
-
-    if (level < 5)
-        return "Explorer";
-
-    if (level < 8)
-        return "Traveler";
-
-    if (level < 12)
-        return "Expert";
-
-    if (level < 20)
-        return "Master";
-
-    return "Legend";
-
-}
-
-
-// ============================================================
-// XP
-// ============================================================
-
-function addXP(amount) {
-
-    const p =
-        getProfile();
-
-    if (!p)
-        return;
-
-
-    const oldLevel =
-        p.level;
-
-
-    p.xp += amount;
-
-
-    p.level =
-        calculateLevel(
-            p.xp
-        );
-
-
-    if (p.level > oldLevel) {
-
-        const levels =
-            p.level - oldLevel;
-
-        const reward =
-            levels * 500;
-
-
-        p.coins += reward;
-
-        p.totalCoinsEarned += reward;
-
-
-        toast(
-            `🎉 LEVEL UP! Level ${p.level}! +${reward} Coins`
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// COINS
-// ============================================================
-
-function addCoins(amount) {
-
-    const p =
-        getProfile();
-
-    if (!p)
-        return;
-
-
-    p.coins += amount;
-
-    p.totalCoinsEarned += amount;
-
-}
-
-
-// ============================================================
-// PROFILE MENU
-// ============================================================
-
-function openProfileMenu() {
-
-    renderProfiles();
-
-    showScreen(
-        "profileScreen"
-    );
-
-}
-
-
-// ============================================================
-// CREATE PROFILE
-// ============================================================
-
-function createProfileFromInput() {
-
-    const input =
-        document.getElementById(
-            "profileNameInput"
-        );
-
-
-    let name =
-        input.value.trim();
-
-
-    if (!name) {
-
-        toast(
-            "Enter a profile name."
-        );
-
-        input.focus();
-
-        return;
-
-    }
-
-
-    createProfile(name);
-
-
-    input.value = "";
-
-}
-
-
-function createProfile(name) {
-
-    if (profiles.length >= 20) {
-
-        toast(
-            "Maximum 20 profiles."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        profiles.some(
-            p =>
-                p.name.toLowerCase() ===
-                name.toLowerCase()
-        )
-    ) {
-
-        toast(
-            "Profile already exists."
-        );
-
-        return;
-
-    }
-
-
-    profiles.push(
-        newProfile(name)
-    );
-
-
-    currentProfile =
-        profiles.length - 1;
-
-
-    save();
-
-    renderProfiles();
-
-
-    toast(
-        `Welcome, ${name}!`
-    );
-
-}
-
-
-// ============================================================
-// SELECT PROFILE
-// ============================================================
-
-function selectProfile(index) {
-
-    index =
-        Number(index);
-
-
-    if (
-        index < 0 ||
-        index >= profiles.length
-    ) {
-
-        return;
-
-    }
-
-
-    currentProfile =
-        index;
-
-
-    save();
-
-    renderProfiles();
-
-
-    toast(
-        `Selected: ${profiles[index].name}`
-    );
-
-}
-
-
-// ============================================================
-// DELETE PROFILE
-// ============================================================
-
-function deleteProfile() {
-
-    if (!getProfile()) {
-
-        toast(
-            "Select a profile first."
-        );
-
-        return;
-
-    }
-
-
-    const name =
-        getProfile().name;
-
-
-    if (
-        !confirm(
-            `Delete ${name}?`
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    profiles.splice(
-        currentProfile,
-        1
-    );
-
-
-    if (
-        profiles.length === 0
-    ) {
-
-        currentProfile =
-            -1;
-
-    }
-    else if (
-        currentProfile >=
-        profiles.length
-    ) {
-
-        currentProfile =
-            profiles.length - 1;
-
-    }
-
-
-    save();
-
-    renderProfiles();
-
-
-    toast(
-        "Profile deleted."
-    );
-
-}
-
-
-// ============================================================
-// RENDER PROFILES
-// ============================================================
-
-function renderProfiles() {
-
-    const container =
-        document.getElementById(
-            "profileList"
-        );
-
-
-    container.innerHTML = "";
-
-
-    if (
-        profiles.length === 0
-    ) {
-
-        container.innerHTML =
-            "<p>No profiles yet.</p>";
-
-        return;
-
-    }
-
-
-    profiles.forEach(
-        (p,index) => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "profile-item" +
-                (
-                    index === currentProfile
-                    ? " selected"
-                    : ""
-                );
-
-
-            div.innerHTML = `
-
-                <div>
-
-                    <strong>
-                        ${escapeHTML(p.name)}
-                    </strong>
-
-                    <br>
-
-                    Lv.${p.level}
-                    |
-                    ${p.xp} XP
-                    |
-                    🪙 ${p.coins}
-
-                </div>
-
-                <button
-                    onclick="selectProfile(${index})">
-
-                    ${index === currentProfile
-                        ? "Selected"
-                        : "Select"}
-
-                </button>
-
-            `;
-
-
-            container.appendChild(div);
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// ESCAPE HTML
-// ============================================================
-
-function escapeHTML(text) {
-
-    return String(text)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-
-}
-
-
-// ============================================================
-// SHOP
-// ============================================================
-
-function openShop() {
-
-    if (!getProfile()) {
-
-        toast(
-            "Create/select a profile first."
-        );
-
-        openProfileMenu();
-
-        return;
-
-    }
-
-
-    updateShop();
-
-    showScreen(
-        "shopScreen"
-    );
-
-}
-
-
-function updateShop() {
-
-    const p =
-        getProfile();
-
-    if (!p)
-        return;
-
-
-    document.getElementById(
-        "shopCoins"
-    ).textContent =
-        p.coins;
-
-}
-
-
-function buyItem(
-    item,
-    price
-) {
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    if (p.coins < price) {
-
-        toast(
-            "Not enough Coins."
-        );
-
-        return;
-
-    }
-
-
-    p.coins -= price;
-
-    p[item]++;
-
-
-    save();
-
-    updateShop();
-
-
-    toast(
-        "🛒 Item purchased!"
-    );
-
-}
-
-
-// ============================================================
-// INVENTORY
-// ============================================================
-
-function openInventory() {
-
-    if (!getProfile()) {
-
-        toast(
-            "Create/select a profile first."
-        );
-
-        openProfileMenu();
-
-        return;
-
-    }
-
-
-    renderInventory();
-
-    showScreen(
-        "inventoryScreen"
-    );
-
-}
-
-
-function renderInventory() {
-
-    const p =
-        getProfile();
-
-
-    const container =
-        document.getElementById(
-            "inventoryList"
-        );
-
-
-    container.innerHTML = `
-
-        <div class="inventory-item">
-            <span>💡 Hint</span>
-            <strong>${p.hints}</strong>
-        </div>
-
-        <div class="inventory-item">
-            <span>❤️ Extra Life</span>
-            <strong>${p.extraLives}</strong>
-        </div>
-
-        <div class="inventory-item">
-            <span>✨ Double XP</span>
-            <strong>${p.doubleXP}</strong>
-        </div>
-
-        <div class="inventory-item">
-            <span>📈 Score Boost</span>
-            <strong>${p.scoreBoost}</strong>
-        </div>
-
-        <div class="inventory-item">
-            <span>🔄 Second Chance</span>
-            <strong>${p.secondChance}</strong>
-        </div>
-
-        <div class="inventory-item">
-            <span>🍀 Lucky Answer</span>
-            <strong>${p.luckyAnswer}</strong>
-        </div>
-
-    `;
-
-}
-
-
-function openInventoryDuringGame() {
-
-    if (!getProfile())
-        return;
-
-
-    renderInventory();
-
-
-    const p =
-        getProfile();
-
-
-    alert(
-        "🎒 INVENTORY\n\n" +
-
-        `💡 Hint: ${p.hints}\n` +
-        `❤️ Extra Life: ${p.extraLives}\n` +
-        `✨ Double XP: ${p.doubleXP}\n` +
-        `📈 Score Boost: ${p.scoreBoost}\n` +
-        `🔄 Second Chance: ${p.secondChance}\n` +
-        `🍀 Lucky Answer: ${p.luckyAnswer}`
-    );
-
-}
 
 
 // ============================================================
@@ -1085,6 +10,8 @@ function openInventoryDuringGame() {
 // ============================================================
 
 let game = {
+
+    active: false,
 
     difficulty: 1,
 
@@ -1104,13 +31,13 @@ let game = {
 
     wrong: 0,
 
-    used: [],
+    usedQuestions: [],
 
     currentCountry: -1,
 
     options: [],
 
-    type: 1,
+    questionType: 1,
 
     hintUsed: false,
 
@@ -1120,27 +47,46 @@ let game = {
 
 
 // ============================================================
-// START GAME MENU
+// RESET GAME
 // ============================================================
 
-function startGameMenu() {
+function resetGame(difficulty) {
 
-    if (!getProfile()) {
+    game = {
 
-        toast(
-            "Create/select a profile first."
-        );
+        active: true,
 
-        openProfileMenu();
+        difficulty: Number(difficulty),
 
-        return;
+        question: 0,
 
-    }
+        totalQuestions: 10,
 
+        score: 0,
 
-    showScreen(
-        "difficultyScreen"
-    );
+        lives: 3,
+
+        combo: 0,
+
+        bestCombo: 0,
+
+        correct: 0,
+
+        wrong: 0,
+
+        usedQuestions: [],
+
+        currentCountry: -1,
+
+        options: [],
+
+        questionType: 1,
+
+        hintUsed: false,
+
+        locked: false
+
+    };
 
 }
 
@@ -1151,11 +97,10 @@ function startGameMenu() {
 
 function startGame(difficulty) {
 
-    const p =
+    const profile =
         getProfile();
 
-
-    if (!p) {
+    if (!profile) {
 
         toast(
             "Create/select a profile first."
@@ -1182,52 +127,28 @@ function startGame(difficulty) {
     }
 
 
-    game = {
-
-        difficulty: difficulty,
-
-        question: 0,
-
-        totalQuestions: 10,
-
-        score: 0,
-
-        lives: 3,
-
-        combo: 0,
-
-        bestCombo: 0,
-
-        correct: 0,
-
-        wrong: 0,
-
-        used: [],
-
-        currentCountry: -1,
-
-        options: [],
-
-        type: 1,
-
-        hintUsed: false,
-
-        locked: false
-
-    };
+    resetGame(
+        difficulty
+    );
 
 
-    if (p.extraLives > 0) {
+    // --------------------------------------------------------
+    // EXTRA LIFE
+    // --------------------------------------------------------
+
+    if (
+        profile.extraLives > 0
+    ) {
 
         const use =
             confirm(
-                `You have ${p.extraLives} Extra Life(s).\nUse one?`
+                `You have ${profile.extraLives} Extra Life(s).\nUse one?`
             );
 
 
         if (use) {
 
-            p.extraLives--;
+            profile.extraLives--;
 
             game.lives++;
 
@@ -1253,6 +174,13 @@ function startGame(difficulty) {
 // ============================================================
 
 function nextQuestion() {
+
+    if (!game.active) {
+
+        return;
+
+    }
+
 
     if (
         game.question >=
@@ -1284,8 +212,25 @@ function nextQuestion() {
     game.locked = false;
 
 
+    generateQuestion();
+
+    renderQuestion();
+
+}
+
+
+// ============================================================
+// GENERATE QUESTION
+// ============================================================
+
+function generateQuestion() {
+
     let correct;
 
+
+    // --------------------------------------------------------
+    // Find unused country
+    // --------------------------------------------------------
 
     do {
 
@@ -1297,15 +242,24 @@ function nextQuestion() {
 
     }
     while (
-        game.used.includes(correct)
+        game.usedQuestions.includes(
+            correct
+        )
     );
 
 
-    game.used.push(correct);
+    game.usedQuestions.push(
+        correct
+    );
+
 
     game.currentCountry =
         correct;
 
+
+    // --------------------------------------------------------
+    // Generate answers
+    // --------------------------------------------------------
 
     const options =
         [correct];
@@ -1323,53 +277,65 @@ function nextQuestion() {
 
 
         if (
-            !options.includes(random)
+            !options.includes(
+                random
+            )
         ) {
 
-            options.push(random);
+            options.push(
+                random
+            );
 
         }
 
     }
 
 
-    shuffle(options);
+    shuffle(
+        options
+    );
 
 
     game.options =
         options;
 
 
+    // --------------------------------------------------------
+    // Question type
+    // --------------------------------------------------------
+
     if (
         game.difficulty === 1
     ) {
 
-        game.type = 1;
+        // EASY
+        game.questionType = 1;
 
     }
+
     else if (
         game.difficulty === 2
     ) {
 
-        game.type =
+        // NORMAL
+        game.questionType =
             1 +
             Math.floor(
                 Math.random() * 2
             );
 
     }
+
     else {
 
-        game.type =
+        // HARD
+        game.questionType =
             1 +
             Math.floor(
                 Math.random() * 4
             );
 
     }
-
-
-    renderQuestion();
 
 }
 
@@ -1388,7 +354,8 @@ function shuffle(array) {
 
         const j =
             Math.floor(
-                Math.random() * (i + 1)
+                Math.random() *
+                (i + 1)
             );
 
 
@@ -1415,136 +382,213 @@ function shuffle(array) {
 
 function renderQuestion() {
 
-    const c =
+    const country =
         countries[
             game.currentCountry
         ];
 
 
-    document.getElementById(
-        "questionNumber"
-    ).textContent =
-        `${game.question}/10`;
+    if (!country) {
+
+        console.error(
+            "Invalid country."
+        );
+
+        return;
+
+    }
 
 
-    document.getElementById(
-        "lives"
-    ).textContent =
-        game.lives;
+    // --------------------------------------------------------
+    // TOP BAR
+    // --------------------------------------------------------
+
+    const questionNumber =
+        document.getElementById(
+            "questionNumber"
+        );
 
 
-    document.getElementById(
-        "combo"
-    ).textContent =
-        game.combo;
+    const lives =
+        document.getElementById(
+            "lives"
+        );
 
 
-    document.getElementById(
-        "score"
-    ).textContent =
-        game.score;
+    const combo =
+        document.getElementById(
+            "combo"
+        );
 
 
-    const p =
-        getProfile();
+    const score =
+        document.getElementById(
+            "score"
+        );
 
 
-    document.getElementById(
-        "gameXP"
-    ).textContent =
-        p ? p.xp : 0;
+    if (questionNumber) {
+
+        questionNumber.textContent =
+            `${game.question}/${game.totalQuestions}`;
+
+    }
 
 
-    document.getElementById(
-        "gameCoins"
-    ).textContent =
-        p ? p.coins : 0;
+    if (lives) {
+
+        lives.textContent =
+            game.lives;
+
+    }
 
 
-    document.getElementById(
-        "gameLevel"
-    ).textContent =
-        p ? p.level : 1;
+    if (combo) {
 
+        combo.textContent =
+            game.combo;
+
+    }
+
+
+    if (score) {
+
+        score.textContent =
+            game.score;
+
+    }
+
+
+    updateGameProfileStats();
+
+
+    // --------------------------------------------------------
+    // QUESTION
+    // --------------------------------------------------------
 
     let title = "";
 
     let value = "";
 
 
-    if (
-        game.type === 1
+    switch (
+        game.questionType
     ) {
 
-        title =
-            "Which country has this capital?";
+        case 1:
 
-        value =
-            c[1];
+            title =
+                "Which country has this capital?";
+
+            value =
+                country[1];
+
+            break;
+
+
+        case 2:
+
+            title =
+                "What is the capital of this country?";
+
+            value =
+                country[0];
+
+            break;
+
+
+        case 3:
+
+            title =
+                "Which country uses this currency?";
+
+            value =
+                country[2];
+
+            break;
+
+
+        case 4:
+
+            title =
+                "Which country belongs to this region?";
+
+            value =
+                country[3];
+
+            break;
 
     }
-    else if (
-        game.type === 2
-    ) {
 
-        title =
-            "What is the capital of this country?";
 
-        value =
-            c[0];
+    const questionType =
+        document.getElementById(
+            "questionType"
+        );
 
-    }
-    else if (
-        game.type === 3
-    ) {
 
-        title =
-            "Which country uses this currency?";
+    const questionText =
+        document.getElementById(
+            "questionText"
+        );
 
-        value =
-            c[2];
 
-    }
-    else {
+    const questionValue =
+        document.getElementById(
+            "questionValue"
+        );
 
-        title =
-            "Which country belongs to this region?";
 
-        value =
-            c[3];
+    if (questionType) {
+
+        questionType.textContent =
+            title;
 
     }
 
 
-    document.getElementById(
-        "questionType"
-    ).textContent =
-        title;
+    if (questionText) {
+
+        questionText.textContent =
+            "Choose the correct answer:";
+
+    }
 
 
-    document.getElementById(
-        "questionText"
-    ).textContent =
-        "Choose the correct answer:";
+    if (questionValue) {
+
+        questionValue.textContent =
+            value;
+
+    }
 
 
-    document.getElementById(
-        "questionValue"
-    ).textContent =
-        value;
+    renderAnswers();
+
+}
 
 
-    const answers =
+// ============================================================
+// RENDER ANSWERS
+// ============================================================
+
+function renderAnswers() {
+
+    const container =
         document.getElementById(
             "answers"
         );
 
 
-    answers.innerHTML = "";
+    if (!container)
+        return;
+
+
+    container.innerHTML = "";
 
 
     game.options.forEach(
-        (index, position) => {
+        (countryIndex, position) => {
 
             const button =
                 document.createElement(
@@ -1557,11 +601,11 @@ function renderQuestion() {
 
 
             button.textContent =
-                `${position + 1}. ${countries[index][0]}`;
+                `${position + 1}. ${countries[countryIndex][0]}`;
 
 
             button.onclick =
-                function() {
+                () => {
 
                     answerQuestion(
                         position
@@ -1570,7 +614,7 @@ function renderQuestion() {
                 };
 
 
-            answers.appendChild(
+            container.appendChild(
                 button
             );
 
@@ -1581,13 +625,79 @@ function renderQuestion() {
 
 
 // ============================================================
-// ANSWER
+// UPDATE GAME PROFILE STATS
 // ============================================================
 
-function answerQuestion(position) {
+function updateGameProfileStats() {
 
-    if (game.locked)
+    const profile =
+        getProfile();
+
+
+    if (!profile)
         return;
+
+
+    const xp =
+        document.getElementById(
+            "gameXP"
+        );
+
+
+    const coins =
+        document.getElementById(
+            "gameCoins"
+        );
+
+
+    const level =
+        document.getElementById(
+            "gameLevel"
+        );
+
+
+    if (xp) {
+
+        xp.textContent =
+            profile.xp;
+
+    }
+
+
+    if (coins) {
+
+        coins.textContent =
+            profile.coins;
+
+    }
+
+
+    if (level) {
+
+        level.textContent =
+            profile.level;
+
+    }
+
+}
+
+
+// ============================================================
+// ANSWER QUESTION
+// ============================================================
+
+function answerQuestion(
+    position
+) {
+
+    if (
+        game.locked ||
+        !game.active
+    ) {
+
+        return;
+
+    }
 
 
     const selected =
@@ -1609,13 +719,17 @@ function answerQuestion(position) {
     }
 
 
-    const p =
+    // --------------------------------------------------------
+    // Lucky Answer
+    // --------------------------------------------------------
+
+    const profile =
         getProfile();
 
 
     if (
-        p &&
-        p.luckyAnswer > 0
+        profile &&
+        profile.luckyAnswer > 0
     ) {
 
         const use =
@@ -1626,11 +740,13 @@ function answerQuestion(position) {
 
         if (use) {
 
-            p.luckyAnswer--;
+            profile.luckyAnswer--;
 
             save();
 
-            correctAnswer(true);
+            correctAnswer(
+                true
+            );
 
             return;
 
@@ -1649,7 +765,7 @@ function answerQuestion(position) {
 // ============================================================
 
 function correctAnswer(
-    savedByLucky = false
+    lucky = false
 ) {
 
     if (game.locked)
@@ -1659,8 +775,12 @@ function correctAnswer(
     game.locked = true;
 
 
-    const p =
+    const profile =
         getProfile();
+
+
+    if (!profile)
+        return;
 
 
     game.combo++;
@@ -1679,22 +799,39 @@ function correctAnswer(
     }
 
 
+    // --------------------------------------------------------
+    // BASE SCORE
+    // --------------------------------------------------------
+
     let baseScore;
 
 
     if (
         game.difficulty === 1
-    )
+    ) {
+
         baseScore = 100;
+
+    }
 
     else if (
         game.difficulty === 2
-    )
+    ) {
+
         baseScore = 150;
 
-    else
+    }
+
+    else {
+
         baseScore = 200;
 
+    }
+
+
+    // --------------------------------------------------------
+    // COMBO BONUS
+    // --------------------------------------------------------
 
     let comboBonus = 0;
 
@@ -1714,8 +851,12 @@ function correctAnswer(
         comboBonus;
 
 
+    // --------------------------------------------------------
+    // SCORE BOOST
+    // --------------------------------------------------------
+
     if (
-        p.scoreBoost > 0
+        profile.scoreBoost > 0
     ) {
 
         const use =
@@ -1726,7 +867,7 @@ function correctAnswer(
 
         if (use) {
 
-            p.scoreBoost--;
+            profile.scoreBoost--;
 
             gained =
                 Math.floor(
@@ -1738,8 +879,13 @@ function correctAnswer(
     }
 
 
-    game.score += gained;
+    game.score +=
+        gained;
 
+
+    // --------------------------------------------------------
+    // XP
+    // --------------------------------------------------------
 
     let gainedXP =
         50 +
@@ -1747,7 +893,7 @@ function correctAnswer(
 
 
     if (
-        p.doubleXP > 0
+        profile.doubleXP > 0
     ) {
 
         const use =
@@ -1758,7 +904,7 @@ function correctAnswer(
 
         if (use) {
 
-            p.doubleXP--;
+            profile.doubleXP--;
 
             gainedXP *= 2;
 
@@ -1767,8 +913,14 @@ function correctAnswer(
     }
 
 
-    addXP(gainedXP);
+    addXP(
+        gainedXP
+    );
 
+
+    // --------------------------------------------------------
+    // COINS
+    // --------------------------------------------------------
 
     const coinReward =
         20 +
@@ -1780,22 +932,45 @@ function correctAnswer(
     );
 
 
-    p.totalCorrect++;
+    // --------------------------------------------------------
+    // STATISTICS
+    // --------------------------------------------------------
 
-    p.totalQuestions++;
+    profile.totalCorrect++;
+
+    profile.totalQuestions++;
 
 
     save();
 
 
-    const message =
-        savedByLucky
-        ? `🍀 Lucky! +${gained} points, +${gainedXP} XP`
-        : `✅ Correct! +${gained} points, +${gainedXP} XP, +${coinReward} Coins`;
+    updateGameProfileStats();
 
 
-    toast(message);
+    // --------------------------------------------------------
+    // MESSAGE
+    // --------------------------------------------------------
 
+    if (lucky) {
+
+        toast(
+            `🍀 Lucky! +${gained} points, +${gainedXP} XP`
+        );
+
+    }
+
+    else {
+
+        toast(
+            `✅ Correct! +${gained} points, +${gainedXP} XP, +${coinReward} Coins`
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // NEXT
+    // --------------------------------------------------------
 
     setTimeout(
         nextQuestion,
@@ -1818,12 +993,20 @@ function wrongAnswer() {
     game.locked = true;
 
 
-    const p =
+    const profile =
         getProfile();
 
 
+    if (!profile)
+        return;
+
+
+    // --------------------------------------------------------
+    // SECOND CHANCE
+    // --------------------------------------------------------
+
     if (
-        p.secondChance > 0
+        profile.secondChance > 0
     ) {
 
         const use =
@@ -1834,15 +1017,15 @@ function wrongAnswer() {
 
         if (use) {
 
-            p.secondChance--;
+            profile.secondChance--;
 
             game.wrong++;
 
             game.combo = 0;
 
-            p.totalWrong++;
+            profile.totalWrong++;
 
-            p.totalQuestions++;
+            profile.totalQuestions++;
 
 
             save();
@@ -1866,6 +1049,10 @@ function wrongAnswer() {
     }
 
 
+    // --------------------------------------------------------
+    // NORMAL WRONG ANSWER
+    // --------------------------------------------------------
+
     game.wrong++;
 
     game.combo = 0;
@@ -1873,9 +1060,9 @@ function wrongAnswer() {
     game.lives--;
 
 
-    p.totalWrong++;
+    profile.totalWrong++;
 
-    p.totalQuestions++;
+    profile.totalQuestions++;
 
 
     save();
@@ -1906,19 +1093,27 @@ function wrongAnswer() {
 
 function useHint() {
 
-    if (game.locked)
+    if (
+        game.locked ||
+        !game.active
+    ) {
+
         return;
 
+    }
 
-    const p =
+
+    const profile =
         getProfile();
 
 
-    if (!p)
+    if (!profile)
         return;
 
 
-    if (game.hintUsed) {
+    if (
+        game.hintUsed
+    ) {
 
         toast(
             "Hint already used."
@@ -1929,7 +1124,9 @@ function useHint() {
     }
 
 
-    if (p.hints <= 0) {
+    if (
+        profile.hints <= 0
+    ) {
 
         toast(
             "You don't have any Hint."
@@ -1940,7 +1137,7 @@ function useHint() {
     }
 
 
-    p.hints--;
+    profile.hints--;
 
     game.hintUsed = true;
 
@@ -1967,9 +1164,14 @@ function useHint() {
 
     const wrongButtons =
         buttons.filter(
-            (button,index) =>
-                game.options[index] !==
-                game.currentCountry
+            (button,index) => {
+
+                return (
+                    game.options[index] !==
+                    game.currentCountry
+                );
+
+            }
         );
 
 
@@ -1994,10 +1196,18 @@ function useHint() {
     save();
 
 
-    document.getElementById(
-        "score"
-    ).textContent =
-        game.score;
+    const score =
+        document.getElementById(
+            "score"
+        );
+
+
+    if (score) {
+
+        score.textContent =
+            game.score;
+
+    }
 
 
     toast(
@@ -2013,22 +1223,40 @@ function useHint() {
 
 function finishGame() {
 
-    const p =
+    if (
+        !game.active
+    ) {
+
+        return;
+
+    }
+
+
+    game.active = false;
+
+
+    const profile =
         getProfile();
 
 
-    if (!p)
+    if (!profile)
         return;
 
 
+    // --------------------------------------------------------
+    // COMPLETION REWARD
+    // --------------------------------------------------------
+
     const completionReward =
         100 +
+
         (
             game.correct ===
             game.totalQuestions
             ? 250
             : 0
         ) +
+
         (
             game.difficulty === 3
             ? 100
@@ -2041,19 +1269,27 @@ function finishGame() {
     );
 
 
-    p.totalGames++;
+    // --------------------------------------------------------
+    // STATISTICS
+    // --------------------------------------------------------
+
+    profile.totalGames++;
 
 
     if (
         game.bestCombo >
-        p.bestCombo
+        profile.bestCombo
     ) {
 
-        p.bestCombo =
+        profile.bestCombo =
             game.bestCombo;
 
     }
 
+
+    // --------------------------------------------------------
+    // HIGH SCORE
+    // --------------------------------------------------------
 
     let newHighScore =
         false;
@@ -2061,10 +1297,10 @@ function finishGame() {
 
     if (
         game.score >
-        p.highScore
+        profile.highScore
     ) {
 
-        p.highScore =
+        profile.highScore =
             game.score;
 
         newHighScore =
@@ -2076,15 +1312,22 @@ function finishGame() {
     save();
 
 
+    // --------------------------------------------------------
+    // RESULT MESSAGE
+    // --------------------------------------------------------
+
     let message;
 
 
-    if (newHighScore) {
+    if (
+        newHighScore
+    ) {
 
         message =
             "🏆 NEW HIGH SCORE!";
 
     }
+
     else if (
         game.correct ===
         game.totalQuestions
@@ -2094,6 +1337,7 @@ function finishGame() {
             "🎉 PERFECT GAME!";
 
     }
+
     else {
 
         message =
@@ -2102,9 +1346,17 @@ function finishGame() {
     }
 
 
-    document.getElementById(
-        "resultInfo"
-    ).innerHTML = `
+    const result =
+        document.getElementById(
+            "resultInfo"
+        );
+
+
+    if (!result)
+        return;
+
+
+    result.innerHTML = `
 
         <div class="result-message">
             ${message}
@@ -2112,34 +1364,44 @@ function finishGame() {
 
         <div class="result-stat">
             <span>⭐ Score</span>
-            <strong>${game.score}</strong>
+            <strong>
+                ${game.score}
+            </strong>
         </div>
 
         <div class="result-stat">
             <span>✅ Correct</span>
-            <strong>${game.correct}</strong>
+            <strong>
+                ${game.correct}
+            </strong>
         </div>
 
         <div class="result-stat">
             <span>❌ Wrong</span>
-            <strong>${game.wrong}</strong>
+            <strong>
+                ${game.wrong}
+            </strong>
         </div>
 
         <div class="result-stat">
             <span>🔥 Best Combo</span>
-            <strong>${game.bestCombo}</strong>
+            <strong>
+                ${game.bestCombo}
+            </strong>
         </div>
 
         <div class="result-stat">
             <span>🪙 Coins</span>
-            <strong>${p.coins}</strong>
+            <strong>
+                ${profile.coins}
+            </strong>
         </div>
 
         <div class="result-stat">
             <span>🏆 Level</span>
             <strong>
-                ${p.level}
-                (${getRank(p.level)})
+                ${profile.level}
+                (${getRank(profile.level)})
             </strong>
         </div>
 
@@ -2159,179 +1421,31 @@ function finishGame() {
 
 function confirmQuitGame() {
 
-    if (game.locked)
-        return;
-
-
     if (
-        confirm(
-            "Quit this game?\nYour current game progress will be lost."
-        )
+        !game.active ||
+        game.locked
     ) {
 
-        game.locked = true;
-
-        goHome();
+        return;
 
     }
 
-}
 
-
-// ============================================================
-// COUNTRY DATABASE
-// ============================================================
-
-function openCountries() {
-
-    const container =
-        document.getElementById(
-            "countryList"
+    const quit =
+        confirm(
+            "Quit this game?\nYour current game progress will be lost."
         );
 
 
-    container.innerHTML = "";
+    if (!quit)
+        return;
 
 
-    document.getElementById(
-        "countryCount"
-    ).textContent =
-        countries.length;
+    game.active = false;
+
+    game.locked = true;
 
 
-    countries.forEach(
-        (c,index) => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "country-card";
-
-
-            div.innerHTML = `
-
-                <h3>
-                    ${index + 1}.
-                    ${escapeHTML(c[0])}
-                </h3>
-
-                <p>
-                    🏛️ Capital:
-                    ${escapeHTML(c[1])}
-                </p>
-
-                <p>
-                    💰 Currency:
-                    ${escapeHTML(c[2])}
-                </p>
-
-                <p>
-                    🌏 Region:
-                    ${escapeHTML(c[3])}
-                </p>
-
-            `;
-
-
-            container.appendChild(
-                div
-            );
-
-        }
-    );
-
-
-    showScreen(
-        "countriesScreen"
-    );
+    goHome();
 
 }
-
-
-// ============================================================
-// RULES
-// ============================================================
-
-function openRules() {
-
-    showScreen(
-        "rulesScreen"
-    );
-
-}
-
-
-// ============================================================
-// UPDATE LOG
-// ============================================================
-
-function openUpdateLog() {
-
-    showScreen(
-        "updateScreen"
-    );
-
-}
-
-
-// ============================================================
-// INFO
-// ============================================================
-
-function openInfo() {
-
-    showScreen(
-        "infoScreen"
-    );
-
-}
-
-
-// ============================================================
-// OWNER SECURITY
-// ============================================================
-//
-// Owner Panel is intentionally NOT displayed anywhere.
-//
-// This version does not pretend that browser JavaScript can
-// securely verify a computer's public IP.
-//
-// If an Owner Panel is added later, authentication should be
-// moved to a backend/server.
-// ============================================================
-
-
-// ============================================================
-// INITIALIZATION
-// ============================================================
-
-function initialize() {
-
-    if (
-        currentProfile >= 0 &&
-        !profiles[currentProfile]
-    ) {
-
-        currentProfile = -1;
-
-        save();
-
-    }
-
-
-    updateHeader();
-
-    updateMainProfile();
-
-}
-
-
-// ============================================================
-// START
-// ============================================================
-
-initialize();
