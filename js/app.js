@@ -1,161 +1,205 @@
 // ============================================================
 // ASIA COUNTRY GUESSING GAME
 // VERSION 2.0
-// APPLICATION BOOT
+// APPLICATION BOOTSTRAP
 // ============================================================
 
-(function () {
+import {
+    countries,
+    COUNTRY_COUNT,
+    regions,
+    getCountry,
+    findCountry,
+    getCountriesByRegion
+} from "./countries.js";
 
-    "use strict";
+import {
+    ProfileManager
+} from "./profile.js";
 
 
-    function boot() {
+// ============================================================
+// GLOBAL COUNTRY DATA
+// ============================================================
+
+window.countries =
+    countries;
+
+window.COUNTRY_COUNT =
+    COUNTRY_COUNT;
+
+window.regions =
+    regions;
+
+window.getCountry =
+    getCountry;
+
+window.findCountry =
+    findCountry;
+
+window.getCountriesByRegion =
+    getCountriesByRegion;
+
+
+// ============================================================
+// PROFILE MANAGER
+// ============================================================
+
+const profileManager =
+    new ProfileManager();
+
+window.profileManager =
+    profileManager;
+
+
+// ============================================================
+// PROFILE API
+// ============================================================
+
+window.getProfile =
+    function () {
+
+        return profileManager
+            .getCurrentProfile();
+
+    };
+
+
+window.getProfiles =
+    function () {
+
+        return profileManager
+            .getProfiles();
+
+    };
+
+
+window.createProfile =
+    function (name) {
+
+        return profileManager
+            .createProfile(name);
+
+    };
+
+
+window.selectProfile =
+    function (index) {
+
+        return profileManager
+            .selectProfile(index);
+
+    };
+
+
+window.deleteCurrentProfile =
+    function () {
+
+        return profileManager
+            .deleteCurrentProfile();
+
+    };
+
+
+window.addXP =
+    function (amount) {
+
+        return profileManager
+            .addXP(amount);
+
+    };
+
+
+window.addCoins =
+    function (amount) {
+
+        return profileManager
+            .addCoins(amount);
+
+    };
+
+
+window.spendCoins =
+    function (amount) {
+
+        return profileManager
+            .spendCoins(amount);
+
+    };
+
+
+window.getRank =
+    function (level) {
+
+        return profileManager
+            .getRank(level);
+
+    };
+
+
+window.save =
+    function () {
+
+        return profileManager
+            .save();
+
+    };
+
+
+// ============================================================
+// COMPATIBILITY API
+// ============================================================
+
+window.loadGame =
+    function () {
+
+        return profileManager
+            .getCurrentProfile();
+
+    };
+
+
+// ============================================================
+// BOOT
+// ============================================================
+
+window.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
         console.log(
-            "=========================================="
+            "🌏 Asia Country Guessing Game V2.0"
         );
 
         console.log(
-            "🌏 ASIA COUNTRY GUESSING GAME v2.0"
+            "Countries:",
+            countries.length
         );
 
         console.log(
-            "Booting..."
+            "Profiles:",
+            profileManager
+                .getProfiles()
+                .length
         );
-
-
-        // ----------------------------------------------------
-        // CHECK COUNTRY DATA
-        // ----------------------------------------------------
 
         if (
-            !Array.isArray(window.countries)
-        ) {
-
-            console.error(
-                "❌ countries.js failed to load."
-            );
-
-            return;
-        }
-
-
-        console.log(
-            `✅ Countries loaded: ${countries.length}`
-        );
-
-
-        // ----------------------------------------------------
-        // CHECK PROFILE
-        // ----------------------------------------------------
-
-        if (
-            typeof window.getProfile !==
+            typeof initializeUI ===
             "function"
         ) {
 
-            console.error(
-                "❌ Profile system failed."
-            );
+            initializeUI();
 
-            return;
         }
 
-
-        console.log(
-            "✅ Profile system loaded."
-        );
-
-
-        // ----------------------------------------------------
-        // CHECK UI
-        // ----------------------------------------------------
-
         if (
-            typeof window.showScreen !==
+            typeof refreshUI ===
             "function"
         ) {
 
-            console.error(
-                "❌ UI system failed."
-            );
+            refreshUI();
 
-            return;
         }
 
-
-        console.log(
-            "✅ UI system loaded."
-        );
-
-
-        // ----------------------------------------------------
-        // CHECK GAME
-        // ----------------------------------------------------
-
-        if (
-            typeof window.startGame !==
-            "function"
-        ) {
-
-            console.error(
-                "❌ Game engine failed."
-            );
-
-            return;
-        }
-
-
-        console.log(
-            "✅ Game engine loaded."
-        );
-
-
-        // ----------------------------------------------------
-        // REFRESH UI
-        // ----------------------------------------------------
-
-        if (
-            typeof window.refreshUI ===
-            "function"
-        ) {
-
-            window.refreshUI();
-        }
-
-
-        if (
-            typeof window.initializeUI ===
-            "function"
-        ) {
-
-            window.initializeUI();
-        }
-
-
-        console.log(
-            "✅ Asia Country Guessing Game v2.0 ready."
-        );
-
-        console.log(
-            "=========================================="
-        );
     }
-
-
-    if (
-        document.readyState ===
-        "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            boot
-        );
-
-    } else {
-
-        boot();
-    }
-
-})();
+);
