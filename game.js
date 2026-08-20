@@ -1,7 +1,7 @@
 // ============================================================
 // ASIA COUNTRY GUESSING GAME
 // WEB EDITION
-// VERSION 1.0
+// VERSION 1.5
 // ============================================================
 
 
@@ -69,6 +69,13 @@ const countries = [
     ["Russia","Moscow","Ruble","North Asia"]
 
 ];
+
+
+// ============================================================
+// VERSION
+// ============================================================
+
+const GAME_VERSION = "1.5";
 
 
 // ============================================================
@@ -141,6 +148,91 @@ catch (error) {
     currentProfile = -1;
 
 }
+
+
+// ============================================================
+// PROFILE MIGRATION
+// ============================================================
+
+function migrateProfile(profile) {
+
+    if (!profile || typeof profile !== "object") {
+
+        return newProfile("Player");
+
+    }
+
+
+    if (typeof profile.name !== "string") {
+
+        profile.name = "Player";
+
+    }
+
+
+    if (typeof profile.level !== "number")
+        profile.level = 1;
+
+    if (typeof profile.xp !== "number")
+        profile.xp = 0;
+
+    if (typeof profile.highScore !== "number")
+        profile.highScore = 0;
+
+    if (typeof profile.totalGames !== "number")
+        profile.totalGames = 0;
+
+    if (typeof profile.totalCorrect !== "number")
+        profile.totalCorrect = 0;
+
+    if (typeof profile.totalWrong !== "number")
+        profile.totalWrong = 0;
+
+    if (typeof profile.totalQuestions !== "number")
+        profile.totalQuestions = 0;
+
+    if (typeof profile.bestCombo !== "number")
+        profile.bestCombo = 0;
+
+    if (typeof profile.coins !== "number")
+        profile.coins = 500;
+
+    if (typeof profile.totalCoinsEarned !== "number")
+        profile.totalCoinsEarned = profile.coins;
+
+
+    if (typeof profile.hints !== "number")
+        profile.hints = 1;
+
+    if (typeof profile.extraLives !== "number")
+        profile.extraLives = 0;
+
+    if (typeof profile.doubleXP !== "number")
+        profile.doubleXP = 0;
+
+    if (typeof profile.scoreBoost !== "number")
+        profile.scoreBoost = 0;
+
+    if (typeof profile.secondChance !== "number")
+        profile.secondChance = 0;
+
+    if (typeof profile.luckyAnswer !== "number")
+        profile.luckyAnswer = 0;
+
+
+    profile.level =
+        calculateLevel(profile.xp);
+
+
+    return profile;
+
+}
+
+
+profiles =
+    profiles.map(
+        migrateProfile
+    );
 
 
 // ============================================================
@@ -273,6 +365,7 @@ function showScreen(id) {
 
     target.classList.add("active");
 
+
     window.scrollTo({
         top: 0,
         behavior: "smooth"
@@ -362,6 +455,10 @@ function updateHeader() {
         );
 
 
+    if (!name || !level || !coins)
+        return;
+
+
     if (!p) {
 
         name.textContent =
@@ -432,6 +529,16 @@ function updateMainProfile() {
         : 0;
 
 
+    const currentLevelXP =
+        getCurrentLevelXP(p.xp);
+
+    const nextLevelXP =
+        getNextLevelXP(p.xp);
+
+    const levelProgress =
+        getLevelProgress(p.xp);
+
+
     container.innerHTML = `
 
         <div class="result-stat">
@@ -454,9 +561,35 @@ function updateMainProfile() {
             <strong>${p.xp}</strong>
         </div>
 
+        <div class="profile-progress">
+            <div class="profile-progress-text">
+                <span>Level Progress</span>
+                <strong>
+                    ${currentLevelXP}/${nextLevelXP}
+                </strong>
+            </div>
+
+            <div class="profile-progress-bar">
+                <div
+                    class="profile-progress-fill"
+                    style="width:${levelProgress}%">
+                </div>
+            </div>
+
+            <small>
+                ${Math.round(levelProgress)}%
+                to next level
+            </small>
+        </div>
+
         <div class="result-stat">
             <span>💰 Coins</span>
             <strong>${p.coins}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🪙 Total Coins Earned</span>
+            <strong>${p.totalCoinsEarned}</strong>
         </div>
 
         <div class="result-stat">
@@ -467,6 +600,21 @@ function updateMainProfile() {
         <div class="result-stat">
             <span>🎯 Accuracy</span>
             <strong>${accuracy}%</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>✅ Correct</span>
+            <strong>${p.totalCorrect}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>❌ Wrong</span>
+            <strong>${p.totalWrong}</strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🔥 Best Combo</span>
+            <strong>${p.bestCombo}</strong>
         </div>
 
         <div class="result-stat">
@@ -488,6 +636,42 @@ function calculateLevel(xp) {
     return Math.floor(
         xp / 500
     ) + 1;
+
+}
+
+
+function getCurrentLevelXP(xp) {
+
+    const level =
+        calculateLevel(xp);
+
+    return xp -
+        (
+            (level - 1) * 500
+        );
+
+}
+
+
+function getNextLevelXP(xp) {
+
+    return 500;
+
+}
+
+
+function getLevelProgress(xp) {
+
+    const current =
+        getCurrentLevelXP(xp);
+
+    return Math.min(
+        100,
+        Math.max(
+            0,
+            (current / 500) * 100
+        )
+    );
 
 }
 
@@ -608,6 +792,10 @@ function createProfileFromInput() {
         document.getElementById(
             "profileNameInput"
         );
+
+
+    if (!input)
+        return;
 
 
     let name =
@@ -803,6 +991,10 @@ function renderProfiles() {
         );
 
 
+    if (!container)
+        return;
+
+
     container.innerHTML = "";
 
 
@@ -927,10 +1119,18 @@ function updateShop() {
         return;
 
 
-    document.getElementById(
-        "shopCoins"
-    ).textContent =
-        p.coins;
+    const shopCoins =
+        document.getElementById(
+            "shopCoins"
+        );
+
+
+    if (shopCoins) {
+
+        shopCoins.textContent =
+            p.coins;
+
+    }
 
 }
 
@@ -946,6 +1146,19 @@ function buyItem(
 
     if (!p)
         return;
+
+
+    if (
+        typeof p[item] !== "number"
+    ) {
+
+        toast(
+            "Invalid item."
+        );
+
+        return;
+
+    }
 
 
     if (p.coins < price) {
@@ -1016,6 +1229,10 @@ function renderInventory() {
         );
 
 
+    if (!p || !container)
+        return;
+
+
     container.innerHTML = `
 
         <div class="inventory-item">
@@ -1057,9 +1274,6 @@ function openInventoryDuringGame() {
 
     if (!getProfile())
         return;
-
-
-    renderInventory();
 
 
     const p =
@@ -1114,7 +1328,9 @@ let game = {
 
     hintUsed: false,
 
-    locked: false
+    locked: false,
+
+    secondChanceUsed: false
 
 };
 
@@ -1212,7 +1428,9 @@ function startGame(difficulty) {
 
         hintUsed: false,
 
-        locked: false
+        locked: false,
+
+        secondChanceUsed: false
 
     };
 
@@ -1282,6 +1500,8 @@ function nextQuestion() {
     game.hintUsed = false;
 
     game.locked = false;
+
+    game.secondChanceUsed = false;
 
 
     let correct;
@@ -1424,7 +1644,7 @@ function renderQuestion() {
     document.getElementById(
         "questionNumber"
     ).textContent =
-        `${game.question}/10`;
+        `${game.question}/${game.totalQuestions}`;
 
 
     document.getElementById(
@@ -1590,6 +1810,16 @@ function answerQuestion(position) {
         return;
 
 
+    if (
+        position < 0 ||
+        position >= game.options.length
+    ) {
+
+        return;
+
+    }
+
+
     const selected =
         game.options[position];
 
@@ -1615,7 +1845,8 @@ function answerQuestion(position) {
 
     if (
         p &&
-        p.luckyAnswer > 0
+        p.luckyAnswer > 0 &&
+        !game.secondChanceUsed
     ) {
 
         const use =
@@ -1661,6 +1892,10 @@ function correctAnswer(
 
     const p =
         getProfile();
+
+
+    if (!p)
+        return;
 
 
     game.combo++;
@@ -1815,20 +2050,26 @@ function wrongAnswer() {
         return;
 
 
-    game.locked = true;
-
-
     const p =
         getProfile();
 
 
+    if (!p)
+        return;
+
+
+    // --------------------------------------------------------
+    // SECOND CHANCE
+    // --------------------------------------------------------
+
     if (
-        p.secondChance > 0
+        p.secondChance > 0 &&
+        !game.secondChanceUsed
     ) {
 
         const use =
             confirm(
-                "Wrong answer!\nUse Second Chance?"
+                "Wrong answer!\nUse Second Chance to try again?"
             );
 
 
@@ -1836,26 +2077,31 @@ function wrongAnswer() {
 
             p.secondChance--;
 
-            game.wrong++;
+            game.secondChanceUsed = true;
 
-            game.combo = 0;
-
-            p.totalWrong++;
-
-            p.totalQuestions++;
+            game.locked = false;
 
 
             save();
 
 
-            toast(
-                "🔄 Second Chance activated!"
+            const buttons =
+                document.querySelectorAll(
+                    "#answers button"
+                );
+
+
+            buttons.forEach(
+                button => {
+
+                    button.disabled = false;
+
+                }
             );
 
 
-            setTimeout(
-                nextQuestion,
-                900
+            toast(
+                "🔄 Second Chance activated! Try again!"
             );
 
 
@@ -1864,6 +2110,9 @@ function wrongAnswer() {
         }
 
     }
+
+
+    game.locked = true;
 
 
     game.wrong++;
@@ -1987,6 +2236,8 @@ function useHint() {
                     "removed"
                 );
 
+                button.disabled = true;
+
             }
         );
 
@@ -2102,6 +2353,21 @@ function finishGame() {
     }
 
 
+    const accuracy =
+        game.question > 0
+        ? Math.round(
+            (
+                game.correct /
+                game.question
+            ) * 100
+        )
+        : 0;
+
+
+    const levelProgress =
+        getLevelProgress(p.xp);
+
+
     document.getElementById(
         "resultInfo"
     ).innerHTML = `
@@ -2126,6 +2392,11 @@ function finishGame() {
         </div>
 
         <div class="result-stat">
+            <span>🎯 Accuracy</span>
+            <strong>${accuracy}%</strong>
+        </div>
+
+        <div class="result-stat">
             <span>🔥 Best Combo</span>
             <strong>${game.bestCombo}</strong>
         </div>
@@ -2136,11 +2407,39 @@ function finishGame() {
         </div>
 
         <div class="result-stat">
+            <span>✨ XP</span>
+            <strong>${p.xp}</strong>
+        </div>
+
+        <div class="result-stat">
             <span>🏆 Level</span>
             <strong>
                 ${p.level}
                 (${getRank(p.level)})
             </strong>
+        </div>
+
+        <div class="profile-progress result-progress">
+
+            <div class="profile-progress-text">
+
+                <span>Level Progress</span>
+
+                <strong>
+                    ${Math.round(levelProgress)}%
+                </strong>
+
+            </div>
+
+            <div class="profile-progress-bar">
+
+                <div
+                    class="profile-progress-fill"
+                    style="width:${levelProgress}%">
+                </div>
+
+            </div>
+
         </div>
 
     `;
@@ -2190,13 +2489,25 @@ function openCountries() {
         );
 
 
+    if (!container)
+        return;
+
+
     container.innerHTML = "";
 
 
-    document.getElementById(
-        "countryCount"
-    ).textContent =
-        countries.length;
+    const countryCount =
+        document.getElementById(
+            "countryCount"
+        );
+
+
+    if (countryCount) {
+
+        countryCount.textContent =
+            countries.length;
+
+    }
 
 
     countries.forEach(
@@ -2237,9 +2548,7 @@ function openCountries() {
             `;
 
 
-            container.appendChild(
-                div
-            );
+            container.appendChild(div);
 
         }
     );
@@ -2295,13 +2604,14 @@ function openInfo() {
 // OWNER SECURITY
 // ============================================================
 //
-// Owner Panel is intentionally NOT displayed anywhere.
+// Owner Panel is intentionally NOT displayed.
 //
-// This version does not pretend that browser JavaScript can
-// securely verify a computer's public IP.
+// Version 1.5 does NOT use browser-side IP verification.
+// Browser JavaScript cannot securely hide or protect a
+// secret IP/password.
 //
-// If an Owner Panel is added later, authentication should be
-// moved to a backend/server.
+// If an Owner Panel is added in a future version,
+// authentication should be handled by a backend/server.
 // ============================================================
 
 
@@ -2318,9 +2628,16 @@ function initialize() {
 
         currentProfile = -1;
 
-        save();
-
     }
+
+
+    profiles =
+        profiles.map(
+            migrateProfile
+        );
+
+
+    save();
 
 
     updateHeader();
