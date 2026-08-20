@@ -58,7 +58,7 @@ function safeParse(
 // LOAD PROFILES
 // ============================================================
 
-export function loadProfiles() {
+function loadProfiles() {
 
     try {
 
@@ -113,7 +113,7 @@ export function loadProfiles() {
 // SAVE PROFILES
 // ============================================================
 
-export function saveProfiles(
+function saveProfiles(
     profiles
 ) {
 
@@ -149,7 +149,7 @@ export function saveProfiles(
 // LOAD CURRENT PROFILE
 // ============================================================
 
-export function loadCurrentProfile() {
+function loadCurrentProfile() {
 
     try {
 
@@ -203,7 +203,7 @@ export function loadCurrentProfile() {
 // SAVE CURRENT PROFILE
 // ============================================================
 
-export function saveCurrentProfile(
+function saveCurrentProfile(
     index
 ) {
 
@@ -237,7 +237,7 @@ export function saveCurrentProfile(
 // CLEAR V2 DATA
 // ============================================================
 
-export function clearV2Storage() {
+function clearV2Storage() {
 
     try {
 
@@ -272,7 +272,7 @@ export function clearV2Storage() {
 // STORAGE INFORMATION
 // ============================================================
 
-export function getStorageInfo() {
+function getStorageInfo() {
 
     let profilesSize = 0;
     let currentSize = 0;
