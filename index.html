@@ -15,6 +15,7 @@
         <h1>🌏 Asia Country Guessing Game</h1>
         <p>Test your knowledge of Asia!</p>
     </div>
+
     <div class="header-profile">
         <span>👤 <strong id="topName">Guest</strong></span>
         <span>⭐ Lv.<strong id="topLevel">1</strong></span>
@@ -28,6 +29,7 @@
         <p>How well do you know the countries of Asia?</p>
         <button class="big-button" onclick="startGameMenu()">🎮 Start Game</button>
     </div>
+
     <div class="card">
         <h2>🏠 Main Menu</h2>
         <div class="menu-grid">
@@ -41,6 +43,7 @@
             <button onclick="openInfo()">ℹ️ About</button>
         </div>
     </div>
+
     <div class="card">
         <h2>📊 Current Profile</h2>
         <div id="mainProfileInfo">No profile selected.</div>
@@ -50,9 +53,22 @@
 <section id="difficultyScreen" class="screen">
     <div class="card centered">
         <h2>🎯 Select Difficulty</h2>
-        <button class="difficulty easy" onclick="startGame(1)">🟢 EASY<small>Capital questions only</small></button>
-        <button class="difficulty normal" onclick="startGame(2)">🟡 NORMAL<small>Capital + country questions</small></button>
-        <button class="difficulty hard" onclick="startGame(3)">🔴 HARD<small>Capital + country + unique currency + region questions</small></button>
+
+        <button class="difficulty easy" onclick="startGame(1)">
+            🟢 EASY
+            <small>Capital questions only</small>
+        </button>
+
+        <button class="difficulty normal" onclick="startGame(2)">
+            🟡 NORMAL
+            <small>Capital + country questions</small>
+        </button>
+
+        <button class="difficulty hard" onclick="startGame(3)">
+            🔴 HARD
+            <small>Capital + country + unique currency + region questions</small>
+        </button>
+
         <button class="secondary" onclick="goHome()">← Back</button>
     </div>
 </section>
@@ -63,17 +79,25 @@
         <div>❤️ Lives <strong id="lives">3</strong></div>
         <div>🔥 Combo <strong id="combo">0</strong></div>
     </div>
+
     <div class="stats-bar">
         <div>⭐ Score<strong id="score">0</strong></div>
         <div>✨ XP<strong id="gameXP">0</strong></div>
         <div>🪙 Coins<strong id="gameCoins">0</strong></div>
         <div>🏆 Level<strong id="gameLevel">1</strong></div>
     </div>
+
     <div class="card question-card">
         <div id="questionType" class="question-type">Question</div>
-        <h2 id="questionText">Choose the correct answer</h2>
+
+        <h2 id="questionText">
+            Choose the correct answer
+        </h2>
+
         <div id="questionValue" class="question-value"></div>
+
         <div id="answers" class="answers"></div>
+
         <div class="game-tools">
             <button onclick="useHint()">💡 Hint</button>
             <button onclick="openInventoryDuringGame()">🎒 Inventory</button>
@@ -87,27 +111,83 @@
         <h2>👤 Profiles</h2>
         <div id="profileList">No profiles.</div>
     </div>
+
     <div class="card">
         <h2>➕ Create Profile</h2>
-        <input id="profileNameInput" type="text" maxlength="20" placeholder="Enter profile name">
-        <button onclick="createProfileFromInput()">Create Profile</button>
-        <button class="danger" onclick="deleteProfile()">🗑️ Delete Selected Profile</button>
-        <button class="secondary" onclick="goHome()">← Back</button>
+
+        <input
+            id="profileNameInput"
+            type="text"
+            maxlength="20"
+            placeholder="Enter profile name">
+
+        <button onclick="createProfileFromInput()">
+            Create Profile
+        </button>
+
+        <button class="danger" onclick="deleteProfile()">
+            🗑️ Delete Selected Profile
+        </button>
+
+        <button class="secondary" onclick="goHome()">
+            ← Back
+        </button>
     </div>
 </section>
 
 <section id="shopScreen" class="screen">
     <div class="card">
         <h2>🛒 Shop</h2>
-        <p class="shop-balance">Your Coins: 🪙 <strong id="shopCoins">0</strong></p>
+
+        <p class="shop-balance">
+            Your Coins:
+            🪙 <strong id="shopCoins">0</strong>
+        </p>
+
         <div class="shop-grid">
-            <div class="shop-item"><h3>💡 Hint</h3><p>Remove two wrong answers.</p><strong>100 🪙</strong><button onclick="buyItem('hints',100)">Buy</button></div>
-            <div class="shop-item"><h3>❤️ Extra Life</h3><p>Start a game with +1 life.</p><strong>250 🪙</strong><button onclick="buyItem('extraLives',250)">Buy</button></div>
-            <div class="shop-item"><h3>✨ Double XP</h3><p>Double XP from one correct answer.</p><strong>500 🪙</strong><button onclick="buyItem('doubleXP',500)">Buy</button></div>
-            <div class="shop-item"><h3>📈 Score Boost</h3><p>Increase one score reward by 25%.</p><strong>500 🪙</strong><button onclick="buyItem('scoreBoost',500)">Buy</button></div>
-            <div class="shop-item"><h3>🔄 Second Chance</h3><p>Prevent one life loss.</p><strong>750 🪙</strong><button onclick="buyItem('secondChance',750)">Buy</button></div>
-            <div class="shop-item"><h3>🍀 Lucky Answer</h3><p>Turn one wrong answer into a correct one.</p><strong>1500 🪙</strong><button onclick="buyItem('luckyAnswer',1500)">Buy</button></div>
+            <div class="shop-item">
+                <h3>💡 Hint</h3>
+                <p>Remove two wrong answers.</p>
+                <strong>100 🪙</strong>
+                <button onclick="buyItem('hints',100)">Buy</button>
+            </div>
+
+            <div class="shop-item">
+                <h3>❤️ Extra Life</h3>
+                <p>Start a game with +1 life.</p>
+                <strong>250 🪙</strong>
+                <button onclick="buyItem('extraLives',250)">Buy</button>
+            </div>
+
+            <div class="shop-item">
+                <h3>✨ Double XP</h3>
+                <p>Double XP from one correct answer.</p>
+                <strong>500 🪙</strong>
+                <button onclick="buyItem('doubleXP',500)">Buy</button>
+            </div>
+
+            <div class="shop-item">
+                <h3>📈 Score Boost</h3>
+                <p>Increase one score reward by 25%.</p>
+                <strong>500 🪙</strong>
+                <button onclick="buyItem('scoreBoost',500)">Buy</button>
+            </div>
+
+            <div class="shop-item">
+                <h3>🔄 Second Chance</h3>
+                <p>Prevent one life loss.</p>
+                <strong>750 🪙</strong>
+                <button onclick="buyItem('secondChance',750)">Buy</button>
+            </div>
+
+            <div class="shop-item">
+                <h3>🍀 Lucky Answer</h3>
+                <p>Turn one wrong answer into a correct one.</p>
+                <strong>1500 🪙</strong>
+                <button onclick="buyItem('luckyAnswer',1500)">Buy</button>
+            </div>
         </div>
+
         <button class="secondary" onclick="goHome()">← Back</button>
     </div>
 </section>
@@ -123,8 +203,14 @@
 <section id="countriesScreen" class="screen">
     <div class="card">
         <h2>🌏 Country Database</h2>
-        <p>Countries available in the game: <strong id="countryCount">0</strong></p>
+
+        <p>
+            Countries available in the game:
+            <strong id="countryCount">0</strong>
+        </p>
+
         <div id="countryList"></div>
+
         <button class="secondary" onclick="goHome()">← Back</button>
     </div>
 </section>
@@ -132,6 +218,7 @@
 <section id="rulesScreen" class="screen">
     <div class="card">
         <h2>📖 Game Rules</h2>
+
         <ol class="rules-list">
             <li>Each game contains 10 questions.</li>
             <li>You start with 3 lives.</li>
@@ -144,6 +231,7 @@
             <li>Your Level determines your Rank.</li>
             <li>Difficulty changes the question types.</li>
         </ol>
+
         <button class="secondary" onclick="goHome()">← Back</button>
     </div>
 </section>
@@ -151,9 +239,14 @@
 <section id="updateScreen" class="screen">
     <div class="card">
         <h2>📝 Update Log</h2>
+
         <div class="update-entry">
             <h3>🚀 Version 1.1</h3>
-            <p class="date">Question-system fixes and gameplay balancing</p>
+
+            <p class="date">
+                Question-system fixes and gameplay balancing
+            </p>
+
             <ul>
                 <li>🌏 Improved Asian country database.</li>
                 <li>🎯 Fixed ambiguous currency questions.</li>
@@ -163,6 +256,7 @@
                 <li>🎮 Kept Easy / Normal / Hard, Shop, Inventory, XP, Coins and Profiles.</li>
             </ul>
         </div>
+
         <button class="secondary" onclick="goHome()">← Back</button>
     </div>
 </section>
@@ -170,26 +264,55 @@
 <section id="infoScreen" class="screen">
     <div class="card">
         <h2>ℹ️ About the Game</h2>
-        <p>Asia Country Guessing Game is a browser-based educational game about Asian countries.</p>
-        <p>The game works on PC, Android and iPhone through a modern web browser.</p>
-        <p>Version: <strong>1.1</strong></p>
-        <button class="secondary" onclick="goHome()">← Back</button>
+
+        <p>
+            Asia Country Guessing Game is a browser-based
+            educational game about Asian countries.
+        </p>
+
+        <p>
+            The game works on PC, Android and iPhone
+            through a modern web browser.
+        </p>
+
+        <p>
+            Version:
+            <strong>1.1</strong>
+        </p>
+
+        <button class="secondary" onclick="goHome()">
+            ← Back
+        </button>
     </div>
 </section>
 
 <section id="resultScreen" class="screen">
     <div class="card result-card">
         <h2>🏆 Game Over</h2>
+
         <div id="resultInfo"></div>
-        <button onclick="startGame(game.difficulty)">🎮 Play Again</button>
-        <button class="secondary" onclick="goHome()">🏠 Main Menu</button>
+
+        <button onclick="startGame(game.difficulty)">
+            🎮 Play Again
+        </button>
+
+        <button class="secondary" onclick="goHome()">
+            🏠 Main Menu
+        </button>
     </div>
 </section>
 
 <div id="toast"></div>
+
 </div>
 
-<footer>Asia Country Guessing Game<br>Version 1.1</footer>
+<footer>
+    Asia Country Guessing Game
+    <br>
+    Version 1.1
+</footer>
+
 <script src="game.js"></script>
+
 </body>
 </html>
