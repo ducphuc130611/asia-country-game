@@ -1,522 +1,2207 @@
-*{box-sizing:border-box}
+/* ============================================================
+   ASIA COUNTRY GUESSING GAME
+   VERSION 2.0
+   MAIN STYLE
+   ============================================================ */
 
-html,body{
-    margin:0;
-    padding:0;
-    min-height:100%
+*{
+    box-sizing:border-box;
 }
 
+
+html,
 body{
-    font-family:Arial,Helvetica,sans-serif;
-    color:white;
+    margin:0;
+    padding:0;
+    min-height:100%;
+}
+
+
+body{
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color:#f8fafc;
+
     background:
         radial-gradient(
             circle at top,
-            #163b60,
-            #07111f 60%
+            #16466f 0%,
+            #0b1c30 42%,
+            #050d18 100%
         );
-    min-height:100vh
+
+    min-height:100vh;
 }
 
-button,input{
-    font:inherit
+
+button,
+input{
+    font:inherit;
 }
+
 
 button{
+
     border:none;
+
     border-radius:12px;
+
     padding:14px 18px;
+
     margin:5px 0;
+
     color:white;
-    background:#1677ff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1677ff,
+            #2563eb
+        );
+
     font-weight:bold;
+
     cursor:pointer;
+
     transition:
-        transform .15s,
-        opacity .15s
+        transform .15s ease,
+        opacity .15s ease,
+        box-shadow .15s ease;
+
 }
+
 
 button:hover{
-    transform:translateY(-2px);
-    opacity:.9
+
+    transform:
+        translateY(-2px);
+
+    opacity:.95;
+
+    box-shadow:
+        0 8px 20px
+        rgba(0,0,0,.25);
+
 }
+
 
 button:active{
-    transform:scale(.97)
+
+    transform:
+        scale(.97);
+
 }
+
+
+button:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.5;
+
+    transform:none;
+
+    box-shadow:none;
+
+}
+
 
 button.secondary{
-    background:#475569
+
+    background:
+        linear-gradient(
+            135deg,
+            #475569,
+            #334155
+        );
+
 }
+
 
 button.danger{
-    background:#dc2626
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #b91c1c
+        );
+
 }
+
 
 button.big-button{
+
     width:100%;
-    min-height:70px;
-    font-size:20px
+
+    min-height:72px;
+
+    font-size:20px;
+
 }
+
+
+/* ============================================================
+   APP
+   ============================================================ */
 
 #app{
-    min-height:calc(100vh - 80px)
+
+    min-height:
+        calc(100vh - 90px);
+
 }
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
 
 .header{
+
     position:sticky;
+
     top:0;
+
     z-index:50;
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
+
     gap:20px;
-    padding:18px 5%;
-    background:rgba(4,14,28,.96);
-    border-bottom:1px solid rgba(255,255,255,.1)
+
+    padding:
+        17px 5%;
+
+    background:
+        rgba(3,12,25,.94);
+
+    backdrop-filter:
+        blur(14px);
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+
 }
+
 
 .header-title h1{
+
     margin:0;
-    font-size:26px
+
+    font-size:26px;
+
+    letter-spacing:-.5px;
+
 }
+
 
 .header-title p{
-    margin:5px 0 0;
-    color:#aebfd1
+
+    margin:
+        5px 0 0;
+
+    color:#94a3b8;
+
 }
+
 
 .header-profile{
+
     display:flex;
-    gap:15px;
+
     align-items:center;
-    white-space:nowrap
+
+    gap:10px;
+
+    white-space:nowrap;
+
 }
+
+
+.header-profile span{
+
+    padding:
+        9px 12px;
+
+    border-radius:10px;
+
+    background:
+        rgba(255,255,255,.05);
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
+}
+
+
+/* ============================================================
+   SCREEN
+   ============================================================ */
 
 .screen{
+
     display:none;
+
     width:100%;
+
     max-width:1100px;
+
     margin:auto;
-    padding:30px 20px
+
+    padding:
+        30px 20px;
+
 }
+
 
 .screen.active{
-    display:block
+
+    display:block;
+
+    animation:
+        screenIn .25s ease;
+
 }
+
+
+@keyframes screenIn{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(8px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* ============================================================
+   CARD
+   ============================================================ */
 
 .card{
-    background:rgba(15,31,50,.95);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17,37,59,.96),
+            rgba(10,25,42,.96)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius:20px;
+
     padding:25px;
+
     margin-bottom:20px;
+
     box-shadow:
-        0 15px 40px
-        rgba(0,0,0,.3)
+        0 18px 45px
+        rgba(0,0,0,.3);
+
 }
+
 
 .card h2{
-    margin-top:0
+
+    margin-top:0;
+
 }
 
-.hero-card{
-    text-align:center;
-    padding:40px 25px
-}
-
-.hero-card h2{
-    font-size:32px
-}
 
 .centered{
+
     max-width:650px;
-    margin:40px auto
+
+    margin:
+        40px auto;
+
 }
+
+
+/* ============================================================
+   SECTION TITLE
+   ============================================================ */
+
+.section-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+    margin-bottom:20px;
+
+}
+
+
+.section-title > span{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:14px;
+
+    background:
+        rgba(37,99,235,.15);
+
+    font-size:24px;
+
+}
+
+
+.section-title h2{
+
+    margin:
+        0 0 3px;
+
+}
+
+
+.section-title p{
+
+    margin:0;
+
+    color:#94a3b8;
+
+    font-size:14px;
+
+}
+
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.hero-card{
+
+    text-align:center;
+
+    padding:
+        55px 30px;
+
+}
+
+
+.hero-icon{
+
+    font-size:60px;
+
+    margin-bottom:10px;
+
+    filter:
+        drop-shadow(
+            0 5px 15px
+            rgba(37,99,235,.3)
+        );
+
+}
+
+
+.hero-card h2{
+
+    font-size:34px;
+
+    margin:
+        5px 0 10px;
+
+}
+
+
+.hero-card p{
+
+    color:#cbd5e1;
+
+    margin-bottom:25px;
+
+}
+
+
+/* ============================================================
+   MAIN MENU
+   ============================================================ */
 
 .menu-grid{
+
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:12px;
+
 }
+
 
 .menu-grid button{
-    min-height:65px;
-    font-size:16px
+
+    min-height:72px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    font-size:15px;
+
 }
+
+
+.menu-grid button:nth-child(5){
+
+    background:
+        linear-gradient(
+            135deg,
+            #0891b2,
+            #0e7490
+        );
+
+}
+
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+
+.profile-summary{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:
+        18px;
+
+    margin-bottom:18px;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.04);
+
+}
+
+
+.profile-avatar{
+
+    width:60px;
+
+    height:60px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #06b6d4
+        );
+
+    font-size:28px;
+
+}
+
+
+.profile-summary h3{
+
+    margin:0 0 5px;
+
+    font-size:21px;
+
+}
+
+
+.profile-summary p{
+
+    margin:0;
+
+    color:#60a5fa;
+
+}
+
+
+.profile-stats-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:10px;
+
+}
+
+
+.profile-stat{
+
+    padding:14px;
+
+    border-radius:13px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.05);
+
+}
+
+
+.profile-stat span{
+
+    display:block;
+
+    color:#94a3b8;
+
+    font-size:13px;
+
+}
+
+
+.profile-stat strong{
+
+    display:block;
+
+    margin-top:6px;
+
+    font-size:19px;
+
+}
+
+
+/* ============================================================
+   PROFILE LIST
+   ============================================================ */
 
 #profileList{
+
     display:flex;
+
     flex-direction:column;
-    gap:10px
+
+    gap:10px;
+
 }
+
 
 .profile-item{
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
+
     gap:15px;
+
     padding:15px;
-    background:rgba(255,255,255,.05);
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.08)
+
+    background:
+        rgba(255,255,255,.045);
+
+    border-radius:13px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
 }
+
 
 .profile-item.selected{
-    border-color:#1677ff
+
+    border-color:#2563eb;
+
+    background:
+        rgba(37,99,235,.09);
+
 }
+
+
+.profile-item strong{
+
+    color:#60a5fa;
+
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
 
 input{
+
     width:100%;
+
     padding:14px;
+
     margin-bottom:10px;
-    border-radius:10px;
-    border:1px solid #64748b;
-    background:#0c1b2d;
+
+    border-radius:11px;
+
+    border:
+        1px solid
+        #475569;
+
+    background:
+        #081827;
+
     color:white;
-    outline:none
+
+    outline:none;
+
 }
+
 
 input:focus{
-    border-color:#1677ff
+
+    border-color:#3b82f6;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(59,130,246,.12);
+
 }
+
+
+/* ============================================================
+   DIFFICULTY
+   ============================================================ */
 
 .difficulty{
+
     display:block;
+
     width:100%;
-    min-height:70px;
+
+    min-height:82px;
+
     text-align:left;
-    font-size:18px
+
+    margin:10px 0;
+
+    padding:16px 20px;
+
+    font-size:18px;
+
 }
+
+
+.difficulty strong{
+
+    display:block;
+
+}
+
 
 .difficulty small{
+
     display:block;
-    margin-top:5px;
-    color:#cbd5e1
+
+    margin-top:6px;
+
+    color:#cbd5e1;
+
+    font-size:13px;
+
 }
+
+
+.difficulty.easy{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #15803d
+        );
+
+}
+
+
+.difficulty.normal{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ca8a04,
+            #a16207
+        );
+
+}
+
+
+.difficulty.hard{
+
+    background:
+        linear-gradient(
+            135deg,
+            #dc2626,
+            #991b1b
+        );
+
+}
+
+
+/* ============================================================
+   GAME TOP
+   ============================================================ */
 
 .game-top{
+
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+
+    grid-template-columns:
+        repeat(3,1fr);
+
     gap:10px;
-    margin-bottom:10px
+
+    margin-bottom:10px;
+
 }
 
-.game-top div,
-.stats-bar div{
+
+.game-top div{
+
     padding:14px;
+
     text-align:center;
+
     border-radius:12px;
-    background:rgba(15,31,50,.95)
+
+    background:
+        rgba(15,31,50,.95);
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
 }
+
+
+.game-top strong{
+
+    margin-left:4px;
+
+}
+
+
+/* ============================================================
+   STATS
+   ============================================================ */
 
 .stats-bar{
+
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+
+    grid-template-columns:
+        repeat(4,1fr);
+
     gap:10px;
-    margin-bottom:20px
+
+    margin-bottom:20px;
+
 }
+
+
+.stats-bar div{
+
+    padding:14px;
+
+    text-align:center;
+
+    border-radius:12px;
+
+    background:
+        rgba(15,31,50,.95);
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
+}
+
 
 .stats-bar strong{
+
     display:block;
+
     margin-top:5px;
-    font-size:20px
+
+    font-size:21px;
+
 }
+
+
+/* ============================================================
+   QUESTION
+   ============================================================ */
 
 .question-card{
-    text-align:center
+
+    text-align:center;
+
 }
+
 
 .question-type{
+
     color:#60a5fa;
-    font-size:14px;
+
+    font-size:13px;
+
     font-weight:bold;
+
     text-transform:uppercase;
-    letter-spacing:1px
+
+    letter-spacing:1px;
+
 }
+
 
 #questionText{
+
     font-size:28px;
-    margin:20px 0 10px
+
+    margin:
+        20px 0 10px;
+
 }
+
 
 .question-value{
-    padding:20px;
+
+    padding:22px;
+
     margin-bottom:20px;
-    border-radius:14px;
-    background:rgba(255,255,255,.06);
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.055);
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
     font-size:23px;
-    font-weight:bold
+
+    font-weight:bold;
+
 }
+
+
+/* ============================================================
+   ANSWERS
+   ============================================================ */
 
 .answers{
+
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:12px;
+
 }
+
 
 .answer-button{
-    min-height:70px;
+
+    min-height:72px;
+
     font-size:17px;
-    background:#193a5c
+
+    background:
+        linear-gradient(
+            135deg,
+            #193a5c,
+            #17324f
+        );
+
 }
+
+
+.answer-button:hover{
+
+    background:
+        linear-gradient(
+            135deg,
+            #24547e,
+            #1d456a
+        );
+
+}
+
 
 .answer-button.removed{
+
     opacity:.25;
-    pointer-events:none
+
+    pointer-events:none;
+
 }
+
 
 .answer-button.correct{
-    background:#15803d
+
+    background:#15803d;
+
 }
+
 
 .answer-button.wrong{
-    background:#b91c1c
+
+    background:#b91c1c;
+
 }
+
+
+/* ============================================================
+   GAME TOOLS
+   ============================================================ */
 
 .game-tools{
+
     display:flex;
+
     gap:10px;
-    margin-top:20px
+
+    margin-top:20px;
+
 }
+
 
 .game-tools button{
-    flex:1
+
+    flex:1;
+
 }
+
+
+/* ============================================================
+   SHOP
+   ============================================================ */
+
+.section-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:20px;
+
+}
+
 
 .shop-balance{
-    font-size:20px
-}
 
-.shop-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px
-}
+    padding:
+        12px 18px;
 
-.shop-item{
-    padding:20px;
-    border-radius:14px;
-    background:rgba(255,255,255,.05);
-    border:1px solid rgba(255,255,255,.08)
-}
-
-.shop-item h3{
-    margin-top:0
-}
-
-.shop-item p{
-    min-height:45px;
-    color:#cbd5e1
-}
-
-.shop-item button{
-    width:100%
-}
-
-.inventory-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px;
-    margin-bottom:8px;
-    border-radius:10px;
-    background:rgba(255,255,255,.05)
-}
-
-#countryList{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    max-height:650px;
-    overflow-y:auto;
-    margin-bottom:20px
-}
-
-.country-card{
-    padding:15px;
     border-radius:12px;
-    background:rgba(255,255,255,.05)
+
+    background:
+        rgba(250,204,21,.08);
+
+    border:
+        1px solid
+        rgba(250,204,21,.2);
+
+    font-size:20px;
+
+    white-space:nowrap;
+
 }
 
-.country-card h3{
-    margin-top:0;
-    color:#60a5fa
+
+.shop-grid-v2{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:15px;
+
+    margin-bottom:20px;
+
 }
 
-.country-card p{
-    color:#dbeafe
+
+.shop-item-v2{
+
+    display:grid;
+
+    grid-template-columns:
+        65px 1fr auto;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    transition:
+        transform .15s,
+        border-color .15s;
+
 }
+
+
+.shop-item-v2:hover{
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(96,165,250,.45);
+
+}
+
+
+.shop-item-icon{
+
+    width:55px;
+
+    height:55px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:
+        rgba(37,99,235,.13);
+
+    font-size:29px;
+
+}
+
+
+.shop-item-info h3{
+
+    margin:
+        0 0 5px;
+
+}
+
+
+.shop-item-info p{
+
+    margin:
+        0 0 8px;
+
+    color:#cbd5e1;
+
+    font-size:13px;
+
+    line-height:1.4;
+
+}
+
+
+.shop-item-stock{
+
+    color:#94a3b8;
+
+    font-size:13px;
+
+}
+
+
+.shop-item-buy{
+
+    text-align:center;
+
+}
+
+
+.shop-price{
+
+    margin-bottom:6px;
+
+    font-weight:bold;
+
+    color:#facc15;
+
+}
+
+
+.shop-buy-button{
+
+    min-width:105px;
+
+}
+
+
+/* ============================================================
+   INVENTORY
+   ============================================================ */
+
+.inventory-item-v2{
+
+    display:grid;
+
+    grid-template-columns:
+        55px 1fr auto;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:15px;
+
+    margin-bottom:9px;
+
+    border-radius:13px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
+}
+
+
+.inventory-icon{
+
+    width:48px;
+
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:
+        rgba(37,99,235,.12);
+
+    font-size:24px;
+
+}
+
+
+.inventory-name{
+
+    font-size:16px;
+
+}
+
+
+.inventory-count{
+
+    min-width:42px;
+
+    padding:7px 10px;
+
+    text-align:center;
+
+    border-radius:9px;
+
+    background:
+        #1d4ed8;
+
+    font-weight:bold;
+
+}
+
+
+/* ============================================================
+   ACHIEVEMENTS
+   ============================================================ */
+
+.achievement-counter{
+
+    padding:
+        8px 12px;
+
+    border-radius:9px;
+
+    background:
+        rgba(37,99,235,.12);
+
+    color:#60a5fa;
+
+    font-weight:bold;
+
+}
+
+
+#achievementList{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    margin-bottom:20px;
+
+}
+
+
+.achievement-card{
+
+    display:grid;
+
+    grid-template-columns:
+        60px 1fr auto;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:16px;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+}
+
+
+.achievement-card.unlocked{
+
+    border-color:
+        rgba(250,204,21,.35);
+
+    background:
+        rgba(250,204,21,.05);
+
+}
+
+
+.achievement-card.locked{
+
+    opacity:.6;
+
+}
+
+
+.achievement-icon{
+
+    width:50px;
+
+    height:50px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:
+        rgba(255,255,255,.07);
+
+    font-size:25px;
+
+}
+
+
+.achievement-content h3{
+
+    margin:
+        0 0 5px;
+
+}
+
+
+.achievement-content p{
+
+    margin:
+        0 0 7px;
+
+    color:#cbd5e1;
+
+    font-size:13px;
+
+}
+
+
+.achievement-reward{
+
+    color:#facc15;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+}
+
+
+.achievement-status{
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    white-space:nowrap;
+
+}
+
+
+.achievement-card.unlocked
+.achievement-status{
+
+    color:#4ade80;
+
+}
+
+
+.achievement-card.locked
+.achievement-status{
+
+    color:#94a3b8;
+
+}
+
+
+/* ============================================================
+   COUNTRY DATABASE
+   ============================================================ */
+
+.country-count{
+
+    padding:
+        9px 13px;
+
+    border-radius:10px;
+
+    background:
+        rgba(8,145,178,.12);
+
+    color:#67e8f9;
+
+    white-space:nowrap;
+
+}
+
+
+.country-list-v2{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:12px;
+
+    max-height:650px;
+
+    overflow-y:auto;
+
+    padding-right:5px;
+
+    margin-bottom:20px;
+
+}
+
+
+.country-card-v2{
+
+    display:grid;
+
+    grid-template-columns:
+        42px 1fr;
+
+    gap:12px;
+
+    padding:16px;
+
+    border-radius:14px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
+}
+
+
+.country-number{
+
+    width:36px;
+
+    height:36px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:
+        rgba(37,99,235,.13);
+
+    color:#60a5fa;
+
+    font-weight:bold;
+
+}
+
+
+.country-info h3{
+
+    margin:
+        0 0 10px;
+
+    color:#60a5fa;
+
+}
+
+
+.country-info p{
+
+    margin:
+        6px 0;
+
+    color:#cbd5e1;
+
+    font-size:13px;
+
+}
+
+
+/* ============================================================
+   RULES
+   ============================================================ */
+
+.rules-list{
+
+    padding-left:25px;
+
+}
+
 
 .rules-list li{
-    margin:12px 0;
-    line-height:1.5
+
+    margin:
+        13px 0;
+
+    line-height:1.6;
+
+    color:#cbd5e1;
+
 }
 
-.update-entry{
+
+.rules-list strong{
+
+    color:#60a5fa;
+
+}
+
+
+/* ============================================================
+   UPDATE LOG
+   ============================================================ */
+
+.update-entry-v2{
+
     padding:20px;
-    border-radius:14px;
-    border-left:4px solid #1677ff;
-    background:rgba(255,255,255,.05)
+
+    margin-bottom:15px;
+
+    border-radius:15px;
+
+    border-left:
+        4px solid
+        #2563eb;
+
+    background:
+        rgba(255,255,255,.045);
+
 }
 
-.update-entry h3{
-    margin-top:0;
-    font-size:25px
+
+.update-version{
+
+    font-size:23px;
+
+    font-weight:bold;
+
 }
+
+
+.update-entry-v2 li{
+
+    margin:
+        9px 0;
+
+    color:#cbd5e1;
+
+}
+
 
 .date{
-    color:#94a3b8
+
+    color:#94a3b8;
+
 }
 
-.update-entry li{
-    margin:9px 0
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+
+.about-card{
+
+    text-align:center;
+
+    max-width:750px;
+
+    margin:
+        40px auto;
+
 }
+
+
+.about-card p{
+
+    color:#cbd5e1;
+
+    line-height:1.6;
+
+}
+
+
+.about-version{
+
+    display:inline-block;
+
+    margin:
+        15px 0;
+
+    padding:
+        10px 16px;
+
+    border-radius:10px;
+
+    background:
+        rgba(37,99,235,.12);
+
+    color:#93c5fd;
+
+}
+
+
+.about-features{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:10px;
+
+    margin:
+        20px 0;
+
+}
+
+
+.about-features span{
+
+    padding:12px;
+
+    border-radius:11px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    color:#cbd5e1;
+
+}
+
+
+/* ============================================================
+   RESULT
+   ============================================================ */
 
 .result-card{
+
     max-width:700px;
-    margin:60px auto;
-    text-align:center
+
+    margin:
+        60px auto;
+
+    text-align:center;
+
 }
+
+
+.result-trophy{
+
+    font-size:60px;
+
+    margin-bottom:5px;
+
+}
+
 
 .result-stat{
+
     display:flex;
+
     justify-content:space-between;
-    padding:13px;
-    border-bottom:1px solid rgba(255,255,255,.1)
+
+    align-items:center;
+
+    padding:14px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+
 }
 
-.result-message{
-    margin:20px 0;
-    padding:18px;
-    border-radius:12px;
-    background:rgba(255,255,255,.06);
-    font-size:20px;
-    font-weight:bold
+
+.result-stat span{
+
+    color:#cbd5e1;
+
 }
+
+
+.result-stat strong{
+
+    color:white;
+
+}
+
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.empty-state{
+
+    text-align:center;
+
+    padding:30px;
+
+    color:#94a3b8;
+
+}
+
+
+.empty-state h3{
+
+    color:#e2e8f0;
+
+}
+
+
+.empty-icon{
+
+    font-size:45px;
+
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
 
 #toast{
+
     position:fixed;
+
     left:50%;
+
     bottom:30px;
+
     z-index:1000;
+
     transform:
         translateX(-50%)
         translateY(100px);
+
     opacity:0;
-    padding:15px 25px;
+
+    max-width:
+        calc(100vw - 30px);
+
+    padding:
+        15px 25px;
+
     border-radius:12px;
-    background:#10233a;
+
+    background:
+        rgba(10,27,45,.97);
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
     box-shadow:
-        0 10px 35px
+        0 12px 35px
         rgba(0,0,0,.5);
+
     font-weight:bold;
+
+    text-align:center;
+
     pointer-events:none;
+
     transition:
         opacity .25s,
-        transform .25s
+        transform .25s;
+
 }
+
 
 #toast.show{
+
     opacity:1;
+
     transform:
         translateX(-50%)
-        translateY(0)
+        translateY(0);
+
 }
 
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
 footer{
+
     text-align:center;
-    padding:20px;
-    color:#94a3b8
+
+    padding:
+        25px 15px;
+
+    color:#64748b;
+
+    line-height:1.7;
+
 }
+
+
+footer strong{
+
+    color:#94a3b8;
+
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+
+::-webkit-scrollbar-track{
+
+    background:
+        rgba(255,255,255,.03);
+
+}
+
+
+::-webkit-scrollbar-thumb{
+
+    background:
+        #334155;
+
+    border-radius:10px;
+
+}
+
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:
+        #475569;
+
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
 
 @media(max-width:700px){
 
     .header{
+
         position:relative;
+
         flex-direction:column;
+
         align-items:flex-start;
-        padding:15px
+
+        padding:15px;
+
     }
+
 
     .header-title h1{
-        font-size:21px
+
+        font-size:21px;
+
     }
+
 
     .header-profile{
+
         width:100%;
+
         justify-content:space-between;
-        gap:8px;
-        font-size:13px
+
+        gap:5px;
+
+        font-size:12px;
+
     }
+
+
+    .header-profile span{
+
+        padding:
+            7px 8px;
+
+    }
+
 
     .screen{
-        padding:15px
+
+        padding:
+            15px;
+
     }
+
+
+    .card{
+
+        padding:18px;
+
+        border-radius:16px;
+
+    }
+
+
+    .hero-card{
+
+        padding:
+            40px 20px;
+
+    }
+
+
+    .hero-card h2{
+
+        font-size:26px;
+
+    }
+
 
     .menu-grid{
-        grid-template-columns:1fr
+
+        grid-template-columns:1fr;
+
     }
+
+
+    .profile-stats-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
 
     .game-top{
-        grid-template-columns:repeat(3,1fr);
-        font-size:13px
+
+        grid-template-columns:
+            repeat(3,1fr);
+
+        font-size:12px;
+
     }
+
 
     .stats-bar{
-        grid-template-columns:repeat(2,1fr)
+
+        grid-template-columns:
+            repeat(2,1fr);
+
     }
+
 
     .answers{
-        grid-template-columns:1fr
+
+        grid-template-columns:1fr;
+
     }
+
 
     #questionText{
-        font-size:22px
+
+        font-size:22px;
+
     }
+
 
     .question-value{
-        font-size:19px
+
+        font-size:19px;
+
     }
 
-    .shop-grid{
-        grid-template-columns:1fr
-    }
-
-    #countryList{
-        grid-template-columns:1fr;
-        max-height:none
-    }
 
     .game-tools{
-        flex-direction:column
+
+        flex-direction:column;
+
     }
+
+
+    .shop-grid-v2{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .shop-item-v2{
+
+        grid-template-columns:
+            55px 1fr;
+
+    }
+
+
+    .shop-item-buy{
+
+        grid-column:
+            1 / -1;
+
+        display:flex;
+
+        justify-content:space-between;
+
+        align-items:center;
+
+        gap:10px;
+
+    }
+
+
+    .country-list-v2{
+
+        grid-template-columns:1fr;
+
+        max-height:none;
+
+    }
+
+
+    .achievement-card{
+
+        grid-template-columns:
+            50px 1fr;
+
+    }
+
+
+    .achievement-status{
+
+        grid-column:2;
+
+        text-align:left;
+
+    }
+
+
+    .about-features{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+
+    .section-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
 
     .profile-item{
+
         flex-direction:column;
-        align-items:stretch
+
+        align-items:stretch;
+
     }
 
+
     button{
-        min-height:50px
+
+        min-height:50px;
+
     }
+
 }
+
+
+/* ============================================================
+   SMALL MOBILE
+   ============================================================ */
 
 @media(max-width:400px){
 
     .card{
-        padding:17px
+
+        padding:16px;
+
     }
+
+
+    .header-profile{
+
+        font-size:11px;
+
+    }
+
 
     .game-top{
-        font-size:12px
+
+        font-size:11px;
+
     }
+
 
     .stats-bar{
-        font-size:13px
+
+        font-size:12px;
+
     }
 
+
     .stats-bar strong{
-        font-size:17px
+
+        font-size:17px;
+
     }
+
+
+    .profile-stats-grid{
+
+        gap:7px;
+
+    }
+
+
+    .profile-stat{
+
+        padding:11px;
+
+    }
+
+
+    .profile-stat strong{
+
+        font-size:17px;
+
+    }
+
+
+    .about-features{
+
+        grid-template-columns:1fr;
+
+    }
+
 }
