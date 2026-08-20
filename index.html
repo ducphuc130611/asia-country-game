@@ -1,119 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#07111f">
-    <title>Asia Country Guessing Game</title>
-    <link rel="stylesheet" href="style.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="theme-color"
+        content="#07111f">
+
+    <title>
+        Asia Country Guessing Game
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+
 </head>
+
+
 <body>
+
 <div id="app">
 
+
+<!-- ========================================================
+     HEADER
+     ======================================================== -->
+
 <header class="header">
+
     <div class="header-title">
-        <h1>🌏 Asia Country Guessing Game</h1>
-        <p>Test your knowledge of Asia!</p>
+
+        <h1>
+            🌏 Asia Country Guessing Game
+        </h1>
+
+        <p>
+            Test your knowledge of Asia!
+        </p>
+
     </div>
+
 
     <div class="header-profile">
-        <span>👤 <strong id="topName">Guest</strong></span>
-        <span>⭐ Lv.<strong id="topLevel">1</strong></span>
-        <span>🪙 <strong id="topCoins">0</strong></span>
+
+        <span>
+            👤
+            <strong id="topName">
+                Guest
+            </strong>
+        </span>
+
+        <span>
+            ⭐ Lv.
+            <strong id="topLevel">
+                1
+            </strong>
+        </span>
+
+        <span>
+            🪙
+            <strong id="topCoins">
+                0
+            </strong>
+        </span>
+
     </div>
+
 </header>
 
-<section id="homeScreen" class="screen active">
+
+
+<!-- ========================================================
+     HOME
+     ======================================================== -->
+
+<section
+    id="homeScreen"
+    class="screen active">
+
+
     <div class="card hero-card">
-        <h2>🌏 Asia Country Guessing Game</h2>
-        <p>How well do you know the countries of Asia?</p>
-        <button class="big-button" onclick="startGameMenu()">🎮 Start Game</button>
-    </div>
 
-    <div class="card">
-        <h2>🏠 Main Menu</h2>
-        <div class="menu-grid">
-            <button onclick="startGameMenu()">🎮 Start Game</button>
-            <button onclick="openProfileMenu()">👤 Profile</button>
-            <button onclick="openShop()">🛒 Shop</button>
-            <button onclick="openInventory()">🎒 Inventory</button>
-            <button onclick="openCountries()">🌏 Country Database</button>
-            <button onclick="openRules()">📖 Game Rules</button>
-            <button onclick="openUpdateLog()">📝 Update Log</button>
-            <button onclick="openInfo()">ℹ️ About</button>
+        <div class="hero-icon">
+            🌏
         </div>
-    </div>
 
-    <div class="card">
-        <h2>📊 Current Profile</h2>
-        <div id="mainProfileInfo">No profile selected.</div>
-    </div>
-</section>
-
-<section id="difficultyScreen" class="screen">
-    <div class="card centered">
-        <h2>🎯 Select Difficulty</h2>
-
-        <button class="difficulty easy" onclick="startGame(1)">
-            🟢 EASY
-            <small>Capital questions only</small>
-        </button>
-
-        <button class="difficulty normal" onclick="startGame(2)">
-            🟡 NORMAL
-            <small>Capital + country questions</small>
-        </button>
-
-        <button class="difficulty hard" onclick="startGame(3)">
-            🔴 HARD
-            <small>Capital + country + unique currency + region questions</small>
-        </button>
-
-        <button class="secondary" onclick="goHome()">← Back</button>
-    </div>
-</section>
-
-<section id="gameScreen" class="screen">
-    <div class="game-top">
-        <div>❓ Question <strong id="questionNumber">1/10</strong></div>
-        <div>❤️ Lives <strong id="lives">3</strong></div>
-        <div>🔥 Combo <strong id="combo">0</strong></div>
-    </div>
-
-    <div class="stats-bar">
-        <div>⭐ Score<strong id="score">0</strong></div>
-        <div>✨ XP<strong id="gameXP">0</strong></div>
-        <div>🪙 Coins<strong id="gameCoins">0</strong></div>
-        <div>🏆 Level<strong id="gameLevel">1</strong></div>
-    </div>
-
-    <div class="card question-card">
-        <div id="questionType" class="question-type">Question</div>
-
-        <h2 id="questionText">
-            Choose the correct answer
+        <h2>
+            Asia Country Guessing Game
         </h2>
 
-        <div id="questionValue" class="question-value"></div>
+        <p>
+            How well do you know the
+            countries of Asia?
+        </p>
 
-        <div id="answers" class="answers"></div>
+        <button
+            class="big-button"
+            onclick="startGameMenu()">
 
-        <div class="game-tools">
-            <button onclick="useHint()">💡 Hint</button>
-            <button onclick="openInventoryDuringGame()">🎒 Inventory</button>
-            <button class="secondary" onclick="confirmQuitGame()">🚪 Quit</button>
-        </div>
+            🎮 Start Game
+
+        </button>
+
     </div>
+
+
+
+    <div class="card">
+
+        <div class="section-title">
+
+            <span>
+                🎮
+            </span>
+
+            <div>
+
+                <h2>
+                    Main Menu
+                </h2>
+
+                <p>
+                    Choose what you want to do.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="menu-grid">
+
+            <button
+                onclick="startGameMenu()">
+
+                🎮
+                <span>
+                    Start Game
+                </span>
+
+            </button>
+
+
+            <button
+                onclick="openProfileMenu()">
+
+                👤
+                <span>
+                    Profile
+                </span>
+
+            </button>
+
+
+            <button
+                onclick="openShopScreen()">
+
+                🛒
+                <span>
+                    Shop
+                </span>
+
+            </button>
+
+
+            <button
+                onclick="openInventory()">
+
+                🎒
+                <span>
+                    Inventory
+                </span>
+
+            </button>
+
+
+            <button
+                onclick="openAchievements()">
+
+                🏆
+                <span>
+                    Achievements
+                </span>
+
+            </button>
+
+
+            <button
+                onclick="openCountries()">
+
+                🌏
+                <span>
+                    Country Database
+                </span>
+
+            </button>
+
+
+            <button
+                onclick="openRules()">
+
+                📖
+                <span>
+                    Game Rules
+                </span>
+
+            </button>
+
+
+            <button
+                onclick="openUpdateLog()">
+
+                📝
+                <span>
+                    Update Log
+                </span>
+
+            </button>
+
+
+            <button
+                onclick="openInfo()">
+
+                ℹ️
+                <span>
+                    About
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <div class="section-title">
+
+            <span>
+                👤
+            </span>
+
+            <div>
+
+                <h2>
+                    Current Profile
+                </h2>
+
+                <p>
+                    Your progress and statistics.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div id="mainProfileInfo">
+
+            No profile selected.
+
+        </div>
+
+    </div>
+
 </section>
 
-<section id="profileScreen" class="screen">
-    <div class="card">
-        <h2>👤 Profiles</h2>
-        <div id="profileList">No profiles.</div>
+
+
+<!-- ========================================================
+     DIFFICULTY
+     ======================================================== -->
+
+<section
+    id="difficultyScreen"
+    class="screen">
+
+
+    <div class="card centered">
+
+        <div class="section-title">
+
+            <span>
+                🎯
+            </span>
+
+            <div>
+
+                <h2>
+                    Select Difficulty
+                </h2>
+
+                <p>
+                    Choose your challenge.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="difficulty easy"
+            onclick="startGame(1)">
+
+            <strong>
+                🟢 EASY
+            </strong>
+
+            <small>
+                Capital questions only
+            </small>
+
+        </button>
+
+
+        <button
+            class="difficulty normal"
+            onclick="startGame(2)">
+
+            <strong>
+                🟡 NORMAL
+            </strong>
+
+            <small>
+                Capital + country questions
+            </small>
+
+        </button>
+
+
+        <button
+            class="difficulty hard"
+            onclick="startGame(3)">
+
+            <strong>
+                🔴 HARD
+            </strong>
+
+            <small>
+                Capital + country +
+                currency + region
+            </small>
+
+        </button>
+
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
+            ← Back
+
+        </button>
+
     </div>
 
+</section>
+
+
+
+<!-- ========================================================
+     GAME
+     ======================================================== -->
+
+<section
+    id="gameScreen"
+    class="screen">
+
+
+    <div class="game-top">
+
+        <div>
+            ❓ Question
+            <strong id="questionNumber">
+                1/10
+            </strong>
+        </div>
+
+        <div>
+            ❤️ Lives
+            <strong id="lives">
+                3
+            </strong>
+        </div>
+
+        <div>
+            🔥 Combo
+            <strong id="combo">
+                0
+            </strong>
+        </div>
+
+    </div>
+
+
+
+    <div class="stats-bar">
+
+        <div>
+            ⭐ Score
+
+            <strong id="score">
+                0
+            </strong>
+        </div>
+
+        <div>
+            ✨ XP
+
+            <strong id="gameXP">
+                0
+            </strong>
+        </div>
+
+        <div>
+            🪙 Coins
+
+            <strong id="gameCoins">
+                0
+            </strong>
+        </div>
+
+        <div>
+            🏆 Level
+
+            <strong id="gameLevel">
+                1
+            </strong>
+        </div>
+
+    </div>
+
+
+
+    <div class="card question-card">
+
+        <div
+            id="questionType"
+            class="question-type">
+
+            Question
+
+        </div>
+
+
+        <h2 id="questionText">
+
+            Choose the correct answer
+
+        </h2>
+
+
+        <div
+            id="questionValue"
+            class="question-value">
+
+        </div>
+
+
+        <div
+            id="answers"
+            class="answers">
+
+        </div>
+
+
+        <div class="game-tools">
+
+            <button
+                onclick="useHint()">
+
+                💡 Hint
+
+            </button>
+
+
+            <button
+                onclick="openInventoryDuringGame()">
+
+                🎒 Inventory
+
+            </button>
+
+
+            <button
+                class="secondary"
+                onclick="confirmQuitGame()">
+
+                🚪 Quit
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================================
+     PROFILE
+     ======================================================== -->
+
+<section
+    id="profileScreen"
+    class="screen">
+
+
     <div class="card">
-        <h2>➕ Create Profile</h2>
+
+        <div class="section-title">
+
+            <span>
+                👤
+            </span>
+
+            <div>
+
+                <h2>
+                    Profiles
+                </h2>
+
+                <p>
+                    Manage your game profiles.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div id="profileList">
+
+            No profiles.
+
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <div class="section-title">
+
+            <span>
+                ➕
+            </span>
+
+            <div>
+
+                <h2>
+                    Create Profile
+                </h2>
+
+            </div>
+
+        </div>
+
 
         <input
             id="profileNameInput"
@@ -121,198 +576,711 @@
             maxlength="20"
             placeholder="Enter profile name">
 
-        <button onclick="createProfileFromInput()">
+
+        <button
+            onclick="createProfileFromInput()">
+
             Create Profile
+
         </button>
 
-        <button class="danger" onclick="deleteProfile()">
+
+        <button
+            class="danger"
+            onclick="deleteProfile()">
+
             🗑️ Delete Selected Profile
+
         </button>
 
-        <button class="secondary" onclick="goHome()">
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
             ← Back
+
         </button>
+
     </div>
+
 </section>
 
-<section id="shopScreen" class="screen">
+
+
+<!-- ========================================================
+     SHOP
+     ======================================================== -->
+
+<section
+    id="shopScreen"
+    class="screen">
+
+
     <div class="card">
-        <h2>🛒 Shop</h2>
 
-        <p class="shop-balance">
-            Your Coins:
-            🪙 <strong id="shopCoins">0</strong>
-        </p>
+        <div class="section-header">
 
-        <div class="shop-grid">
-            <div class="shop-item">
-                <h3>💡 Hint</h3>
-                <p>Remove two wrong answers.</p>
-                <strong>100 🪙</strong>
-                <button onclick="buyItem('hints',100)">Buy</button>
+            <div class="section-title">
+
+                <span>
+                    🛒
+                </span>
+
+                <div>
+
+                    <h2>
+                        Shop
+                    </h2>
+
+                    <p>
+                        Spend Coins on useful
+                        items.
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="shop-item">
-                <h3>❤️ Extra Life</h3>
-                <p>Start a game with +1 life.</p>
-                <strong>250 🪙</strong>
-                <button onclick="buyItem('extraLives',250)">Buy</button>
+
+            <div class="shop-balance">
+
+                🪙
+
+                <strong id="shopCoins">
+                    0
+                </strong>
+
             </div>
 
-            <div class="shop-item">
-                <h3>✨ Double XP</h3>
-                <p>Double XP from one correct answer.</p>
-                <strong>500 🪙</strong>
-                <button onclick="buyItem('doubleXP',500)">Buy</button>
-            </div>
-
-            <div class="shop-item">
-                <h3>📈 Score Boost</h3>
-                <p>Increase one score reward by 25%.</p>
-                <strong>500 🪙</strong>
-                <button onclick="buyItem('scoreBoost',500)">Buy</button>
-            </div>
-
-            <div class="shop-item">
-                <h3>🔄 Second Chance</h3>
-                <p>Prevent one life loss.</p>
-                <strong>750 🪙</strong>
-                <button onclick="buyItem('secondChance',750)">Buy</button>
-            </div>
-
-            <div class="shop-item">
-                <h3>🍀 Lucky Answer</h3>
-                <p>Turn one wrong answer into a correct one.</p>
-                <strong>1500 🪙</strong>
-                <button onclick="buyItem('luckyAnswer',1500)">Buy</button>
-            </div>
         </div>
 
-        <button class="secondary" onclick="goHome()">← Back</button>
+
+        <div
+            id="shopList"
+            class="shop-grid-v2">
+
+        </div>
+
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
+            ← Back
+
+        </button>
+
     </div>
+
 </section>
 
-<section id="inventoryScreen" class="screen">
+
+
+<!-- ========================================================
+     INVENTORY
+     ======================================================== -->
+
+<section
+    id="inventoryScreen"
+    class="screen">
+
+
     <div class="card">
-        <h2>🎒 Inventory</h2>
-        <div id="inventoryList"></div>
-        <button class="secondary" onclick="goHome()">← Back</button>
+
+        <div class="section-title">
+
+            <span>
+                🎒
+            </span>
+
+            <div>
+
+                <h2>
+                    Inventory
+                </h2>
+
+                <p>
+                    Your available items.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div id="inventoryList">
+
+        </div>
+
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
+            ← Back
+
+        </button>
+
     </div>
+
 </section>
 
-<section id="countriesScreen" class="screen">
+
+
+<!-- ========================================================
+     ACHIEVEMENTS
+     ======================================================== -->
+
+<section
+    id="achievementsScreen"
+    class="screen">
+
+
     <div class="card">
-        <h2>🌏 Country Database</h2>
 
-        <p>
-            Countries available in the game:
-            <strong id="countryCount">0</strong>
-        </p>
+        <div class="section-header">
 
-        <div id="countryList"></div>
+            <div class="section-title">
 
-        <button class="secondary" onclick="goHome()">← Back</button>
+                <span>
+                    🏆
+                </span>
+
+                <div>
+
+                    <h2>
+                        Achievements
+                    </h2>
+
+                    <p>
+                        Complete challenges and
+                        earn rewards.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="achievementCount"
+                class="achievement-counter">
+
+                0/0
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="achievementList">
+
+        </div>
+
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
+            ← Back
+
+        </button>
+
     </div>
+
 </section>
 
-<section id="rulesScreen" class="screen">
+
+
+<!-- ========================================================
+     COUNTRY DATABASE
+     ======================================================== -->
+
+<section
+    id="countriesScreen"
+    class="screen">
+
+
     <div class="card">
-        <h2>📖 Game Rules</h2>
+
+        <div class="section-header">
+
+            <div class="section-title">
+
+                <span>
+                    🌏
+                </span>
+
+                <div>
+
+                    <h2>
+                        Country Database
+                    </h2>
+
+                    <p>
+                        Explore all countries
+                        available in the game.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="country-count">
+
+                <strong id="countryCount">
+                    50
+                </strong>
+
+                Countries
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="countryList"
+            class="country-list-v2">
+
+        </div>
+
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
+            ← Back
+
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================================
+     RULES
+     ======================================================== -->
+
+<section
+    id="rulesScreen"
+    class="screen">
+
+
+    <div class="card">
+
+        <div class="section-title">
+
+            <span>
+                📖
+            </span>
+
+            <div>
+
+                <h2>
+                    Game Rules
+                </h2>
+
+                <p>
+                    Everything you need to know.
+                </p>
+
+            </div>
+
+        </div>
+
 
         <ol class="rules-list">
-            <li>Each game contains 10 questions.</li>
-            <li>You start with 3 lives.</li>
-            <li>Correct answers give Score, XP and Coins.</li>
-            <li>Correct answers increase your Combo.</li>
-            <li>Wrong answers reset your Combo.</li>
-            <li>Hint removes two incorrect answers and costs 25 Score.</li>
-            <li>Coins can be spent in the Shop.</li>
-            <li>XP increases your Level.</li>
-            <li>Your Level determines your Rank.</li>
-            <li>Difficulty changes the question types.</li>
+
+            <li>
+                Each game contains
+                <strong>10 questions</strong>.
+            </li>
+
+            <li>
+                You start with
+                <strong>3 Lives</strong>.
+            </li>
+
+            <li>
+                Correct answers give
+                Score, XP and Coins.
+            </li>
+
+            <li>
+                Correct answers increase
+                your Combo.
+            </li>
+
+            <li>
+                Wrong answers reset your Combo
+                and normally cost one Life.
+            </li>
+
+            <li>
+                Hint removes two incorrect
+                answers and costs 25 Score.
+            </li>
+
+            <li>
+                Coins can be spent in the Shop.
+            </li>
+
+            <li>
+                XP increases your Level.
+            </li>
+
+            <li>
+                Your Level determines your Rank.
+            </li>
+
+            <li>
+                Difficulty changes the
+                question types and Score reward.
+            </li>
+
+            <li>
+                Achievements provide additional
+                Coins and XP rewards.
+            </li>
+
         </ol>
 
-        <button class="secondary" onclick="goHome()">← Back</button>
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
+            ← Back
+
+        </button>
+
     </div>
+
 </section>
 
-<section id="updateScreen" class="screen">
+
+
+<!-- ========================================================
+     UPDATE LOG
+     ======================================================== -->
+
+<section
+    id="updateScreen"
+    class="screen">
+
+
     <div class="card">
-        <h2>📝 Update Log</h2>
 
-        <div class="update-entry">
-            <h3>🚀 Version 1.1</h3>
+        <div class="section-title">
 
-            <p class="date">
-                Question-system fixes and gameplay balancing
-            </p>
+            <span>
+                📝
+            </span>
 
-            <ul>
-                <li>🌏 Improved Asian country database.</li>
-                <li>🎯 Fixed ambiguous currency questions.</li>
-                <li>🌏 Fixed region questions so only one answer is correct.</li>
-                <li>🧠 Improved question generation.</li>
-                <li>🛡️ Added safer local profile loading.</li>
-                <li>🎮 Kept Easy / Normal / Hard, Shop, Inventory, XP, Coins and Profiles.</li>
-            </ul>
+            <div>
+
+                <h2>
+                    Update Log
+                </h2>
+
+                <p>
+                    What's new in the game?
+                </p>
+
+            </div>
+
         </div>
 
-        <button class="secondary" onclick="goHome()">← Back</button>
-    </div>
-</section>
 
-<section id="infoScreen" class="screen">
-    <div class="card">
-        <h2>ℹ️ About the Game</h2>
+        <div class="update-entry-v2">
 
-        <p>
-            Asia Country Guessing Game is a browser-based
-            educational game about Asian countries.
-        </p>
+            <div class="update-version">
 
-        <p>
-            The game works on PC, Android and iPhone
-            through a modern web browser.
-        </p>
+                🚀 Version 2.0
 
-        <p>
-            Version:
-            <strong>1.1</strong>
-        </p>
+            </div>
 
-        <button class="secondary" onclick="goHome()">
+
+            <p class="date">
+
+                Major Update
+
+            </p>
+
+
+            <ul>
+
+                <li>
+                    🌏 Expanded game architecture.
+                </li>
+
+                <li>
+                    🎮 Improved game engine structure.
+                </li>
+
+                <li>
+                    👤 Improved profile system.
+                </li>
+
+                <li>
+                    🛒 New modular Shop system.
+                </li>
+
+                <li>
+                    🎒 Improved Inventory.
+                </li>
+
+                <li>
+                    🏆 New Achievement system.
+                </li>
+
+                <li>
+                    💰 Improved Coins economy.
+                </li>
+
+                <li>
+                    ✨ Improved XP progression.
+                </li>
+
+                <li>
+                    📱 Improved mobile interface.
+                </li>
+
+                <li>
+                    🧩 Separated JavaScript modules.
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <div class="update-entry-v2">
+
+            <div class="update-version">
+
+                Version 1.1
+
+            </div>
+
+            <ul>
+
+                <li>
+                    🌏 Improved Asian country database.
+                </li>
+
+                <li>
+                    🎯 Fixed ambiguous questions.
+                </li>
+
+                <li>
+                    🧠 Improved question generation.
+                </li>
+
+                <li>
+                    🛡️ Safer local profile loading.
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
             ← Back
+
         </button>
+
     </div>
+
 </section>
 
-<section id="resultScreen" class="screen">
+
+
+<!-- ========================================================
+     ABOUT
+     ======================================================== -->
+
+<section
+    id="infoScreen"
+    class="screen">
+
+
+    <div class="card about-card">
+
+        <div class="hero-icon">
+            🌏
+        </div>
+
+
+        <h2>
+            Asia Country Guessing Game
+        </h2>
+
+
+        <p>
+            A browser-based educational
+            game about Asian countries.
+        </p>
+
+
+        <div class="about-version">
+
+            Version
+            <strong>
+                2.0
+            </strong>
+
+        </div>
+
+
+        <div class="about-features">
+
+            <span>
+                🌏 50 Countries
+            </span>
+
+            <span>
+                🎮 3 Difficulties
+            </span>
+
+            <span>
+                🏆 Achievements
+            </span>
+
+            <span>
+                🛒 Shop
+            </span>
+
+            <span>
+                🎒 Inventory
+            </span>
+
+            <span>
+                👤 Profiles
+            </span>
+
+        </div>
+
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
+            ← Back
+
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================================
+     RESULT
+     ======================================================== -->
+
+<section
+    id="resultScreen"
+    class="screen">
+
+
     <div class="card result-card">
-        <h2>🏆 Game Over</h2>
 
-        <div id="resultInfo"></div>
+        <div class="result-trophy">
+            🏆
+        </div>
 
-        <button onclick="startGame(game.difficulty)">
+
+        <h2>
+            Game Over
+        </h2>
+
+
+        <div id="resultInfo">
+
+        </div>
+
+
+        <button
+            onclick="startGame(game.difficulty)">
+
             🎮 Play Again
+
         </button>
 
-        <button class="secondary" onclick="goHome()">
+
+        <button
+            class="secondary"
+            onclick="goHome()">
+
             🏠 Main Menu
+
         </button>
+
     </div>
+
 </section>
+
+
+
+<!-- ========================================================
+     TOAST
+     ======================================================== -->
 
 <div id="toast"></div>
 
+
 </div>
 
+
+
+<!-- ========================================================
+     FOOTER
+     ======================================================== -->
+
 <footer>
-    Asia Country Guessing Game
+
+    <strong>
+        Asia Country Guessing Game
+    </strong>
+
     <br>
-    Version 1.1
+
+    Version 2.0
+
+    <br>
+
+    <span>
+        Educational game about Asia
+    </span>
+
 </footer>
 
-<script src="game.js"></script>
+
+
+<!-- ========================================================
+     JAVASCRIPT
+     ======================================================== -->
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/shop.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/game.js"></script>
+
 
 </body>
 </html>
