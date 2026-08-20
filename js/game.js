@@ -3,6 +3,21 @@
 // VERSION 2.0
 // GAME ENGINE
 // ============================================================
+//
+// REQUIREMENTS:
+// country.js
+// storage.js
+// profile.js
+// achievement.js
+// shop.js
+// ui.js
+//
+// app.js sẽ khởi động toàn bộ hệ thống.
+//
+// IMPORTANT:
+// countries[] ĐƯỢC LẤY TRỰC TIẾP TỪ country.js
+// KHÔNG tạo lại dữ liệu quốc gia ở đây.
+// ============================================================
 
 
 // ============================================================
@@ -41,80 +56,7 @@ let game = {
 
     hintUsed: false,
 
-    locked: false,
-
-    startTime: 0,
-
-    questionStartTime: 0,
-
-    timeLimit: 0,
-
-    streak: 0,
-
-    perfect: true
-
-};
-
-
-// ============================================================
-// DIFFICULTY CONFIG
-// ============================================================
-
-const GAME_DIFFICULTY = {
-
-    1: {
-
-        name: "Easy",
-
-        baseScore: 100,
-
-        time: 30,
-
-        lives: 3,
-
-        questionTypes: [1],
-
-        coinMultiplier: 1,
-
-        xpMultiplier: 1
-
-    },
-
-    2: {
-
-        name: "Normal",
-
-        baseScore: 150,
-
-        time: 20,
-
-        lives: 3,
-
-        questionTypes: [1, 2],
-
-        coinMultiplier: 1.25,
-
-        xpMultiplier: 1.25
-
-    },
-
-    3: {
-
-        name: "Hard",
-
-        baseScore: 200,
-
-        time: 15,
-
-        lives: 3,
-
-        questionTypes: [1, 2, 3, 4],
-
-        coinMultiplier: 1.5,
-
-        xpMultiplier: 1.5
-
-    }
+    locked: false
 
 };
 
@@ -123,24 +65,13 @@ const GAME_DIFFICULTY = {
 // RESET GAME
 // ============================================================
 
-function resetGame(difficulty = 1) {
-
-    difficulty = Number(difficulty);
-
-    if (!GAME_DIFFICULTY[difficulty]) {
-
-        difficulty = 1;
-
-    }
-
-    const config =
-        GAME_DIFFICULTY[difficulty];
+function resetGame(difficulty) {
 
     game = {
 
         active: true,
 
-        difficulty: difficulty,
+        difficulty: Number(difficulty),
 
         question: 0,
 
@@ -148,7 +79,7 @@ function resetGame(difficulty = 1) {
 
         score: 0,
 
-        lives: config.lives,
+        lives: 3,
 
         combo: 0,
 
@@ -168,17 +99,7 @@ function resetGame(difficulty = 1) {
 
         hintUsed: false,
 
-        locked: false,
-
-        startTime: Date.now(),
-
-        questionStartTime: Date.now(),
-
-        timeLimit: config.time,
-
-        streak: 0,
-
-        perfect: true
+        locked: false
 
     };
 
@@ -189,30 +110,15 @@ function resetGame(difficulty = 1) {
 // START GAME
 // ============================================================
 
-function startGame(difficulty = 1) {
+function startGame(difficulty) {
 
-    const profile =
-        typeof getProfile === "function"
-            ? getProfile()
-            : null;
+    const profile = getProfile();
 
     if (!profile) {
 
-        if (typeof toast === "function") {
+        toast("Create/select a profile first.");
 
-            toast(
-                "Create or select a profile first."
-            );
-
-        }
-
-        if (
-            typeof openProfileMenu === "function"
-        ) {
-
-            openProfileMenu();
-
-        }
+        openProfileMenu();
 
         return;
 
@@ -222,7 +128,7 @@ function startGame(difficulty = 1) {
     difficulty = Number(difficulty);
 
 
-    if (!GAME_DIFFICULTY[difficulty]) {
+    if (difficulty < 1 || difficulty > 3) {
 
         difficulty = 1;
 
@@ -236,14 +142,12 @@ function startGame(difficulty = 1) {
     // EXTRA LIFE
     // --------------------------------------------------------
 
-    if (
-        Number(profile.extraLives || 0) > 0
-    ) {
+    if (profile.extraLives > 0) {
 
-        const use =
-            confirm(
-                `You have ${profile.extraLives} Extra Life(s).\nUse one?`
-            );
+        const use = confirm(
+            `You have ${profile.extraLives} Extra Life(s).\nUse one?`
+        );
+
 
         if (use) {
 
@@ -251,38 +155,16 @@ function startGame(difficulty = 1) {
 
             game.lives++;
 
-            if (typeof save === "function") {
-
-                save();
-
-            }
+            save();
 
         }
 
     }
 
 
-    game.timeLimit =
-        GAME_DIFFICULTY[difficulty].time;
+    showScreen("gameScreen");
 
-
-    if (
-        typeof showScreen === "function"
-    ) {
-
-        showScreen("gameScreen");
-
-    }
-
-
-    if (
-        typeof updateGameUI === "function"
-    ) {
-
-        updateGameUI();
-
-    }
-
+    updateGameProfileStats();
 
     nextQuestion();
 
@@ -302,10 +184,7 @@ function nextQuestion() {
     }
 
 
-    if (
-        game.question >=
-        game.totalQuestions
-    ) {
+    if (game.question >= game.totalQuestions) {
 
         finishGame();
 
@@ -314,9 +193,7 @@ function nextQuestion() {
     }
 
 
-    if (
-        game.lives <= 0
-    ) {
+    if (game.lives <= 0) {
 
         finishGame();
 
@@ -330,9 +207,6 @@ function nextQuestion() {
     game.hintUsed = false;
 
     game.locked = false;
-
-    game.questionStartTime =
-        Date.now();
 
 
     generateQuestion();
@@ -348,70 +222,44 @@ function nextQuestion() {
 
 function generateQuestion() {
 
-    if (
-        typeof countries === "undefined" ||
-        !Array.isArray(countries) ||
-        countries.length === 0
-    ) {
-
-        console.error(
-            "countries was not found. Check country.js."
-        );
-
-        return;
-
-    }
-
-
     let correct;
 
-    let attempts = 0;
 
+    // --------------------------------------------------------
+    // FIND UNUSED COUNTRY
+    // --------------------------------------------------------
 
     do {
 
-        correct =
-            Math.floor(
-                Math.random() *
-                countries.length
-            );
+        correct = Math.floor(
+            Math.random() * countries.length
+        );
 
-        attempts++;
-
-    }
-    while (
-        game.usedQuestions.includes(correct) &&
-        attempts < 100
+    } while (
+        game.usedQuestions.includes(correct)
     );
 
 
     game.usedQuestions.push(correct);
 
-    game.currentCountry =
-        correct;
+    game.currentCountry = correct;
 
 
     // --------------------------------------------------------
-    // ANSWER OPTIONS
+    // GENERATE OPTIONS
     // --------------------------------------------------------
 
     const options = [correct];
 
 
-    while (
-        options.length < 4
-    ) {
+    while (options.length < 4) {
 
-        const random =
-            Math.floor(
-                Math.random() *
-                countries.length
-            );
+        const random = Math.floor(
+            Math.random() * countries.length
+        );
 
 
-        if (
-            !options.includes(random)
-        ) {
+        if (!options.includes(random)) {
 
             options.push(random);
 
@@ -429,23 +277,28 @@ function generateQuestion() {
     // QUESTION TYPE
     // --------------------------------------------------------
 
-    const config =
-        GAME_DIFFICULTY[
-            game.difficulty
-        ];
+    if (game.difficulty === 1) {
 
+        // EASY
+        game.questionType = 1;
 
-    const types =
-        config.questionTypes;
+    }
 
+    else if (game.difficulty === 2) {
 
-    game.questionType =
-        types[
-            Math.floor(
-                Math.random() *
-                types.length
-            )
-        ];
+        // NORMAL
+        game.questionType =
+            1 + Math.floor(Math.random() * 2);
+
+    }
+
+    else {
+
+        // HARD
+        game.questionType =
+            1 + Math.floor(Math.random() * 4);
+
+    }
 
 }
 
@@ -462,18 +315,15 @@ function shuffle(array) {
         i--
     ) {
 
-        const j =
-            Math.floor(
-                Math.random() *
-                (i + 1)
-            );
+        const j = Math.floor(
+            Math.random() * (i + 1)
+        );
 
 
         [
             array[i],
             array[j]
-        ] =
-        [
+        ] = [
             array[j],
             array[i]
         ];
@@ -493,15 +343,14 @@ function shuffle(array) {
 function renderQuestion() {
 
     const country =
-        countries[
-            game.currentCountry
-        ];
+        countries[game.currentCountry];
 
 
     if (!country) {
 
         console.error(
-            "Invalid country index."
+            "Invalid country index:",
+            game.currentCountry
         );
 
         return;
@@ -513,25 +362,49 @@ function renderQuestion() {
     // TOP BAR
     // --------------------------------------------------------
 
-    setText(
-        "questionNumber",
-        `${game.question}/${game.totalQuestions}`
-    );
+    const questionNumber =
+        document.getElementById("questionNumber");
 
-    setText(
-        "lives",
-        game.lives
-    );
+    const lives =
+        document.getElementById("lives");
 
-    setText(
-        "combo",
-        game.combo
-    );
+    const combo =
+        document.getElementById("combo");
 
-    setText(
-        "score",
-        game.score
-    );
+    const score =
+        document.getElementById("score");
+
+
+    if (questionNumber) {
+
+        questionNumber.textContent =
+            `${game.question}/${game.totalQuestions}`;
+
+    }
+
+
+    if (lives) {
+
+        lives.textContent =
+            game.lives;
+
+    }
+
+
+    if (combo) {
+
+        combo.textContent =
+            game.combo;
+
+    }
+
+
+    if (score) {
+
+        score.textContent =
+            game.score;
+
+    }
 
 
     updateGameProfileStats();
@@ -546,9 +419,7 @@ function renderQuestion() {
     let value = "";
 
 
-    switch (
-        game.questionType
-    ) {
+    switch (game.questionType) {
 
         case 1:
 
@@ -593,48 +464,44 @@ function renderQuestion() {
 
             break;
 
+    }
 
-        default:
 
-            title =
-                "Which country has this capital?";
+    const questionType =
+        document.getElementById("questionType");
 
-            value =
-                country[1];
+    const questionText =
+        document.getElementById("questionText");
+
+    const questionValue =
+        document.getElementById("questionValue");
+
+
+    if (questionType) {
+
+        questionType.textContent =
+            title;
 
     }
 
 
-    setText(
-        "questionType",
-        title
-    );
+    if (questionText) {
 
-    setText(
-        "questionText",
-        "Choose the correct answer:"
-    );
+        questionText.textContent =
+            "Choose the correct answer:";
 
-    setText(
-        "questionValue",
-        value
-    );
+    }
+
+
+    if (questionValue) {
+
+        questionValue.textContent =
+            value;
+
+    }
 
 
     renderAnswers();
-
-
-    // --------------------------------------------------------
-    // OPTIONAL UI UPDATE
-    // --------------------------------------------------------
-
-    if (
-        typeof updateGameUI === "function"
-    ) {
-
-        updateGameUI();
-
-    }
 
 }
 
@@ -646,9 +513,7 @@ function renderQuestion() {
 function renderAnswers() {
 
     const container =
-        document.getElementById(
-            "answers"
-        );
+        document.getElementById("answers");
 
 
     if (!container) {
@@ -665,39 +530,80 @@ function renderAnswers() {
         (countryIndex, position) => {
 
             const button =
-                document.createElement(
-                    "button"
-                );
+                document.createElement("button");
 
 
             button.className =
                 "answer-button";
 
 
-            button.dataset.index =
-                position;
-
-
             button.textContent =
                 `${position + 1}. ${countries[countryIndex][0]}`;
 
 
-            button.onclick =
-                function () {
+            button.onclick = () => {
 
-                    answerQuestion(
-                        position
-                    );
+                answerQuestion(position);
 
-                };
+            };
 
 
-            container.appendChild(
-                button
-            );
+            container.appendChild(button);
 
         }
     );
+
+}
+
+
+// ============================================================
+// UPDATE PROFILE HUD
+// ============================================================
+
+function updateGameProfileStats() {
+
+    const profile = getProfile();
+
+
+    if (!profile) {
+
+        return;
+
+    }
+
+
+    const xp =
+        document.getElementById("gameXP");
+
+    const coins =
+        document.getElementById("gameCoins");
+
+    const level =
+        document.getElementById("gameLevel");
+
+
+    if (xp) {
+
+        xp.textContent =
+            profile.xp;
+
+    }
+
+
+    if (coins) {
+
+        coins.textContent =
+            profile.coins;
+
+    }
+
+
+    if (level) {
+
+        level.textContent =
+            profile.level;
+
+    }
 
 }
 
@@ -731,28 +637,11 @@ function answerQuestion(position) {
     const selected =
         game.options[position];
 
-
     const correct =
         game.currentCountry;
 
 
-    // --------------------------------------------------------
-    // VISUAL FEEDBACK
-    // --------------------------------------------------------
-
-    highlightAnswer(
-        position,
-        selected === correct
-    );
-
-
-    // --------------------------------------------------------
-    // CORRECT
-    // --------------------------------------------------------
-
-    if (
-        selected === correct
-    ) {
+    if (selected === correct) {
 
         correctAnswer();
 
@@ -765,32 +654,24 @@ function answerQuestion(position) {
     // LUCKY ANSWER
     // --------------------------------------------------------
 
-    const profile =
-        getProfileSafe();
+    const profile = getProfile();
 
 
     if (
         profile &&
-        Number(profile.luckyAnswer || 0) > 0
+        profile.luckyAnswer > 0
     ) {
 
-        const use =
-            confirm(
-                "Wrong answer!\nUse Lucky Answer?"
-            );
+        const use = confirm(
+            "Wrong answer!\nUse Lucky Answer?"
+        );
 
 
         if (use) {
 
             profile.luckyAnswer--;
 
-            if (
-                typeof save === "function"
-            ) {
-
-                save();
-
-            }
+            save();
 
             correctAnswer(true);
 
@@ -807,68 +688,12 @@ function answerQuestion(position) {
 
 
 // ============================================================
-// HIGHLIGHT ANSWER
-// ============================================================
-
-function highlightAnswer(
-    selectedPosition,
-    isCorrect
-) {
-
-    const buttons =
-        document.querySelectorAll(
-            "#answers button"
-        );
-
-
-    buttons.forEach(
-        (button, index) => {
-
-            button.disabled = true;
-
-
-            if (
-                index === selectedPosition
-            ) {
-
-                button.classList.add(
-                    isCorrect
-                        ? "correct"
-                        : "wrong"
-                );
-
-            }
-
-
-            if (
-                game.options[index] ===
-                game.currentCountry
-            ) {
-
-                button.classList.add(
-                    "correct"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-// ============================================================
 // CORRECT ANSWER
 // ============================================================
 
-function correctAnswer(
-    lucky = false
-) {
+function correctAnswer(lucky = false) {
 
-    if (
-        game.locked ||
-        !game.active
-    ) {
+    if (game.locked) {
 
         return;
 
@@ -878,11 +703,12 @@ function correctAnswer(
     game.locked = true;
 
 
-    const profile =
-        getProfileSafe();
+    const profile = getProfile();
 
 
     if (!profile) {
+
+        game.locked = false;
 
         return;
 
@@ -893,13 +719,8 @@ function correctAnswer(
 
     game.correct++;
 
-    game.streak++;
 
-
-    if (
-        game.combo >
-        game.bestCombo
-    ) {
+    if (game.combo > game.bestCombo) {
 
         game.bestCombo =
             game.combo;
@@ -908,79 +729,59 @@ function correctAnswer(
 
 
     // --------------------------------------------------------
-    // DIFFICULTY
-    // --------------------------------------------------------
-
-    const config =
-        GAME_DIFFICULTY[
-            game.difficulty
-        ];
-
-
-    // --------------------------------------------------------
     // BASE SCORE
     // --------------------------------------------------------
 
-    let gained =
-        config.baseScore;
+    let baseScore;
+
+
+    if (game.difficulty === 1) {
+
+        baseScore = 100;
+
+    }
+
+    else if (game.difficulty === 2) {
+
+        baseScore = 150;
+
+    }
+
+    else {
+
+        baseScore = 200;
+
+    }
 
 
     // --------------------------------------------------------
-    // COMBO
+    // COMBO BONUS
     // --------------------------------------------------------
 
-    if (
-        game.combo >= 2
-    ) {
+    let comboBonus = 0;
 
-        gained +=
+
+    if (game.combo >= 2) {
+
+        comboBonus =
             game.combo * 25;
 
     }
 
 
-    // --------------------------------------------------------
-    // SPEED BONUS
-    // --------------------------------------------------------
-
-    const elapsed =
-        (
-            Date.now() -
-            game.questionStartTime
-        ) / 1000;
-
-
-    if (
-        elapsed <=
-        config.time * 0.35
-    ) {
-
-        gained += 50;
-
-    }
-
-    else if (
-        elapsed <=
-        config.time * 0.60
-    ) {
-
-        gained += 25;
-
-    }
+    let gained =
+        baseScore + comboBonus;
 
 
     // --------------------------------------------------------
     // SCORE BOOST
     // --------------------------------------------------------
 
-    if (
-        Number(profile.scoreBoost || 0) > 0
-    ) {
+    if (profile.scoreBoost > 0) {
 
-        const use =
-            confirm(
-                "Use Score Boost?"
-            );
+        const use = confirm(
+            "Use Score Boost?"
+        );
 
 
         if (use) {
@@ -988,28 +789,14 @@ function correctAnswer(
             profile.scoreBoost--;
 
             gained =
-                Math.floor(
-                    gained * 1.25
-                );
+                Math.floor(gained * 1.25);
 
         }
 
     }
 
 
-    // --------------------------------------------------------
-    // LUCKY BONUS
-    // --------------------------------------------------------
-
-    if (lucky) {
-
-        gained += 50;
-
-    }
-
-
-    game.score +=
-        gained;
+    game.score += gained;
 
 
     // --------------------------------------------------------
@@ -1017,29 +804,14 @@ function correctAnswer(
     // --------------------------------------------------------
 
     let gainedXP =
-        50 +
-        game.combo * 10;
+        50 + game.combo * 10;
 
 
-    gainedXP =
-        Math.floor(
-            gainedXP *
-            config.xpMultiplier
+    if (profile.doubleXP > 0) {
+
+        const use = confirm(
+            "Use Double XP?"
         );
-
-
-    // --------------------------------------------------------
-    // DOUBLE XP
-    // --------------------------------------------------------
-
-    if (
-        Number(profile.doubleXP || 0) > 0
-    ) {
-
-        const use =
-            confirm(
-                "Use Double XP?"
-            );
 
 
         if (use) {
@@ -1053,115 +825,84 @@ function correctAnswer(
     }
 
 
-    if (
-        typeof addXP === "function"
-    ) {
-
-        addXP(gainedXP);
-
-    }
+    addXP(gainedXP);
 
 
     // --------------------------------------------------------
     // COINS
     // --------------------------------------------------------
 
-    let coinReward =
-        20 +
-        game.combo * 5;
+    const coinReward =
+        20 + game.combo * 5;
 
 
-    coinReward =
-        Math.floor(
-            coinReward *
-            config.coinMultiplier
-        );
-
-
-    if (
-        typeof addCoins === "function"
-    ) {
-
-        addCoins(
-            coinReward
-        );
-
-    }
+    addCoins(coinReward);
 
 
     // --------------------------------------------------------
     // STATISTICS
     // --------------------------------------------------------
 
-    profile.totalCorrect =
-        Number(
-            profile.totalCorrect || 0
-        ) + 1;
+    profile.totalCorrect++;
+
+    profile.totalQuestions++;
 
 
-    profile.totalQuestions =
-        Number(
-            profile.totalQuestions || 0
-        ) + 1;
-
-
-    if (
-        typeof save === "function"
-    ) {
-
-        save();
-
-    }
+    save();
 
 
     updateGameProfileStats();
 
 
     // --------------------------------------------------------
+    // ACHIEVEMENT CHECK
+    // --------------------------------------------------------
+    //
+    // Achievement system có thể kiểm tra:
+    // - correct answers
+    // - combo
+    // - score
+    // - total questions
+    //
+    // Không cần tự viết lại achievement ở đây.
+    //
+
+    if (
+        typeof checkAchievements === "function"
+    ) {
+
+        checkAchievements();
+
+    }
+
+
+    // --------------------------------------------------------
     // MESSAGE
     // --------------------------------------------------------
 
-    let message;
-
-
     if (lucky) {
 
-        message =
-            `🍀 Lucky! +${gained} points`;
+        toast(
+            `🍀 Lucky! +${gained} points, +${gainedXP} XP`
+        );
 
     }
 
     else {
 
-        message =
-            `✅ Correct! +${gained} points`;
-
-    }
-
-
-    message +=
-        ` | +${gainedXP} XP | +${coinReward} Coins`;
-
-
-    if (
-        typeof toast === "function"
-    ) {
-
-        toast(message);
+        toast(
+            `✅ Correct! +${gained} points, +${gainedXP} XP, +${coinReward} Coins`
+        );
 
     }
 
 
     // --------------------------------------------------------
-    // NEXT
+    // NEXT QUESTION
     // --------------------------------------------------------
 
     setTimeout(
-        function () {
-
-            nextQuestion();
-
-        },
+        nextQuestion,
         900
     );
 
@@ -1174,10 +915,7 @@ function correctAnswer(
 
 function wrongAnswer() {
 
-    if (
-        game.locked ||
-        !game.active
-    ) {
+    if (game.locked) {
 
         return;
 
@@ -1187,32 +925,27 @@ function wrongAnswer() {
     game.locked = true;
 
 
-    const profile =
-        getProfileSafe();
+    const profile = getProfile();
 
 
     if (!profile) {
+
+        game.locked = false;
 
         return;
 
     }
 
 
-    game.perfect = false;
-
-
     // --------------------------------------------------------
     // SECOND CHANCE
     // --------------------------------------------------------
 
-    if (
-        Number(profile.secondChance || 0) > 0
-    ) {
+    if (profile.secondChance > 0) {
 
-        const use =
-            confirm(
-                "Wrong answer!\nUse Second Chance?"
-            );
+        const use = confirm(
+            "Wrong answer!\nUse Second Chance?"
+        );
 
 
         if (use) {
@@ -1223,44 +956,31 @@ function wrongAnswer() {
 
             game.combo = 0;
 
-            profile.totalWrong =
-                Number(
-                    profile.totalWrong || 0
-                ) + 1;
+
+            profile.totalWrong++;
+
+            profile.totalQuestions++;
 
 
-            profile.totalQuestions =
-                Number(
-                    profile.totalQuestions || 0
-                ) + 1;
+            save();
 
 
             if (
-                typeof save === "function"
+                typeof checkAchievements === "function"
             ) {
 
-                save();
+                checkAchievements();
 
             }
 
 
-            if (
-                typeof toast === "function"
-            ) {
-
-                toast(
-                    "🔄 Second Chance activated!"
-                );
-
-            }
+            toast(
+                "🔄 Second Chance activated!"
+            );
 
 
             setTimeout(
-                function () {
-
-                    nextQuestion();
-
-                },
+                nextQuestion,
                 900
             );
 
@@ -1273,40 +993,31 @@ function wrongAnswer() {
 
 
     // --------------------------------------------------------
-    // NORMAL WRONG
+    // NORMAL WRONG ANSWER
     // --------------------------------------------------------
 
     game.wrong++;
 
     game.combo = 0;
 
-    game.streak = 0;
-
     game.lives--;
 
 
-    profile.totalWrong =
-        Number(
-            profile.totalWrong || 0
-        ) + 1;
+    profile.totalWrong++;
+
+    profile.totalQuestions++;
 
 
-    profile.totalQuestions =
-        Number(
-            profile.totalQuestions || 0
-        ) + 1;
+    save();
 
 
     if (
-        typeof save === "function"
+        typeof checkAchievements === "function"
     ) {
 
-        save();
+        checkAchievements();
 
     }
-
-
-    updateGameProfileStats();
 
 
     const correctCountry =
@@ -1315,23 +1026,38 @@ function wrongAnswer() {
         ][0];
 
 
-    if (
-        typeof toast === "function"
-    ) {
+    toast(
+        `❌ Wrong! Correct answer: ${correctCountry}`
+    );
 
-        toast(
-            `❌ Wrong! Correct answer: ${correctCountry}`
-        );
+
+    // Update HUD immediately
+
+    const lives =
+        document.getElementById("lives");
+
+    const combo =
+        document.getElementById("combo");
+
+
+    if (lives) {
+
+        lives.textContent =
+            game.lives;
+
+    }
+
+
+    if (combo) {
+
+        combo.textContent =
+            game.combo;
 
     }
 
 
     setTimeout(
-        function () {
-
-            nextQuestion();
-
-        },
+        nextQuestion,
         1200
     );
 
@@ -1354,8 +1080,7 @@ function useHint() {
     }
 
 
-    const profile =
-        getProfileSafe();
+    const profile = getProfile();
 
 
     if (!profile) {
@@ -1365,11 +1090,9 @@ function useHint() {
     }
 
 
-    if (
-        game.hintUsed
-    ) {
+    if (game.hintUsed) {
 
-        toastSafe(
+        toast(
             "Hint already used."
         );
 
@@ -1378,11 +1101,9 @@ function useHint() {
     }
 
 
-    if (
-        Number(profile.hints || 0) <= 0
-    ) {
+    if (profile.hints <= 0) {
 
-        toastSafe(
+        toast(
             "You don't have any Hint."
         );
 
@@ -1399,9 +1120,7 @@ function useHint() {
     game.score -= 25;
 
 
-    if (
-        game.score < 0
-    ) {
+    if (game.score < 0) {
 
         game.score = 0;
 
@@ -1418,7 +1137,7 @@ function useHint() {
 
     const wrongButtons =
         buttons.filter(
-            function (button, index) {
+            (button, index) => {
 
                 return (
                     game.options[index] !==
@@ -1429,92 +1148,47 @@ function useHint() {
         );
 
 
-    shuffle(
-        wrongButtons
-    );
+    shuffle(wrongButtons);
 
 
     wrongButtons
         .slice(0, 2)
-        .forEach(
-            function (button) {
+        .forEach(button => {
 
-                button.disabled = true;
+            button.classList.add("removed");
 
-                button.classList.add(
-                    "removed"
-                );
+            button.disabled = true;
 
-                button.style.opacity =
-                    "0.25";
-
-            }
-        );
+        });
 
 
-    if (
-        typeof save === "function"
-    ) {
+    save();
 
-        save();
+
+    const score =
+        document.getElementById("score");
+
+
+    if (score) {
+
+        score.textContent =
+            game.score;
 
     }
 
 
-    setText(
-        "score",
-        game.score
-    );
-
-
-    toastSafe(
+    toast(
         "💡 Hint used! -25 points"
     );
 
-}
 
+    if (
+        typeof checkAchievements === "function"
+    ) {
 
-// ============================================================
-// UPDATE GAME PROFILE STATS
-// ============================================================
+        checkAchievements();
 
-function updateGameProfileStats() {
-
-    const profile =
-        getProfileSafe();
-
-
-    if (!profile)
-        return;
-
-
-    setText(
-        "gameXP",
-        profile.xp
-    );
-
-    setText(
-        "gameCoins",
-        profile.coins
-    );
-
-    setText(
-        "gameLevel",
-        profile.level
-    );
-
-
-    // Optional shop/game stats
-
-    setText(
-        "gameHints",
-        profile.hints
-    );
-
-    setText(
-        "gameLives",
-        game.lives
-    );
+    }
 
 }
 
@@ -1525,9 +1199,7 @@ function updateGameProfileStats() {
 
 function finishGame() {
 
-    if (
-        !game.active
-    ) {
+    if (!game.active) {
 
         return;
 
@@ -1539,8 +1211,7 @@ function finishGame() {
     game.locked = true;
 
 
-    const profile =
-        getProfileSafe();
+    const profile = getProfile();
 
 
     if (!profile) {
@@ -1550,70 +1221,39 @@ function finishGame() {
     }
 
 
-    const config =
-        GAME_DIFFICULTY[
-            game.difficulty
-        ];
-
-
     // --------------------------------------------------------
     // COMPLETION REWARD
     // --------------------------------------------------------
 
-    let completionReward =
-        100;
+    const completionReward =
+        100 +
 
+        (
+            game.correct === game.totalQuestions
+                ? 250
+                : 0
+        ) +
 
-    if (
-        game.correct ===
-        game.totalQuestions
-    ) {
-
-        completionReward += 250;
-
-    }
-
-
-    if (
-        game.difficulty === 3
-    ) {
-
-        completionReward += 100;
-
-    }
-
-
-    completionReward =
-        Math.floor(
-            completionReward *
-            config.coinMultiplier
+        (
+            game.difficulty === 3
+                ? 100
+                : 0
         );
 
 
-    if (
-        typeof addCoins === "function"
-    ) {
-
-        addCoins(
-            completionReward
-        );
-
-    }
+    addCoins(completionReward);
 
 
     // --------------------------------------------------------
     // STATISTICS
     // --------------------------------------------------------
 
-    profile.totalGames =
-        Number(
-            profile.totalGames || 0
-        ) + 1;
+    profile.totalGames++;
 
 
     if (
         game.bestCombo >
-        Number(profile.bestCombo || 0)
+        profile.bestCombo
     ) {
 
         profile.bestCombo =
@@ -1623,16 +1263,39 @@ function finishGame() {
 
 
     // --------------------------------------------------------
+    // SAVE LAST GAME RESULT
+    // --------------------------------------------------------
+    //
+    // Achievement.js dùng các thông tin này
+    // để kiểm tra thành tựu sau khi game kết thúc.
+    //
+
+    profile.lastGameScore =
+        game.score;
+
+    profile.lastGameCorrect =
+        game.correct;
+
+    profile.lastGameWrong =
+        game.wrong;
+
+    profile.lastGameCombo =
+        game.bestCombo;
+
+    profile.lastGameDifficulty =
+        game.difficulty;
+
+
+    // --------------------------------------------------------
     // HIGH SCORE
     // --------------------------------------------------------
 
-    let newHighScore =
-        false;
+    let newHighScore = false;
 
 
     if (
         game.score >
-        Number(profile.highScore || 0)
+        profile.highScore
     ) {
 
         profile.highScore =
@@ -1644,29 +1307,19 @@ function finishGame() {
 
 
     // --------------------------------------------------------
-    // PERFECT GAME
+    // ACHIEVEMENT SYSTEM
     // --------------------------------------------------------
 
     if (
-        game.correct ===
-        game.totalQuestions
+        typeof checkAchievements === "function"
     ) {
 
-        profile.perfectGames =
-            Number(
-                profile.perfectGames || 0
-            ) + 1;
+        checkAchievements();
 
     }
 
 
-    if (
-        typeof save === "function"
-    ) {
-
-        save();
-
-    }
+    save();
 
 
     // --------------------------------------------------------
@@ -1693,19 +1346,10 @@ function finishGame() {
 
     }
 
-    else if (
-        game.lives <= 0
-    ) {
-
-        message =
-            "💀 GAME OVER";
-
-    }
-
     else {
 
         message =
-            `Game Complete! +${completionReward} Coins`;
+            `Game reward: +${completionReward} Coins`;
 
     }
 
@@ -1715,103 +1359,69 @@ function finishGame() {
     // --------------------------------------------------------
 
     const result =
-        document.getElementById(
-            "resultInfo"
-        );
+        document.getElementById("resultInfo");
 
 
-    if (result) {
+    if (!result) {
 
-        result.innerHTML = `
-
-            <div class="result-message">
-                ${message}
-            </div>
-
-            <div class="result-stat">
-                <span>⭐ Score</span>
-                <strong>
-                    ${game.score}
-                </strong>
-            </div>
-
-            <div class="result-stat">
-                <span>✅ Correct</span>
-                <strong>
-                    ${game.correct}
-                </strong>
-            </div>
-
-            <div class="result-stat">
-                <span>❌ Wrong</span>
-                <strong>
-                    ${game.wrong}
-                </strong>
-            </div>
-
-            <div class="result-stat">
-                <span>🔥 Best Combo</span>
-                <strong>
-                    ${game.bestCombo}
-                </strong>
-            </div>
-
-            <div class="result-stat">
-                <span>🪙 Coins Earned</span>
-                <strong>
-                    +${completionReward}
-                </strong>
-            </div>
-
-            <div class="result-stat">
-                <span>🪙 Total Coins</span>
-                <strong>
-                    ${profile.coins}
-                </strong>
-            </div>
-
-            <div class="result-stat">
-                <span>🏆 Level</span>
-                <strong>
-                    ${profile.level}
-                    ${
-                        typeof getRank === "function"
-                            ? ` (${getRank(profile.level)})`
-                            : ""
-                    }
-                </strong>
-            </div>
-
-            <div class="result-stat">
-                <span>🎯 Difficulty</span>
-                <strong>
-                    ${config.name}
-                </strong>
-            </div>
-
-        `;
+        return;
 
     }
 
 
-    if (
-        typeof updateGameUI === "function"
-    ) {
+    result.innerHTML = `
 
-        updateGameUI();
+        <div class="result-message">
+            ${message}
+        </div>
 
-    }
+        <div class="result-stat">
+            <span>⭐ Score</span>
+            <strong>
+                ${game.score}
+            </strong>
+        </div>
+
+        <div class="result-stat">
+            <span>✅ Correct</span>
+            <strong>
+                ${game.correct}
+            </strong>
+        </div>
+
+        <div class="result-stat">
+            <span>❌ Wrong</span>
+            <strong>
+                ${game.wrong}
+            </strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🔥 Best Combo</span>
+            <strong>
+                ${game.bestCombo}
+            </strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🪙 Coins</span>
+            <strong>
+                ${profile.coins}
+            </strong>
+        </div>
+
+        <div class="result-stat">
+            <span>🏆 Level</span>
+            <strong>
+                ${profile.level}
+                (${getRank(profile.level)})
+            </strong>
+        </div>
+
+    `;
 
 
-    if (
-        typeof showScreen === "function"
-    ) {
-
-        showScreen(
-            "resultScreen"
-        );
-
-    }
+    showScreen("resultScreen");
 
 }
 
@@ -1823,15 +1433,7 @@ function finishGame() {
 function confirmQuitGame() {
 
     if (
-        !game.active
-    ) {
-
-        return;
-
-    }
-
-
-    if (
+        !game.active ||
         game.locked
     ) {
 
@@ -1840,10 +1442,9 @@ function confirmQuitGame() {
     }
 
 
-    const quit =
-        confirm(
-            "Quit this game?\nYour current game progress will be lost."
-        );
+    const quit = confirm(
+        "Quit this game?\nYour current game progress will be lost."
+    );
 
 
     if (!quit) {
@@ -1858,283 +1459,65 @@ function confirmQuitGame() {
     game.locked = true;
 
 
-    if (
-        typeof goHome === "function"
-    ) {
-
-        goHome();
-
-    }
+    goHome();
 
 }
 
 
 // ============================================================
-// RESTART GAME
+// GET CURRENT GAME DATA
 // ============================================================
 
-function restartGame() {
+function getGameState() {
 
-    const difficulty =
-        game.difficulty || 1;
+    return {
 
+        active: game.active,
 
-    startGame(
-        difficulty
-    );
+        difficulty: game.difficulty,
+
+        question: game.question,
+
+        totalQuestions:
+            game.totalQuestions,
+
+        score: game.score,
+
+        lives: game.lives,
+
+        combo: game.combo,
+
+        bestCombo: game.bestCombo,
+
+        correct: game.correct,
+
+        wrong: game.wrong,
+
+        currentCountry:
+            game.currentCountry,
+
+        questionType:
+            game.questionType
+
+    };
 
 }
-
-
-// ============================================================
-// RETURN HOME
-// ============================================================
-
-function exitGame() {
-
-    if (game.active) {
-
-        const confirmExit =
-            confirm(
-                "Exit the current game?"
-            );
-
-        if (!confirmExit) {
-
-            return;
-
-        }
-
-    }
-
-
-    game.active = false;
-
-    game.locked = true;
-
-
-    if (
-        typeof goHome === "function"
-    ) {
-
-        goHome();
-
-    }
-
-}
-
-
-// ============================================================
-// UTILITY: SET TEXT
-// ============================================================
-
-function setText(
-    id,
-    value
-) {
-
-    const element =
-        document.getElementById(id);
-
-
-    if (element) {
-
-        element.textContent =
-            value;
-
-    }
-
-}
-
-
-// ============================================================
-// UTILITY: PROFILE
-// ============================================================
-
-function getProfileSafe() {
-
-    if (
-        typeof getProfile === "function"
-    ) {
-
-        return getProfile();
-
-    }
-
-
-    console.warn(
-        "getProfile() is not available."
-    );
-
-
-    return null;
-
-}
-
-
-// ============================================================
-// UTILITY: TOAST
-// ============================================================
-
-function toastSafe(
-    message
-) {
-
-    if (
-        typeof toast === "function"
-    ) {
-
-        toast(message);
-
-    }
-
-    else {
-
-        console.log(message);
-
-    }
-
-}
-
-
-// ============================================================
-// OPTIONAL UI BRIDGE
-// ============================================================
-
-function updateGameUI() {
-
-    setText(
-        "questionNumber",
-        `${game.question}/${game.totalQuestions}`
-    );
-
-    setText(
-        "score",
-        game.score
-    );
-
-    setText(
-        "lives",
-        game.lives
-    );
-
-    setText(
-        "combo",
-        game.combo
-    );
-
-
-    updateGameProfileStats();
-
-}
-
-
-// ============================================================
-// KEYBOARD CONTROLS
-// ============================================================
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (!game.active)
-            return;
-
-
-        if (game.locked)
-            return;
-
-
-        // 1 - 4 answer
-
-        if (
-            ["1", "2", "3", "4"]
-                .includes(event.key)
-        ) {
-
-            const position =
-                Number(event.key) - 1;
-
-
-            if (
-                position <
-                game.options.length
-            ) {
-
-                answerQuestion(
-                    position
-                );
-
-            }
-
-        }
-
-
-        // H = hint
-
-        if (
-            event.key.toLowerCase() === "h"
-        ) {
-
-            useHint();
-
-        }
-
-
-        // ESC = quit
-
-        if (
-            event.key === "Escape"
-        ) {
-
-            confirmQuitGame();
-
-        }
-
-    }
-);
-
-
-// ============================================================
-// PREVENT DOUBLE CLICK / ACCIDENTAL SUBMIT
-// ============================================================
-
-document.addEventListener(
-    "click",
-    function (event) {
-
-        if (!game.active)
-            return;
-
-
-        const button =
-            event.target.closest(
-                "#answers button"
-            );
-
-
-        if (!button)
-            return;
-
-
-        if (game.locked) {
-
-            event.preventDefault();
-
-        }
-
-    }
-);
 
 
 // ============================================================
 // DEBUG
 // ============================================================
 
-function getGameState() {
+function debugGame() {
 
-    return {
-        ...game
-    };
+    console.log(
+        "================ GAME STATE ================"
+    );
+
+    console.log(game);
+
+    console.log(
+        "============================================="
+    );
 
 }
