@@ -1,7 +1,7 @@
 // ============================================================
 // ASIA COUNTRY GUESSING GAME
 // WEB EDITION
-// VERSION 2.0
+// VERSION 2.5
 // ============================================================
 
 
@@ -75,153 +75,13 @@ const countries = [
 // STORAGE
 // ============================================================
 
-const STORAGE_KEY =
-    "asia_country_game_profiles_v2";
-
-const CURRENT_PROFILE_KEY =
-    "asia_current_profile_v2";
-
-const DAILY_KEY =
-    "asia_daily_v2";
+const STORAGE_KEY = "asia_country_game_profiles_v25";
+const CURRENT_PROFILE_KEY = "asia_current_profile_v25";
+const DAILY_KEY = "asia_daily_v25";
 
 
 // ============================================================
-// GLOBAL STATE
-// ============================================================
-
-let profiles = [];
-
-let currentProfile = -1;
-
-let game = {
-
-    mode: "classic",
-
-    difficulty: 1,
-
-    question: 0,
-
-    totalQuestions: 10,
-
-    score: 0,
-
-    lives: 3,
-
-    combo: 0,
-
-    bestCombo: 0,
-
-    correct: 0,
-
-    wrong: 0,
-
-    used: [],
-
-    currentCountry: -1,
-
-    options: [],
-
-    type: 1,
-
-    hintUsed: false,
-
-    locked: false,
-
-    timeLeft: 0,
-
-    timer: null,
-
-    daily: false
-
-};
-
-let dailyData = {};
-
-let toastTimer = null;
-
-
-// ============================================================
-// LOAD
-// ============================================================
-
-function loadJSON(key, fallback) {
-
-    try {
-
-        const saved =
-            localStorage.getItem(key);
-
-        if (saved === null)
-            return fallback;
-
-        return JSON.parse(saved);
-
-    }
-    catch (error) {
-
-        console.error(
-            "Load error:",
-            error
-        );
-
-        return fallback;
-
-    }
-
-}
-
-
-profiles =
-    loadJSON(
-        STORAGE_KEY,
-        []
-    );
-
-
-if (!Array.isArray(profiles)) {
-
-    profiles = [];
-
-}
-
-
-try {
-
-    const savedCurrent =
-        localStorage.getItem(
-            CURRENT_PROFILE_KEY
-        );
-
-    currentProfile =
-        Number(savedCurrent);
-
-    if (
-        !Number.isInteger(
-            currentProfile
-        )
-    ) {
-
-        currentProfile = -1;
-
-    }
-
-}
-catch (error) {
-
-    currentProfile = -1;
-
-}
-
-
-dailyData =
-    loadJSON(
-        DAILY_KEY,
-        {}
-    );
-
-
-// ============================================================
-// PROFILE DEFAULT
+// PROFILE
 // ============================================================
 
 function newProfile(name) {
@@ -231,78 +91,142 @@ function newProfile(name) {
         name: name,
 
         level: 1,
-
         xp: 0,
 
         highScore: 0,
 
         totalGames: 0,
-
         totalCorrect: 0,
-
         totalWrong: 0,
-
         totalQuestions: 0,
 
         bestCombo: 0,
 
         coins: 500,
-
         totalCoinsEarned: 500,
 
-        hints: 1,
-
+        hints: 2,
         extraLives: 0,
-
         doubleXP: 0,
-
         scoreBoost: 0,
-
         secondChance: 0,
-
         luckyAnswer: 0,
 
+        skins: ["Default"],
+        equippedSkin: "Default",
+
         achievements: [],
-
-        chests: [],
-
-        chestStats: {
-
-            common: 0,
-
-            rare: 0,
-
-            epic: 0,
-
-            legend: 0,
-
-            mythic: 0,
-
-            divine: 0
-
+        chests: {
+            Common: 0,
+            Rare: 0,
+            Epic: 0,
+            Legend: 0,
+            Mythic: 0,
+            Divine: 0
         },
 
-        dailyCompleted: [],
+        bossItems: [],
 
-        modesPlayed: {
-
-            classic: 0,
-
-            survival: 0,
-
-            timeattack: 0,
-
-            daily: 0
-
-        },
-
-        perfectGames: 0,
-
-        highestDailyScore: 0
+        bossWins: 0,
+        dailyWins: 0
 
     };
 
 }
+
+
+// ============================================================
+// LOAD
+// ============================================================
+
+let profiles = [];
+let currentProfile = -1;
+
+try {
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+
+        profiles = JSON.parse(saved);
+
+        if (!Array.isArray(profiles))
+            profiles = [];
+
+    }
+
+}
+catch (e) {
+
+    profiles = [];
+
+}
+
+
+try {
+
+    const savedCurrent =
+        localStorage.getItem(CURRENT_PROFILE_KEY);
+
+    if (savedCurrent !== null)
+        currentProfile = Number(savedCurrent);
+
+}
+catch (e) {
+
+    currentProfile = -1;
+
+}
+
+
+// ============================================================
+// MIGRATION
+// ============================================================
+
+function migrateProfile(p) {
+
+    if (!p) return;
+
+    if (!Array.isArray(p.skins))
+        p.skins = ["Default"];
+
+    if (!p.equippedSkin)
+        p.equippedSkin = "Default";
+
+    if (!Array.isArray(p.achievements))
+        p.achievements = [];
+
+    if (!p.chests) {
+
+        p.chests = {
+            Common: 0,
+            Rare: 0,
+            Epic: 0,
+            Legend: 0,
+            Mythic: 0,
+            Divine: 0
+        };
+
+    }
+
+    if (!Array.isArray(p.bossItems))
+        p.bossItems = [];
+
+    if (typeof p.bossWins !== "number")
+        p.bossWins = 0;
+
+    if (typeof p.dailyWins !== "number")
+        p.dailyWins = 0;
+
+    if (typeof p.totalCoinsEarned !== "number")
+        p.totalCoinsEarned = p.coins || 0;
+
+    if (typeof p.totalGames !== "number")
+        p.totalGames = 0;
+
+}
+
+profiles.forEach(migrateProfile);
 
 
 // ============================================================
@@ -323,23 +247,14 @@ function save() {
             String(currentProfile)
         );
 
-        localStorage.setItem(
-            DAILY_KEY,
-            JSON.stringify(dailyData)
-        );
-
     }
-    catch (error) {
+    catch (e) {
 
-        console.error(
-            "Save error:",
-            error
-        );
+        console.error("Save error:", e);
 
     }
 
     updateHeader();
-
     updateMainProfile();
 
 }
@@ -354,11 +269,8 @@ function getProfile() {
     if (
         currentProfile < 0 ||
         !profiles[currentProfile]
-    ) {
-
+    )
         return null;
-
-    }
 
     return profiles[currentProfile];
 
@@ -389,59 +301,23 @@ function showScreen(id) {
 
     document
         .querySelectorAll(".screen")
-        .forEach(
-            screen =>
-                screen.classList.remove(
-                    "active"
-                )
+        .forEach(screen =>
+            screen.classList.remove("active")
         );
-
 
     const target =
         document.getElementById(id);
 
+    if (!target) return;
 
-    if (!target) {
-
-        console.error(
-            "Screen not found:",
-            id
-        );
-
-        return;
-
-    }
-
-
-    target.classList.add(
-        "active"
-    );
-
+    target.classList.add("active");
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
 
-
     updateHeader();
-
-}
-
-
-// ============================================================
-// HOME
-// ============================================================
-
-function goHome() {
-
-    clearInterval(game.timer);
-
-    showScreen(
-        "homeScreen"
-    );
-
-    updateMainProfile();
 
 }
 
@@ -450,43 +326,26 @@ function goHome() {
 // TOAST
 // ============================================================
 
+let toastTimer = null;
+
 function toast(message) {
 
     const element =
-        document.getElementById(
-            "toast"
-        );
+        document.getElementById("toast");
 
+    if (!element) return;
 
-    if (!element)
-        return;
+    element.textContent = message;
 
+    element.classList.add("show");
 
-    element.textContent =
-        message;
+    clearTimeout(toastTimer);
 
+    toastTimer = setTimeout(() => {
 
-    element.classList.add(
-        "show"
-    );
+        element.classList.remove("show");
 
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
-            () => {
-
-                element.classList.remove(
-                    "show"
-                );
-
-            },
-            2300
-        );
+    }, 2400);
 
 }
 
@@ -497,350 +356,115 @@ function toast(message) {
 
 function updateHeader() {
 
-    const p =
-        getProfile();
+    const p = getProfile();
 
+    const name =
+        document.getElementById("topName");
 
-    document.getElementById(
-        "topName"
-    ).textContent =
-        p
-        ? p.name
-        : "Guest";
+    const level =
+        document.getElementById("topLevel");
 
+    const coins =
+        document.getElementById("topCoins");
 
-    document.getElementById(
-        "topLevel"
-    ).textContent =
-        p
-        ? p.level
-        : "1";
-
-
-    document.getElementById(
-        "topCoins"
-    ).textContent =
-        p
-        ? p.coins
-        : "0";
-
-}
-
-
-// ============================================================
-// LEVEL
-// ============================================================
-
-function calculateLevel(xp) {
-
-    return Math.floor(
-        xp / 500
-    ) + 1;
-
-}
-
-
-// ============================================================
-// RANK
-// ============================================================
-
-function getRank(level) {
-
-    if (level < 3)
-        return "Beginner";
-
-    if (level < 5)
-        return "Explorer";
-
-    if (level < 8)
-        return "Traveler";
-
-    if (level < 12)
-        return "Expert";
-
-    if (level < 20)
-        return "Master";
-
-    if (level < 30)
-        return "Grand Master";
-
-    if (level < 40)
-        return "Champion";
-
-    if (level < 50)
-        return "Elite";
-
-    if (level < 60)
-        return "Legendary";
-
-    if (level < 70)
-        return "Mythic";
-
-    if (level < 80)
-        return "Divine";
-
-    if (level < 90)
-        return "Celestial";
-
-    if (level < 100)
-        return "Immortal";
-
-    return "Transcendent";
-
-}
-
-
-// ============================================================
-// RANK EFFECT
-// ============================================================
-
-function getRankMultiplier(level) {
-
-    if (level >= 100)
-        return 1.30;
-
-    if (level >= 90)
-        return 1.25;
-
-    if (level >= 80)
-        return 1.20;
-
-    if (level >= 70)
-        return 1.15;
-
-    if (level >= 60)
-        return 1.15;
-
-    if (level >= 50)
-        return 1.10;
-
-    if (level >= 40)
-        return 1.10;
-
-    if (level >= 30)
-        return 1.05;
-
-    if (level >= 20)
-        return 1.05;
-
-    return 1;
-
-}
-
-
-function rankEffect(level) {
-
-    if (level < 20)
-        return "No special bonus";
-
-    const bonus =
-        Math.round(
-            (
-                getRankMultiplier(level) - 1
-            ) * 100
-        );
-
-    return `+${bonus}% XP / Coins`;
-
-}
-
-
-// ============================================================
-// XP
-// ============================================================
-
-function addXP(amount) {
-
-    const p =
-        getProfile();
-
-
-    if (!p)
+    if (!name || !level || !coins)
         return;
 
+    if (!p) {
 
-    const multiplier =
-        getRankMultiplier(
-            p.level
-        );
+        name.textContent = "Guest";
+        level.textContent = "1";
+        coins.textContent = "0";
 
-
-    const gained =
-        Math.floor(
-            amount *
-            multiplier
-        );
-
-
-    const oldLevel =
-        p.level;
-
-
-    p.xp += gained;
-
-
-    p.level =
-        calculateLevel(
-            p.xp
-        );
-
-
-    if (
-        p.level >
-        oldLevel
-    ) {
-
-        const reward =
-            (
-                p.level -
-                oldLevel
-            ) * 500;
-
-
-        p.coins += reward;
-
-        p.totalCoinsEarned +=
-            reward;
-
-
-        toast(
-            `🎉 LEVEL UP! Level ${p.level}! +${reward} Coins`
-        );
+        return;
 
     }
 
-}
-
-
-// ============================================================
-// COINS
-// ============================================================
-
-function addCoins(amount) {
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    const multiplier =
-        getRankMultiplier(
-            p.level
-        );
-
-
-    const gained =
-        Math.floor(
-            amount *
-            multiplier
-        );
-
-
-    p.coins += gained;
-
-    p.totalCoinsEarned +=
-        gained;
+    name.textContent = p.name;
+    level.textContent = p.level;
+    coins.textContent = p.coins;
 
 }
 
 
 // ============================================================
-// MAIN PROFILE
+// PROFILE DISPLAY
 // ============================================================
 
 function updateMainProfile() {
 
     const container =
-        document.getElementById(
-            "mainProfileInfo"
-        );
+        document.getElementById("mainProfileInfo");
 
+    if (!container) return;
 
-    if (!container)
-        return;
-
-
-    const p =
-        getProfile();
-
+    const p = getProfile();
 
     if (!p) {
 
         container.innerHTML = `
             <p>No profile selected.</p>
-            <p>Create a profile to start playing.</p>
+            <button onclick="openProfileMenu()">
+                👤 Create / Select Profile
+            </button>
         `;
 
         return;
 
     }
 
-
     const accuracy =
         p.totalQuestions > 0
         ? Math.round(
             p.totalCorrect /
-            p.totalQuestions *
-            100
+            p.totalQuestions * 100
         )
         : 0;
 
-
     container.innerHTML = `
 
-        <div class="result-stat">
-            <span>👤 Name</span>
-            <strong>${escapeHTML(p.name)}</strong>
-        </div>
+        <div class="profile-summary">
 
-        <div class="result-stat">
-            <span>🏆 Rank</span>
-            <strong>${getRank(p.level)}</strong>
-        </div>
+            <div>
+                <span>👤 Name</span>
+                <strong>${escapeHTML(p.name)}</strong>
+            </div>
 
-        <div class="result-stat">
-            <span>⚡ Rank Effect</span>
-            <strong>${rankEffect(p.level)}</strong>
-        </div>
+            <div>
+                <span>⭐ Level</span>
+                <strong>${p.level}</strong>
+            </div>
 
-        <div class="result-stat">
-            <span>⭐ Level</span>
-            <strong>${p.level}</strong>
-        </div>
+            <div>
+                <span>🏆 Rank</span>
+                <strong>${getRank(p.level)}</strong>
+            </div>
 
-        <div class="result-stat">
-            <span>✨ XP</span>
-            <strong>${p.xp}</strong>
-        </div>
+            <div>
+                <span>✨ XP</span>
+                <strong>${p.xp}</strong>
+            </div>
 
-        <div class="result-stat">
-            <span>🪙 Coins</span>
-            <strong>${p.coins}</strong>
-        </div>
+            <div>
+                <span>🎯 Accuracy</span>
+                <strong>${accuracy}%</strong>
+            </div>
 
-        <div class="result-stat">
-            <span>🎮 Games</span>
-            <strong>${p.totalGames}</strong>
-        </div>
+            <div>
+                <span>🔥 Best Combo</span>
+                <strong>${p.bestCombo}</strong>
+            </div>
 
-        <div class="result-stat">
-            <span>🎯 Accuracy</span>
-            <strong>${accuracy}%</strong>
-        </div>
+            <div>
+                <span>👹 Boss Wins</span>
+                <strong>${p.bossWins}</strong>
+            </div>
 
-        <div class="result-stat">
-            <span>🏅 High Score</span>
-            <strong>${p.highScore}</strong>
-        </div>
+            <div>
+                <span>🏅 Achievements</span>
+                <strong>${p.achievements.length}</strong>
+            </div>
 
-        <div class="result-stat">
-            <span>🏆 Achievements</span>
-            <strong>
-                ${p.achievements.length}/${ACHIEVEMENTS.length}
-            </strong>
         </div>
 
     `;
@@ -849,16 +473,112 @@ function updateMainProfile() {
 
 
 // ============================================================
-// PROFILE
+// LEVEL / RANK
+// ============================================================
+
+function calculateLevel(xp) {
+
+    return Math.min(
+        100,
+        Math.floor(xp / 500) + 1
+    );
+
+}
+
+
+const ranks = [
+
+    [1,"Beginner"],
+    [3,"Explorer"],
+    [5,"Traveler"],
+    [8,"Expert"],
+    [12,"Master"],
+    [20,"Champion"],
+    [30,"Elite"],
+    [40,"Veteran"],
+    [50,"Grandmaster"],
+    [60,"Legend"],
+    [70,"Mythic"],
+    [80,"Immortal"],
+    [90,"Celestial"],
+    [100,"Divine"]
+
+];
+
+
+function getRank(level) {
+
+    let result = "Beginner";
+
+    for (const rank of ranks) {
+
+        if (level >= rank[0])
+            result = rank[1];
+
+    }
+
+    return result;
+
+}
+
+
+// ============================================================
+// XP / COINS
+// ============================================================
+
+function addXP(amount) {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    const oldLevel = p.level;
+
+    p.xp += Math.max(0, amount);
+
+    p.level = calculateLevel(p.xp);
+
+    if (p.level > oldLevel) {
+
+        const levels = p.level - oldLevel;
+        const reward = levels * 500;
+
+        addCoins(reward);
+
+        toast(
+            `🎉 LEVEL UP! Lv.${p.level} ${getRank(p.level)} +${reward} Coins`
+        );
+
+    }
+
+    checkAchievements();
+
+}
+
+
+function addCoins(amount) {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    amount = Math.max(0, Math.floor(amount));
+
+    p.coins += amount;
+    p.totalCoinsEarned += amount;
+
+}
+
+
+// ============================================================
+// PROFILES
 // ============================================================
 
 function openProfileMenu() {
 
     renderProfiles();
 
-    showScreen(
-        "profileScreen"
-    );
+    showScreen("profileScreen");
 
 }
 
@@ -866,30 +586,20 @@ function openProfileMenu() {
 function createProfileFromInput() {
 
     const input =
-        document.getElementById(
-            "profileNameInput"
-        );
+        document.getElementById("profileNameInput");
 
+    if (!input) return;
 
-    const name =
-        input.value.trim();
-
+    const name = input.value.trim();
 
     if (!name) {
 
-        toast(
-            "Enter a profile name."
-        );
-
+        toast("Enter a profile name.");
         return;
 
     }
 
-
-    createProfile(
-        name
-    );
-
+    createProfile(name);
 
     input.value = "";
 
@@ -898,18 +608,12 @@ function createProfileFromInput() {
 
 function createProfile(name) {
 
-    if (
-        profiles.length >= 20
-    ) {
+    if (profiles.length >= 20) {
 
-        toast(
-            "Maximum 20 profiles."
-        );
-
+        toast("Maximum 20 profiles.");
         return;
 
     }
-
 
     if (
         profiles.some(
@@ -919,117 +623,72 @@ function createProfile(name) {
         )
     ) {
 
-        toast(
-            "Profile already exists."
-        );
-
+        toast("Profile already exists.");
         return;
 
     }
 
+    profiles.push(newProfile(name));
 
-    profiles.push(
-        newProfile(name)
-    );
-
-
-    currentProfile =
-        profiles.length - 1;
-
+    currentProfile = profiles.length - 1;
 
     save();
 
     renderProfiles();
 
-
-    toast(
-        `Welcome, ${name}!`
-    );
+    toast(`Welcome, ${name}!`);
 
 }
 
 
 function selectProfile(index) {
 
-    index =
-        Number(index);
-
+    index = Number(index);
 
     if (
-        !profiles[index]
+        index < 0 ||
+        index >= profiles.length
     )
         return;
 
-
-    currentProfile =
-        index;
-
+    currentProfile = index;
 
     save();
 
     renderProfiles();
 
-
-    toast(
-        `Selected: ${profiles[index].name}`
-    );
+    toast(`Selected: ${profiles[index].name}`);
 
 }
 
 
 function deleteProfile() {
 
-    const p =
-        getProfile();
-
+    const p = getProfile();
 
     if (!p) {
 
-        toast(
-            "Select a profile first."
-        );
-
+        toast("Select a profile first.");
         return;
 
     }
 
-
-    if (
-        !confirm(
-            `Delete ${p.name}?`
-        )
-    )
+    if (!confirm(`Delete ${p.name}?`))
         return;
 
+    profiles.splice(currentProfile,1);
 
-    profiles.splice(
-        currentProfile,
-        1
-    );
+    if (!profiles.length)
+        currentProfile = -1;
 
-
-    if (
-        profiles.length === 0
-    ) {
-
-        currentProfile =
-            -1;
-
-    }
-    else if (
-        currentProfile >=
-        profiles.length
-    ) {
-
-        currentProfile =
-            profiles.length - 1;
-
-    }
-
+    else if (currentProfile >= profiles.length)
+        currentProfile = profiles.length - 1;
 
     save();
 
     renderProfiles();
+
+    toast("Profile deleted.");
 
 }
 
@@ -1037,18 +696,13 @@ function deleteProfile() {
 function renderProfiles() {
 
     const container =
-        document.getElementById(
-            "profileList"
-        );
+        document.getElementById("profileList");
 
+    if (!container) return;
 
-    if (!container)
-        return;
+    container.innerHTML = "";
 
-
-    if (
-        profiles.length === 0
-    ) {
+    if (!profiles.length) {
 
         container.innerHTML =
             "<p>No profiles yet.</p>";
@@ -1057,1180 +711,287 @@ function renderProfiles() {
 
     }
 
-
-    container.innerHTML =
-        profiles
-            .map(
-                (p,index) => `
-
-                <div class="profile-item
-                    ${index === currentProfile
-                        ? "selected"
-                        : ""}">
-
-                    <div>
-
-                        <strong>
-                            ${escapeHTML(p.name)}
-                        </strong>
-
-                        <br>
-
-                        Lv.${p.level}
-                        |
-                        ${p.xp} XP
-                        |
-                        🪙 ${p.coins}
-
-                    </div>
-
-                    <button
-                        onclick="selectProfile(${index})">
-
-                        ${
-                            index === currentProfile
-                            ? "Selected"
-                            : "Select"
-                        }
-
-                    </button>
-
-                </div>
-
-            `
-            )
-            .join("");
-
-}
-
-
-// ============================================================
-// GAME MODES
-// ============================================================
-
-const MODES = {
-
-    classic: {
-
-        name: "Classic Mode",
-
-        questions: 10,
-
-        lives: 3
-
-    },
-
-    survival: {
-
-        name: "Survival Mode",
-
-        questions: 20,
-
-        lives: 5
-
-    },
-
-    timeattack: {
-
-        name: "Time Attack",
-
-        questions: 10,
-
-        lives: 3
-
-    },
-
-    daily: {
-
-        name: "Daily Challenge",
-
-        questions: 10,
-
-        lives: 3
-
-    }
-
-};
-
-
-// ============================================================
-// MODE MENU
-// ============================================================
-
-function openModeMenu() {
-
-    if (!getProfile()) {
-
-        toast(
-            "Create/select a profile first."
-        );
-
-        openProfileMenu();
-
-        return;
-
-    }
-
-
-    showScreen(
-        "modeScreen"
-    );
-
-}
-
-
-// ============================================================
-// DIFFICULTY
-// ============================================================
-
-function openDifficulty(mode) {
-
-    const modeInput =
-        document.getElementById(
-            "selectedMode"
-        );
-
-
-    modeInput.value =
-        mode;
-
-
-    const title =
-        document.getElementById(
-            "difficultyTitle"
-        );
-
-
-    title.textContent =
-        `🎯 ${MODES[mode].name} — Difficulty`;
-
-
-    showScreen(
-        "difficultyScreen"
-    );
-
-}
-
-
-function startSelectedMode() {
-
-    const mode =
-        document.getElementById(
-            "selectedMode"
-        ).value;
-
-
-    const difficulty =
-        Number(
-            document.getElementById(
-                "difficultySelect"
-            ).value
-        );
-
-
-    startGame(
-        difficulty,
-        mode
-    );
-
-}
-
-
-// ============================================================
-// START GAME
-// ============================================================
-
-function startGame(
-    difficulty,
-    mode
-) {
-
-    const p =
-        getProfile();
-
-
-    if (!p) {
-
-        openProfileMenu();
-
-        return;
-
-    }
-
-
-    difficulty =
-        Number(difficulty);
-
-
-    if (
-        difficulty < 1 ||
-        difficulty > 3
-    ) {
-
-        difficulty = 1;
-
-    }
-
-
-    const settings =
-        MODES[mode] ||
-        MODES.classic;
-
-
-    game = {
-
-        mode: mode,
-
-        difficulty: difficulty,
-
-        question: 0,
-
-        totalQuestions:
-            settings.questions,
-
-        score: 0,
-
-        lives:
-            settings.lives,
-
-        combo: 0,
-
-        bestCombo: 0,
-
-        correct: 0,
-
-        wrong: 0,
-
-        used: [],
-
-        currentCountry: -1,
-
-        options: [],
-
-        type: 1,
-
-        hintUsed: false,
-
-        locked: false,
-
-        timeLeft:
-            mode === "timeattack"
-            ? 60
-            : 0,
-
-        timer: null,
-
-        daily:
-            mode === "daily"
-
-    };
-
-
-    if (
-        p.extraLives > 0 &&
-        mode !== "survival"
-    ) {
-
-        if (
-            confirm(
-                `You have ${p.extraLives} Extra Life(s). Use one?`
-            )
-        ) {
-
-            p.extraLives--;
-
-            game.lives++;
-
-            save();
-
-        }
-
-    }
-
-
-    showScreen(
-        "gameScreen"
-    );
-
-
-    nextQuestion();
-
-
-    if (
-        mode === "timeattack"
-    ) {
-
-        startTimer();
-
-    }
-
-}
-
-
-// ============================================================
-// TIMER
-// ============================================================
-
-function startTimer() {
-
-    clearInterval(
-        game.timer
-    );
-
-
-    game.timer =
-        setInterval(
-            () => {
-
-                if (
-                    game.locked
-                )
-                    return;
-
-
-                game.timeLeft--;
-
-
-                const timer =
-                    document.getElementById(
-                        "timer"
-                    );
-
-
-                if (timer) {
-
-                    timer.textContent =
-                        game.timeLeft;
-
-                }
-
-
-                if (
-                    game.timeLeft <= 0
-                ) {
-
-                    clearInterval(
-                        game.timer
-                    );
-
-
-                    game.locked =
-                        true;
-
-
-                    toast(
-                        "⏱️ Time's up!"
-                    );
-
-
-                    setTimeout(
-                        finishGame,
-                        500
-                    );
-
-                }
-
-            },
-            1000
-        );
-
-}
-
-
-// ============================================================
-// NEXT QUESTION
-// ============================================================
-
-function nextQuestion() {
-
-    if (
-        game.question >=
-        game.totalQuestions
-    ) {
-
-        finishGame();
-
-        return;
-
-    }
-
-
-    if (
-        game.lives <= 0
-    ) {
-
-        finishGame();
-
-        return;
-
-    }
-
-
-    game.question++;
-
-    game.hintUsed =
-        false;
-
-    game.locked =
-        false;
-
-
-    let correct;
-
-
-    do {
-
-        correct =
-            Math.floor(
-                Math.random() *
-                countries.length
+    profiles.forEach((p,index) => {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "profile-item" +
+            (
+                index === currentProfile
+                ? " selected"
+                : ""
             );
 
-    }
-    while (
-        game.used.includes(
-            correct
+        div.innerHTML = `
+
+            <div>
+
+                <strong>
+                    ${escapeHTML(p.name)}
+                </strong>
+
+                <br>
+
+                Lv.${p.level}
+                |
+                ${getRank(p.level)}
+                |
+                🪙 ${p.coins}
+
+            </div>
+
+            <div class="profile-actions">
+
+                <button
+                    onclick="selectProfile(${index})">
+                    ${
+                        index === currentProfile
+                        ? "Selected"
+                        : "Select"
+                    }
+                </button>
+
+                <button
+                    class="secondary"
+                    onclick="viewProfile(${index})">
+                    View
+                </button>
+
+            </div>
+
+        `;
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+// ============================================================
+// VIEW PROFILE
+// ============================================================
+
+function viewProfile(index = currentProfile) {
+
+    index = Number(index);
+
+    if (!profiles[index])
+        return;
+
+    const p = profiles[index];
+
+    const accuracy =
+        p.totalQuestions
+        ? Math.round(
+            p.totalCorrect /
+            p.totalQuestions * 100
         )
-    );
-
-
-    game.used.push(
-        correct
-    );
-
-
-    game.currentCountry =
-        correct;
-
-
-    game.options =
-        [correct];
-
-
-    while (
-        game.options.length < 4
-    ) {
-
-        const random =
-            Math.floor(
-                Math.random() *
-                countries.length
-            );
-
-
-        if (
-            !game.options.includes(
-                random
-            )
-        ) {
-
-            game.options.push(
-                random
-            );
-
-        }
-
-    }
-
-
-    shuffle(
-        game.options
-    );
-
-
-    /*
-        IMPORTANT FIX:
-
-        Hard Mode no longer uses
-        Currency or Region questions.
-
-        This guarantees one correct
-        answer because Capital and
-        Country questions map uniquely.
-    */
-
-    if (
-        game.difficulty === 1
-    ) {
-
-        game.type = 1;
-
-    }
-    else {
-
-        game.type =
-            1 +
-            Math.floor(
-                Math.random() * 2
-            );
-
-    }
-
-
-    renderQuestion();
-
-}
-
-
-// ============================================================
-// SHUFFLE
-// ============================================================
-
-function shuffle(array) {
-
-    for (
-        let i = array.length - 1;
-        i > 0;
-        i--
-    ) {
-
-        const j =
-            Math.floor(
-                Math.random() *
-                (i + 1)
-            );
-
-
-        [
-            array[i],
-            array[j]
-        ] =
-        [
-            array[j],
-            array[i]
-        ];
-
-    }
-
-
-    return array;
-
-}
-
-
-// ============================================================
-// RENDER QUESTION
-// ============================================================
-
-function renderQuestion() {
-
-    const country =
-        countries[
-            game.currentCountry
-        ];
-
-
-    const p =
-        getProfile();
-
-
-    document.getElementById(
-        "questionNumber"
-    ).textContent =
-        `${game.question}/${game.totalQuestions}`;
-
-
-    document.getElementById(
-        "lives"
-    ).textContent =
-        game.lives;
-
-
-    document.getElementById(
-        "combo"
-    ).textContent =
-        game.combo;
-
-
-    document.getElementById(
-        "score"
-    ).textContent =
-        game.score;
-
-
-    document.getElementById(
-        "gameXP"
-    ).textContent =
-        p
-        ? p.xp
         : 0;
 
+    const box =
+        document.getElementById("profileDetails");
 
-    document.getElementById(
-        "gameCoins"
-    ).textContent =
-        p
-        ? p.coins
-        : 0;
+    if (!box) return;
 
+    box.innerHTML = `
 
-    document.getElementById(
-        "gameLevel"
-    ).textContent =
-        p
-        ? p.level
-        : 1;
+        <h3>👤 ${escapeHTML(p.name)}</h3>
 
+        <div class="profile-detail-grid">
 
-    const timerBox =
-        document.getElementById(
-            "timerBox"
-        );
+            <div>⭐ Level<strong>${p.level}</strong></div>
+            <div>🏆 Rank<strong>${getRank(p.level)}</strong></div>
+            <div>✨ XP<strong>${p.xp}</strong></div>
+            <div>🪙 Coins<strong>${p.coins}</strong></div>
+            <div>🎮 Games<strong>${p.totalGames}</strong></div>
+            <div>🎯 Accuracy<strong>${accuracy}%</strong></div>
+            <div>🔥 Best Combo<strong>${p.bestCombo}</strong></div>
+            <div>👹 Boss Wins<strong>${p.bossWins}</strong></div>
+            <div>🏅 Achievements<strong>${p.achievements.length}</strong></div>
+            <div>🎨 Skin<strong>${escapeHTML(p.equippedSkin)}</strong></div>
 
+        </div>
 
-    if (
-        game.mode ===
-        "timeattack"
-    ) {
+    `;
 
-        timerBox.style.display =
-            "block";
-
-        document.getElementById(
-            "timer"
-        ).textContent =
-            game.timeLeft;
-
-    }
-    else {
-
-        timerBox.style.display =
-            "none";
-
-    }
-
-
-    let title;
-
-    let value;
-
-
-    if (
-        game.type === 1
-    ) {
-
-        title =
-            "Which country has this capital?";
-
-        value =
-            country[1];
-
-    }
-    else {
-
-        title =
-            "What is the capital of this country?";
-
-        value =
-            country[0];
-
-    }
-
-
-    document.getElementById(
-        "questionType"
-    ).textContent =
-        title;
-
-
-    document.getElementById(
-        "questionText"
-    ).textContent =
-        "Choose the correct answer:";
-
-
-    document.getElementById(
-        "questionValue"
-    ).textContent =
-        value;
-
-
-    const answers =
-        document.getElementById(
-            "answers"
-        );
-
-
-    answers.innerHTML =
-        "";
-
-
-    game.options.forEach(
-        (countryIndex, position) => {
-
-            const button =
-                document.createElement(
-                    "button"
-                );
-
-
-            button.className =
-                "answer-button";
-
-
-            button.textContent =
-                `${position + 1}. ${countries[countryIndex][0]}`;
-
-
-            button.onclick =
-                () => {
-
-                    answerQuestion(
-                        position
-                    );
-
-                };
-
-
-            answers.appendChild(
-                button
-            );
-
-        }
-    );
+    showScreen("profileViewScreen");
 
 }
 
 
 // ============================================================
-// ANSWER
+// SHOP ITEMS
 // ============================================================
 
-function answerQuestion(
-    position
-) {
+const shopItems = [
 
-    if (
-        game.locked
-    )
-        return;
+    {
+        id:"hints",
+        name:"💡 Hint",
+        price:100,
+        description:"Remove two wrong answers."
+    },
 
+    {
+        id:"extraLives",
+        name:"❤️ Extra Life",
+        price:250,
+        description:"+1 Life."
+    },
 
-    const selected =
-        game.options[
-            position
-        ];
+    {
+        id:"doubleXP",
+        name:"✨ Double XP",
+        price:500,
+        description:"Double XP from one correct answer."
+    },
 
+    {
+        id:"scoreBoost",
+        name:"📈 Score Boost",
+        price:500,
+        description:"+25% score on one answer."
+    },
 
-    if (
-        selected ===
-        game.currentCountry
-    ) {
+    {
+        id:"secondChance",
+        name:"🔄 Second Chance",
+        price:750,
+        description:"Prevent one life loss."
+    },
 
-        correctAnswer();
+    {
+        id:"luckyAnswer",
+        name:"🍀 Lucky Answer",
+        price:1500,
+        description:"Turn one wrong answer into a correct answer."
+    },
 
-        return;
+    {
+        id:"megaHint",
+        name:"🧠 Mega Hint",
+        price:2500,
+        description:"Remove three wrong answers."
+    },
 
+    {
+        id:"timeFreeze",
+        name:"❄️ Time Freeze",
+        price:3500,
+        description:"Premium utility for future timed modes."
+    },
+
+    {
+        id:"answerShield",
+        name:"🛡️ Answer Shield",
+        price:5000,
+        description:"Protect one mistake without losing combo."
+    },
+
+    {
+        id:"phoenix",
+        name:"🔥 Phoenix Save",
+        price:7500,
+        description:"Revive once after losing all lives."
     }
 
-
-    const p =
-        getProfile();
-
-
-    if (
-        p &&
-        p.luckyAnswer > 0
-    ) {
-
-        if (
-            confirm(
-                "Wrong answer!\nUse Lucky Answer?"
-            )
-        ) {
-
-            p.luckyAnswer--;
-
-            save();
-
-            correctAnswer(
-                true
-            );
-
-            return;
-
-        }
-
-    }
-
-
-    wrongAnswer();
-
-}
-
-
-// ============================================================
-// CORRECT
-// ============================================================
-
-function correctAnswer(
-    lucky = false
-) {
-
-    if (
-        game.locked
-    )
-        return;
-
-
-    game.locked =
-        true;
-
-
-    const p =
-        getProfile();
-
-
-    game.combo++;
-
-    game.correct++;
-
-
-    if (
-        game.combo >
-        game.bestCombo
-    ) {
-
-        game.bestCombo =
-            game.combo;
-
-    }
-
-
-    let baseScore;
-
-
-    if (
-        game.difficulty === 1
-    ) {
-
-        baseScore = 100;
-
-    }
-    else if (
-        game.difficulty === 2
-    ) {
-
-        baseScore = 150;
-
-    }
-    else {
-
-        baseScore = 200;
-
-    }
-
-
-    if (
-        game.mode ===
-        "survival"
-    ) {
-
-        baseScore =
-            Math.floor(
-                baseScore * 1.25
-            );
-
-    }
-
-
-    if (
-        game.mode ===
-        "timeattack"
-    ) {
-
-        baseScore +=
-            Math.max(
-                0,
-                game.timeLeft
-            );
-
-    }
-
-
-    let gained =
-        baseScore +
-        (
-            game.combo >= 2
-            ? game.combo * 25
-            : 0
-        );
-
-
-    if (
-        p.scoreBoost > 0
-    ) {
-
-        if (
-            confirm(
-                "Use Score Boost?"
-            )
-        ) {
-
-            p.scoreBoost--;
-
-            gained =
-                Math.floor(
-                    gained * 1.25
-                );
-
-        }
-
-    }
-
-
-    game.score +=
-        gained;
-
-
-    let xp =
-        50 +
-        game.combo * 10;
-
-
-    if (
-        p.doubleXP > 0
-    ) {
-
-        if (
-            confirm(
-                "Use Double XP?"
-            )
-        ) {
-
-            p.doubleXP--;
-
-            xp *= 2;
-
-        }
-
-    }
-
-
-    addXP(
-        xp
-    );
-
-
-    addCoins(
-        20 +
-        game.combo * 5
-    );
-
-
-    p.totalCorrect++;
-
-    p.totalQuestions++;
-
-
-    save();
-
-
-    toast(
-        lucky
-        ? `🍀 Lucky! +${gained} points`
-        : `✅ Correct! +${gained} points`
-    );
-
-
-    setTimeout(
-        nextQuestion,
-        650
-    );
-
-}
+];
 
 
 // ============================================================
-// WRONG
+// SKINS
 // ============================================================
 
-function wrongAnswer() {
+const skins = [
 
-    if (
-        game.locked
-    )
-        return;
+    {
+        name:"Default",
+        price:0,
+        bonus:"No bonus",
+        score:1,
+        xp:1,
+        coins:1
+    },
 
+    {
+        name:"Bronze Explorer",
+        price:1000,
+        bonus:"+5% Coins",
+        score:1,
+        xp:1,
+        coins:1.05
+    },
 
-    game.locked =
-        true;
+    {
+        name:"Silver Traveler",
+        price:5000,
+        bonus:"+10% XP",
+        score:1,
+        xp:1.10,
+        coins:1
+    },
 
+    {
+        name:"Golden Master",
+        price:12000,
+        bonus:"+10% Score",
+        score:1.10,
+        xp:1,
+        coins:1
+    },
 
-    const p =
-        getProfile();
+    {
+        name:"Platinum Champion",
+        price:25000,
+        bonus:"+15% Score +5% XP",
+        score:1.15,
+        xp:1.05,
+        coins:1
+    },
 
+    {
+        name:"Diamond Elite",
+        price:50000,
+        bonus:"+15% XP +10% Coins",
+        score:1,
+        xp:1.15,
+        coins:1.10
+    },
 
-    if (
-        p.secondChance > 0
-    ) {
+    {
+        name:"Celestial",
+        price:100000,
+        bonus:"+20% Score +20% XP +15% Coins",
+        score:1.20,
+        xp:1.20,
+        coins:1.15
+    },
 
-        if (
-            confirm(
-                "Wrong answer!\nUse Second Chance?"
-            )
-        ) {
-
-            p.secondChance--;
-
-            game.wrong++;
-
-            game.combo = 0;
-
-            p.totalWrong++;
-
-            p.totalQuestions++;
-
-            save();
-
-
-            toast(
-                "🔄 Second Chance activated!"
-            );
-
-
-            setTimeout(
-                nextQuestion,
-                650
-            );
-
-
-            return;
-
-        }
-
+    {
+        name:"Divine",
+        price:250000,
+        bonus:"+30% Score +30% XP +25% Coins",
+        score:1.30,
+        xp:1.30,
+        coins:1.25
     }
 
-
-    game.wrong++;
-
-    game.combo = 0;
-
-    game.lives--;
+];
 
 
-    p.totalWrong++;
+function getSkin() {
 
-    p.totalQuestions++;
+    const p = getProfile();
 
+    if (!p) return skins[0];
 
-    save();
-
-
-    toast(
-        `❌ Wrong! Correct answer: ${countries[game.currentCountry][0]}`
-    );
-
-
-    setTimeout(
-        nextQuestion,
-        850
-    );
-
-}
-
-
-// ============================================================
-// HINT
-// ============================================================
-
-function useHint() {
-
-    if (
-        game.locked
-    )
-        return;
-
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    if (
-        game.hintUsed
-    ) {
-
-        toast(
-            "Hint already used."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        p.hints <= 0
-    ) {
-
-        toast(
-            "You don't have any Hint."
-        );
-
-        return;
-
-    }
-
-
-    p.hints--;
-
-    game.hintUsed =
-        true;
-
-
-    game.score =
-        Math.max(
-            0,
-            game.score - 25
-        );
-
-
-    const buttons =
-        Array.from(
-            document.querySelectorAll(
-                "#answers button"
-            )
-        );
-
-
-    const wrongButtons =
-        buttons.filter(
-            (button,index) =>
-                game.options[index] !==
-                game.currentCountry
-        );
-
-
-    shuffle(
-        wrongButtons
-    );
-
-
-    wrongButtons
-        .slice(0,2)
-        .forEach(
-            button =>
-                button.classList.add(
-                    "removed"
-                )
-        );
-
-
-    save();
-
-
-    document.getElementById(
-        "score"
-    ).textContent =
-        game.score;
-
-
-    toast(
-        "💡 Hint used! -25 points"
+    return (
+        skins.find(
+            s => s.name === p.equippedSkin
+        ) || skins[0]
     );
 
 }
@@ -2244,85 +1005,527 @@ function openShop() {
 
     if (!getProfile()) {
 
-        toast(
-            "Create/select a profile first."
-        );
-
+        toast("Create/select a profile first.");
         openProfileMenu();
-
         return;
 
     }
 
-
     updateShop();
 
-    showScreen(
-        "shopScreen"
-    );
+    showScreen("shopScreen");
 
 }
 
 
 function updateShop() {
 
-    const p =
-        getProfile();
+    const p = getProfile();
 
+    if (!p) return;
 
-    if (!p)
+    const coins =
+        document.getElementById("shopCoins");
+
+    if (coins)
+        coins.textContent = p.coins;
+
+    const itemContainer =
+        document.getElementById("shopItems");
+
+    if (!itemContainer)
         return;
 
+    itemContainer.innerHTML = "";
 
-    document.getElementById(
-        "shopCoins"
-    ).textContent =
-        p.coins;
+    shopItems.forEach(item => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "shop-item";
+
+        const count =
+            typeof p[item.id] === "number"
+            ? p[item.id]
+            : 0;
+
+        div.innerHTML = `
+
+            <h3>${item.name}</h3>
+
+            <p>${item.description}</p>
+
+            <strong>
+                ${item.price.toLocaleString()} 🪙
+            </strong>
+
+            <small>
+                Owned: ${count}
+            </small>
+
+            <button
+                onclick="buyItem('${item.id}',${item.price})">
+                Buy
+            </button>
+
+        `;
+
+        itemContainer.appendChild(div);
+
+    });
+
+    renderSkins();
 
 }
 
 
-function buyItem(
-    item,
-    price
-) {
+function buyItem(item,price) {
 
-    const p =
-        getProfile();
+    const p = getProfile();
 
+    if (!p) return;
 
-    if (!p)
-        return;
+    if (p.coins < price) {
 
-
-    if (
-        p.coins < price
-    ) {
-
-        toast(
-            "Not enough Coins."
-        );
-
+        toast("Not enough Coins.");
         return;
 
     }
 
+    p.coins -= price;
 
-    p.coins -=
-        price;
-
+    if (typeof p[item] !== "number")
+        p[item] = 0;
 
     p[item]++;
-
 
     save();
 
     updateShop();
 
+    toast("🛒 Item purchased!");
 
-    toast(
-        "🛒 Item purchased!"
-    );
+}
+
+
+// ============================================================
+// SKIN SHOP
+// ============================================================
+
+function renderSkins() {
+
+    const p = getProfile();
+
+    const container =
+        document.getElementById("skinShop");
+
+    if (!p || !container)
+        return;
+
+    container.innerHTML = "";
+
+    skins.forEach(skin => {
+
+        const owned =
+            p.skins.includes(skin.name);
+
+        const equipped =
+            p.equippedSkin === skin.name;
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "skin-card" +
+            (equipped ? " equipped" : "");
+
+        div.innerHTML = `
+
+            <h3>🎨 ${skin.name}</h3>
+
+            <p>${skin.bonus}</p>
+
+            ${
+                skin.price === 0
+                ? "<strong>FREE</strong>"
+                : `<strong>${skin.price.toLocaleString()} 🪙</strong>`
+            }
+
+            <button
+                onclick="buyOrEquipSkin('${escapeHTML(skin.name)}')">
+
+                ${
+                    equipped
+                    ? "Equipped"
+                    : owned
+                    ? "Equip"
+                    : "Buy"
+                }
+
+            </button>
+
+        `;
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+function buyOrEquipSkin(name) {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    const skin =
+        skins.find(s => s.name === name);
+
+    if (!skin) return;
+
+    if (p.skins.includes(name)) {
+
+        p.equippedSkin = name;
+
+        save();
+
+        renderSkins();
+
+        toast(`🎨 Equipped ${name}`);
+
+        return;
+
+    }
+
+    if (p.coins < skin.price) {
+
+        toast("Not enough Coins.");
+        return;
+
+    }
+
+    p.coins -= skin.price;
+
+    p.skins.push(name);
+    p.equippedSkin = name;
+
+    save();
+
+    renderSkins();
+
+    toast(`🎨 Unlocked ${name}!`);
+
+}
+
+
+// ============================================================
+// CHESTS
+// ============================================================
+
+const chestTypes = {
+
+    Common: {
+        price:1000,
+        color:"Common"
+    },
+
+    Rare: {
+        price:3000,
+        color:"Rare"
+    },
+
+    Epic: {
+        price:7500,
+        color:"Epic"
+    },
+
+    Legend: {
+        price:20000,
+        color:"Legend"
+    },
+
+    Mythic: {
+        price:50000,
+        color:"Mythic"
+    },
+
+    Divine: {
+        price:150000,
+        color:"Divine"
+    }
+
+};
+
+
+function chestRoll(type) {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    let reward;
+
+    const roll = Math.random();
+
+    if (type === "Common") {
+
+        if (roll < .50)
+            reward = ["coins",500];
+
+        else if (roll < .80)
+            reward = ["xp",100];
+
+        else
+            reward = ["hints",2];
+
+    }
+    else if (type === "Rare") {
+
+        if (roll < .45)
+            reward = ["coins",1500];
+
+        else if (roll < .75)
+            reward = ["xp",300];
+
+        else if (roll < .92)
+            reward = ["secondChance",1];
+
+        else
+            reward = ["chest","Epic"];
+
+    }
+    else if (type === "Epic") {
+
+        if (roll < .40)
+            reward = ["coins",5000];
+
+        else if (roll < .70)
+            reward = ["xp",1000];
+
+        else if (roll < .90)
+            reward = ["scoreBoost",2];
+
+        else
+            reward = ["chest","Legend"];
+
+    }
+    else if (type === "Legend") {
+
+        if (roll < .40)
+            reward = ["coins",15000];
+
+        else if (roll < .70)
+            reward = ["xp",3000];
+
+        else if (roll < .90)
+            reward = ["luckyAnswer",2];
+
+        else
+            reward = ["chest","Mythic"];
+
+    }
+    else if (type === "Mythic") {
+
+        if (roll < .40)
+            reward = ["coins",40000];
+
+        else if (roll < .70)
+            reward = ["xp",10000];
+
+        else if (roll < .90)
+            reward = ["phoenix",1];
+
+        else
+            reward = ["chest","Divine"];
+
+    }
+    else {
+
+        if (roll < .50)
+            reward = ["coins",100000];
+
+        else if (roll < .80)
+            reward = ["xp",25000];
+
+        else
+            reward = ["divineItem","Celestial Core"];
+
+    }
+
+    applyChestReward(reward,type);
+
+}
+
+
+function applyChestReward(reward,type) {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    if (reward[0] === "coins") {
+
+        addCoins(reward[1]);
+
+        toast(
+            `🎁 ${type} Chest: +${reward[1]} Coins`
+        );
+
+    }
+
+    else if (reward[0] === "xp") {
+
+        addXP(reward[1]);
+
+        toast(
+            `🎁 ${type} Chest: +${reward[1]} XP`
+        );
+
+    }
+
+    else if (reward[0] === "chest") {
+
+        p.chests[reward[1]]++;
+
+        toast(
+            `🎁 ${type} Chest: You received a ${reward[1]} Chest!`
+        );
+
+    }
+
+    else if (reward[0] === "divineItem") {
+
+        p.bossItems.push(reward[1]);
+
+        toast(
+            `✨ DIVINE REWARD: ${reward[1]}`
+        );
+
+    }
+
+    else {
+
+        if (typeof p[reward[0]] !== "number")
+            p[reward[0]] = 0;
+
+        p[reward[0]] += reward[1];
+
+        toast(
+            `🎁 ${type} Chest: +${reward[1]} item`
+        );
+
+    }
+
+    save();
+
+    renderChests();
+
+}
+
+
+function openChest(type) {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    if (p.chests[type] <= 0) {
+
+        toast(`You don't have a ${type} Chest.`);
+        return;
+
+    }
+
+    p.chests[type]--;
+
+    chestRoll(type);
+
+}
+
+
+function buyChest(type) {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    const chest =
+        chestTypes[type];
+
+    if (!chest) return;
+
+    if (p.coins < chest.price) {
+
+        toast("Not enough Coins.");
+        return;
+
+    }
+
+    p.coins -= chest.price;
+
+    p.chests[type]++;
+
+    save();
+
+    renderChests();
+
+    toast(`🎁 Purchased ${type} Chest!`);
+
+}
+
+
+function renderChests() {
+
+    const p = getProfile();
+
+    const container =
+        document.getElementById("chestShop");
+
+    if (!p || !container)
+        return;
+
+    container.innerHTML = "";
+
+    Object.keys(chestTypes).forEach(type => {
+
+        const chest =
+            chestTypes[type];
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            `chest-card ${type.toLowerCase()}`;
+
+        div.innerHTML = `
+
+            <h3>🎁 ${type} Chest</h3>
+
+            <p>
+                Owned:
+                <strong>${p.chests[type]}</strong>
+            </p>
+
+            <button onclick="openChest('${type}')">
+                Open
+            </button>
+
+            <button
+                class="secondary"
+                onclick="buyChest('${type}')">
+
+                Buy
+                ${chest.price.toLocaleString()} 🪙
+
+            </button>
+
+        `;
+
+        container.appendChild(div);
+
+    });
 
 }
 
@@ -2333,43 +1536,30 @@ function buyItem(
 
 function openInventory() {
 
-    const p =
-        getProfile();
+    if (!getProfile()) {
 
-
-    if (!p) {
-
-        toast(
-            "Create/select a profile first."
-        );
-
+        toast("Create/select a profile first.");
         openProfileMenu();
-
         return;
 
     }
 
-
     renderInventory();
 
-    showScreen(
-        "inventoryScreen"
-    );
+    showScreen("inventoryScreen");
 
 }
 
 
 function renderInventory() {
 
-    const p =
-        getProfile();
-
+    const p = getProfile();
 
     const container =
-        document.getElementById(
-            "inventoryList"
-        );
+        document.getElementById("inventoryList");
 
+    if (!p || !container)
+        return;
 
     container.innerHTML = `
 
@@ -2403,997 +1593,895 @@ function renderInventory() {
             <strong>${p.luckyAnswer}</strong>
         </div>
 
+        <div class="inventory-item">
+            <span>🧠 Mega Hint</span>
+            <strong>${p.megaHint || 0}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>❄️ Time Freeze</span>
+            <strong>${p.timeFreeze || 0}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>🛡️ Answer Shield</span>
+            <strong>${p.answerShield || 0}</strong>
+        </div>
+
+        <div class="inventory-item">
+            <span>🔥 Phoenix Save</span>
+            <strong>${p.phoenix || 0}</strong>
+        </div>
+
+        <h3>🎨 Skins</h3>
+
+        <div class="inventory-item">
+            <span>Equipped</span>
+            <strong>${escapeHTML(p.equippedSkin)}</strong>
+        </div>
+
+        <h3>🎁 Chests</h3>
+
+        ${Object.keys(p.chests)
+            .map(type => `
+                <div class="inventory-item">
+                    <span>🎁 ${type}</span>
+                    <strong>${p.chests[type]}</strong>
+                </div>
+            `)
+            .join("")}
+
+        <h3>👹 Boss Items</h3>
+
+        ${
+            p.bossItems.length
+            ? p.bossItems
+                .map(item =>
+                    `<div class="inventory-item">
+                        <span>👹 ${escapeHTML(item)}</span>
+                        <strong>✓</strong>
+                    </div>`
+                )
+                .join("")
+            : "<p>No Boss-exclusive items yet.</p>"
+        }
+
     `;
 
 }
 
 
-// ============================================================
-// ACHIEVEMENTS
-// ============================================================
+function openInventoryDuringGame() {
 
-const ACHIEVEMENTS = [
+    renderInventory();
 
-    [
-        "first_game",
-        "First Steps",
-        "Complete your first game.",
-        1,
-        200
-    ],
-
-    [
-        "perfect",
-        "Perfect",
-        "Get 10/10 in one game.",
-        1,
-        500
-    ],
-
-    [
-        "games10",
-        "Dedicated",
-        "Complete 10 games.",
-        10,
-        500
-    ],
-
-    [
-        "correct50",
-        "Knowledge Seeker",
-        "Answer 50 questions correctly.",
-        50,
-        750
-    ],
-
-    [
-        "combo10",
-        "Combo Master",
-        "Reach a 10 combo.",
-        10,
-        1000
-    ],
-
-    [
-        "coins5000",
-        "Rich Explorer",
-        "Earn 5,000 total coins.",
-        5000,
-        1000
-    ],
-
-    [
-        "level20",
-        "Master",
-        "Reach Level 20.",
-        20,
-        1000
-    ],
-
-    [
-        "level50",
-        "Elite",
-        "Reach Level 50.",
-        50,
-        2500
-    ],
-
-    [
-        "level100",
-        "Transcendent",
-        "Reach Level 100.",
-        100,
-        10000
-    ],
-
-    [
-        "daily7",
-        "Daily Hero",
-        "Complete 7 Daily Challenges.",
-        7,
-        1500
-    ],
-
-    [
-        "chest10",
-        "Treasure Hunter",
-        "Open 10 Chests.",
-        10,
-        1200
-    ],
-
-    [
-        "hard10",
-        "Hardcore",
-        "Complete 10 Hard games.",
-        10,
-        1500
-    ]
-
-];
-
-
-function achievementProgress(
-    id,
-    p
-) {
-
-    switch (id) {
-
-        case "first_game":
-            return p.totalGames;
-
-        case "perfect":
-            return p.perfectGames;
-
-        case "games10":
-            return p.totalGames;
-
-        case "correct50":
-            return p.totalCorrect;
-
-        case "combo10":
-            return p.bestCombo;
-
-        case "coins5000":
-            return p.totalCoinsEarned;
-
-        case "level20":
-        case "level50":
-        case "level100":
-            return p.level;
-
-        case "daily7":
-            return p.dailyCompleted.length;
-
-        case "chest10":
-
-            return Object.values(
-                p.chestStats
-            )
-            .reduce(
-                (a,b) =>
-                    a + b,
-                0
-            );
-
-        case "hard10":
-            return p.modesPlayed.hard || 0;
-
-        default:
-            return 0;
-
-    }
+    showScreen("inventoryScreen");
 
 }
 
 
-function checkAchievements() {
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    ACHIEVEMENTS.forEach(
-        achievement => {
-
-            const id =
-                achievement[0];
-
-            const reward =
-                achievement[4];
-
-            if (
-                p.achievements.includes(
-                    id
-                )
-            )
-                return;
-
-
-            if (
-                achievementProgress(
-                    id,
-                    p
-                ) >= achievement[3]
-            ) {
-
-                p.achievements.push(
-                    id
-                );
-
-
-                p.coins +=
-                    reward;
-
-
-                p.totalCoinsEarned +=
-                    reward;
-
-
-                toast(
-                    `🏆 Achievement unlocked: ${achievement[1]}! +${reward} Coins`
-                );
-
-            }
-
-        }
-    );
-
-
-    save();
-
-}
-
-
-function openAchievements() {
-
-    const p =
-        getProfile();
-
-
-    if (!p) {
-
-        toast(
-            "Create/select a profile first."
-        );
-
-        openProfileMenu();
-
-        return;
-
-    }
-
-
-    const container =
-        document.getElementById(
-            "achievementList"
-        );
-
-
-    container.innerHTML =
-        ACHIEVEMENTS
-            .map(
-                achievement => {
-
-                    const done =
-                        p.achievements.includes(
-                            achievement[0]
-                        );
-
-
-                    const progress =
-                        Math.min(
-                            achievementProgress(
-                                achievement[0],
-                                p
-                            ),
-                            achievement[3]
-                        );
-
-
-                    return `
-
-                        <div class="achievement
-                            ${done ? "done" : ""}">
-
-                            <h3>
-                                ${done ? "🏆" : "🔒"}
-                                ${achievement[1]}
-                            </h3>
-
-                            <p>
-                                ${achievement[2]}
-                            </p>
-
-                            <small>
-                                Progress:
-                                ${progress}/${achievement[3]}
-                                · Reward:
-                                ${achievement[4]} 🪙
-                            </small>
-
-                        </div>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    showScreen(
-        "achievementScreen"
-    );
-
-}
-
-
 // ============================================================
-// CHESTS
+// GAME STATE
 // ============================================================
 
-const CHESTS = {
+let game = {
 
-    common: {
+    mode:"classic",
 
-        name: "Common",
+    difficulty:1,
 
-        cost: 500,
+    question:0,
 
-        weight: 55
+    totalQuestions:10,
 
-    },
+    score:0,
 
-    rare: {
+    lives:3,
 
-        name: "Rare",
+    combo:0,
 
-        cost: 1000,
+    bestCombo:0,
 
-        weight: 25
+    correct:0,
 
-    },
+    wrong:0,
 
-    epic: {
+    used:[],
 
-        name: "Epic",
+    currentCountry:-1,
 
-        cost: 2000,
+    options:[],
 
-        weight: 12
+    type:1,
 
-    },
+    hintUsed:false,
 
-    legend: {
-
-        name: "Legend",
-
-        cost: 4000,
-
-        weight: 5
-
-    },
-
-    mythic: {
-
-        name: "Mythic",
-
-        cost: 8000,
-
-        weight: 2.5
-
-    },
-
-    divine: {
-
-        name: "Divine",
-
-        cost: 15000,
-
-        weight: 0.5
-
-    }
+    locked:false
 
 };
 
 
-function randomChest() {
+// ============================================================
+// GAME MENU
+// ============================================================
 
-    const random =
-        Math.random() * 100;
+function startGameMenu() {
+
+    if (!getProfile()) {
+
+        toast("Create/select a profile first.");
+        openProfileMenu();
+        return;
+
+    }
+
+    showScreen("difficultyScreen");
+
+}
 
 
-    let total = 0;
+// ============================================================
+// START CLASSIC
+// ============================================================
 
+function startGame(difficulty) {
 
-    for (
-        const type of Object.keys(
-            CHESTS
-        )
-    ) {
+    const p = getProfile();
 
-        total +=
-            CHESTS[type].weight;
+    if (!p) {
 
+        toast("Create/select a profile first.");
+        return;
+
+    }
+
+    difficulty = Number(difficulty);
+
+    if (
+        difficulty < 1 ||
+        difficulty > 3
+    )
+        difficulty = 1;
+
+    game = {
+
+        mode:"classic",
+
+        difficulty,
+
+        question:0,
+
+        totalQuestions:10,
+
+        score:0,
+
+        lives:3,
+
+        combo:0,
+
+        bestCombo:0,
+
+        correct:0,
+
+        wrong:0,
+
+        used:[],
+
+        currentCountry:-1,
+
+        options:[],
+
+        type:1,
+
+        hintUsed:false,
+
+        locked:false
+
+    };
+
+    if (p.extraLives > 0) {
 
         if (
-            random < total
+            confirm(
+                `You have ${p.extraLives} Extra Life(s).\nUse one?`
+            )
         ) {
 
-            return type;
+            p.extraLives--;
+
+            game.lives++;
+
+            save();
 
         }
 
     }
 
+    showScreen("gameScreen");
 
-    return "common";
+    nextQuestion();
 
 }
 
 
-function chestReward(
-    type
-) {
+// ============================================================
+// UNIQUE QUESTION GENERATOR
+// ============================================================
+//
+// Currency and Region are NOT removed.
+// Instead, the clue contains an additional unique fact.
+//
+// Example:
+//
+// Currency:
+// "Which country uses Rupee AND has capital New Delhi?"
+//
+// Region:
+// "Which country is in South Asia AND has capital New Delhi?"
+//
+// Therefore multiple countries can share the currency/region,
+// but only one country matches the complete clue.
+// ============================================================
 
-    const p =
-        getProfile();
+function createOptions(correct,type) {
 
+    const options = [correct];
 
-    const rewards = {
+    const correctCountry =
+        countries[correct];
 
-        common: [
-            ["coins",250,600],
-            ["hints",1,2],
-            ["extraLives",1,1]
-        ],
+    let attempts = 0;
 
-        rare: [
-            ["coins",700,1500],
-            ["doubleXP",1,2],
-            ["scoreBoost",1,2],
-            ["hints",2,4]
-        ],
-
-        epic: [
-            ["coins",1500,3500],
-            ["secondChance",1,2],
-            ["luckyAnswer",1,2],
-            ["doubleXP",2,3]
-        ],
-
-        legend: [
-            ["coins",4000,8000],
-            ["luckyAnswer",2,4],
-            ["secondChance",2,4]
-        ],
-
-        mythic: [
-            ["coins",8000,15000],
-            ["luckyAnswer",3,6],
-            ["doubleXP",3,6]
-        ],
-
-        divine: [
-            ["coins",20000,40000],
-            ["luckyAnswer",5,10],
-            ["secondChance",5,10]
-        ]
-
-    };
-
-
-    const pool =
-        rewards[type];
-
-
-    const reward =
-        pool[
-            Math.floor(
-                Math.random() *
-                pool.length
-            )
-        ];
-
-
-    const amount =
-        reward[1] +
-        Math.floor(
-            Math.random() *
-            (
-                reward[2] -
-                reward[1] +
-                1
-            )
-        );
-
-
-    if (
-        reward[0] ===
-        "coins"
+    while (
+        options.length < 4 &&
+        attempts < 1000
     ) {
 
-        addCoins(
-            amount
-        );
+        attempts++;
+
+        const random =
+            Math.floor(
+                Math.random() *
+                countries.length
+            );
+
+        if (options.includes(random))
+            continue;
+
+        const candidate =
+            countries[random];
+
+        // Never use countries sharing the unique clue.
+
+        if (type === 3) {
+
+            if (
+                candidate[2] === correctCountry[2] &&
+                candidate[1] === correctCountry[1]
+            )
+                continue;
+
+        }
+
+        if (type === 4) {
+
+            if (
+                candidate[3] === correctCountry[3] &&
+                candidate[1] === correctCountry[1]
+            )
+                continue;
+
+        }
+
+        options.push(random);
+
+    }
+
+    while (options.length < 4) {
+
+        const random =
+            Math.floor(
+                Math.random() *
+                countries.length
+            );
+
+        if (!options.includes(random))
+            options.push(random);
+
+    }
+
+    return shuffle(options);
+
+}
+
+
+// ============================================================
+// NEXT QUESTION
+// ============================================================
+
+function nextQuestion() {
+
+    if (
+        game.question >=
+        game.totalQuestions
+    ) {
+
+        finishGame();
+        return;
+
+    }
+
+    if (game.lives <= 0) {
+
+        finishGame();
+        return;
+
+    }
+
+    game.question++;
+
+    game.hintUsed = false;
+    game.locked = false;
+
+    let correct;
+
+    do {
+
+        correct =
+            Math.floor(
+                Math.random() *
+                countries.length
+            );
+
+    }
+    while (
+        game.used.includes(correct)
+    );
+
+    game.used.push(correct);
+
+    game.currentCountry = correct;
+
+    if (game.difficulty === 1) {
+
+        game.type = 1;
+
+    }
+    else if (game.difficulty === 2) {
+
+        game.type =
+            1 +
+            Math.floor(
+                Math.random() * 2
+            );
 
     }
     else {
 
-        p[
-            reward[0]
-        ] += amount;
+        game.type =
+            1 +
+            Math.floor(
+                Math.random() * 4
+            );
 
     }
 
-
-    p.chestStats[type]++;
-
-
-    save();
-
-
-    return reward[0] ===
-        "coins"
-        ? `🪙 ${amount} Coins`
-        : `${amount} × ${reward[0]}`;
-
-}
-
-
-function earnChest() {
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    const type =
-        randomChest();
-
-
-    p.chests.push(
-        type
-    );
-
-
-    save();
-
-
-    toast(
-        `🎁 You earned a ${CHESTS[type].name} Chest!`
-    );
-
-}
-
-
-function openChest(
-    type
-) {
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    const index =
-        p.chests.indexOf(
-            type
+    game.options =
+        createOptions(
+            correct,
+            game.type
         );
 
-
-    if (
-        index === -1
-    ) {
-
-        toast(
-            `You don't have a ${CHESTS[type].name} Chest.`
-        );
-
-        return;
-
-    }
-
-
-    p.chests.splice(
-        index,
-        1
-    );
-
-
-    const reward =
-        chestReward(
-            type
-        );
-
-
-    toast(
-        `🎁 ${CHESTS[type].name} Chest: ${reward}`
-    );
-
-
-    openChests();
-
-}
-
-
-function buyChest(
-    type
-) {
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    const price =
-        CHESTS[type].cost;
-
-
-    if (
-        p.coins < price
-    ) {
-
-        toast(
-            "Not enough Coins."
-        );
-
-        return;
-
-    }
-
-
-    p.coins -=
-        price;
-
-
-    p.chests.push(
-        type
-    );
-
-
-    save();
-
-
-    toast(
-        `🎁 Purchased ${CHESTS[type].name} Chest!`
-    );
-
-
-    openChests();
-
-}
-
-
-function openChests() {
-
-    const p =
-        getProfile();
-
-
-    if (!p) {
-
-        openProfileMenu();
-
-        return;
-
-    }
-
-
-    const inventory =
-        document.getElementById(
-            "chestList"
-        );
-
-
-    inventory.innerHTML =
-        Object.entries(
-            CHESTS
-        )
-        .map(
-            ([type,data]) => `
-
-                <div class="
-                    chest-item
-                    rarity-${type}">
-
-                    <h3>
-                        🎁 ${data.name} Chest
-                    </h3>
-
-                    <p>
-                        Owned:
-                        <strong>
-                            ${
-                                p.chests.filter(
-                                    c => c === type
-                                ).length
-                            }
-                        </strong>
-                    </p>
-
-                    <button
-                        onclick="openChest('${type}')">
-
-                        Open
-
-                    </button>
-
-                </div>
-
-            `
-        )
-        .join("");
-
-
-    const shop =
-        document.getElementById(
-            "chestShop"
-        );
-
-
-    shop.innerHTML =
-        Object.entries(
-            CHESTS
-        )
-        .map(
-            ([type,data]) => `
-
-                <div class="
-                    shop-item
-                    rarity-${type}">
-
-                    <h3>
-                        🎁 ${data.name}
-                    </h3>
-
-                    <p>
-                        Price:
-                        ${data.cost} 🪙
-                    </p>
-
-                    <button
-                        onclick="buyChest('${type}')">
-
-                        Buy Chest
-
-                    </button>
-
-                </div>
-
-            `
-        )
-        .join("");
-
-
-    showScreen(
-        "chestScreen"
-    );
+    renderQuestion();
 
 }
 
 
 // ============================================================
-// DAILY CHALLENGE
+// SHUFFLE
 // ============================================================
 
-function todayKey() {
-
-    const date =
-        new Date();
-
-
-    return [
-
-        date.getFullYear(),
-
-        String(
-            date.getMonth() + 1
-        ).padStart(2,"0"),
-
-        String(
-            date.getDate()
-        ).padStart(2,"0")
-
-    ].join("-");
-
-}
-
-
-function dailyConfig() {
-
-    const key =
-        todayKey();
-
-
-    let seed = 0;
-
+function shuffle(array) {
 
     for (
-        let i = 0;
-        i < key.length;
-        i++
+        let i = array.length - 1;
+        i > 0;
+        i--
     ) {
 
-        seed =
-            (
-                seed * 31 +
-                key.charCodeAt(i)
-            ) >>> 0;
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            array[i],
+            array[j]
+        ] =
+        [
+            array[j],
+            array[i]
+        ];
 
     }
 
-
-    return {
-
-        difficulty:
-            1 +
-            (
-                seed % 3
-            ),
-
-        bonus:
-            500 +
-            (
-                seed % 6
-            ) * 250
-
-    };
+    return array;
 
 }
 
 
-function openDaily() {
+// ============================================================
+// QUESTION RENDER
+// ============================================================
+
+function renderQuestion() {
+
+    const c =
+        countries[
+            game.currentCountry
+        ];
 
     const p =
         getProfile();
-
-
-    if (!p) {
-
-        toast(
-            "Create/select a profile first."
-        );
-
-        openProfileMenu();
-
-        return;
-
-    }
-
-
-    const key =
-        todayKey();
-
-
-    const config =
-        dailyConfig();
-
-
-    const completed =
-        p.dailyCompleted.includes(
-            key
-        );
-
 
     document.getElementById(
-        "dailyInfo"
-    ).innerHTML = `
+        "questionNumber"
+    ).textContent =
+        `${game.question}/${game.totalQuestions}`;
 
-        <h3>📅 ${key}</h3>
+    document.getElementById(
+        "lives"
+    ).textContent =
+        game.lives;
 
-        <p>
-            Difficulty:
-            <strong>
-                ${
-                    ["","Easy","Normal","Hard"]
-                    [config.difficulty]
-                }
-            </strong>
-        </p>
+    document.getElementById(
+        "combo"
+    ).textContent =
+        game.combo;
 
-        <p>
-            Completion Bonus:
-            <strong>
-                ${config.bonus} 🪙
-            </strong>
-        </p>
+    document.getElementById(
+        "score"
+    ).textContent =
+        game.score;
 
-        <p>
-            ${
-                completed
-                ? "✅ Completed today."
-                : "🔥 Challenge available!"
-            }
-        </p>
+    document.getElementById(
+        "gameXP"
+    ).textContent =
+        p ? p.xp : 0;
 
-    `;
+    document.getElementById(
+        "gameCoins"
+    ).textContent =
+        p ? p.coins : 0;
 
+    document.getElementById(
+        "gameLevel"
+    ).textContent =
+        p ? p.level : 1;
 
-    showScreen(
-        "dailyScreen"
+    let title = "";
+    let value = "";
+
+    if (game.type === 1) {
+
+        title =
+            "Which country has this capital?";
+
+        value =
+            c[1];
+
+    }
+
+    else if (game.type === 2) {
+
+        title =
+            "What is the capital of this country?";
+
+        value =
+            c[0];
+
+    }
+
+    else if (game.type === 3) {
+
+        title =
+            "Which country uses this currency and has this capital?";
+
+        value =
+            `${c[2]} • Capital: ${c[1]}`;
+
+    }
+
+    else {
+
+        title =
+            "Which country belongs to this region and has this capital?";
+
+        value =
+            `${c[3]} • Capital: ${c[1]}`;
+
+    }
+
+    document.getElementById(
+        "questionType"
+    ).textContent =
+        title;
+
+    document.getElementById(
+        "questionText"
+    ).textContent =
+        "Choose the correct answer:";
+
+    document.getElementById(
+        "questionValue"
+    ).textContent =
+        value;
+
+    const answers =
+        document.getElementById("answers");
+
+    answers.innerHTML = "";
+
+    game.options.forEach(
+        (index,position) => {
+
+            const button =
+                document.createElement("button");
+
+            button.className =
+                "answer-button";
+
+            button.textContent =
+                `${position + 1}. ${countries[index][0]}`;
+
+            button.onclick =
+                () =>
+                    answerQuestion(position);
+
+            answers.appendChild(button);
+
+        }
     );
 
 }
 
 
-function startDaily() {
+// ============================================================
+// ANSWER
+// ============================================================
 
-    const p =
-        getProfile();
+function answerQuestion(position) {
 
-
-    if (!p)
+    if (game.locked)
         return;
 
-
-    const key =
-        todayKey();
-
+    const selected =
+        game.options[position];
 
     if (
-        p.dailyCompleted.includes(
-            key
-        )
+        selected ===
+        game.currentCountry
     ) {
 
-        toast(
-            "Today's challenge is already completed."
-        );
-
+        correctAnswer();
         return;
 
     }
 
+    const p = getProfile();
 
-    const config =
-        dailyConfig();
+    if (
+        p &&
+        p.luckyAnswer > 0
+    ) {
 
+        if (
+            confirm(
+                "Wrong answer!\nUse Lucky Answer?"
+            )
+        ) {
 
-    game = {
+            p.luckyAnswer--;
 
-        mode: "daily",
+            save();
 
-        difficulty:
-            config.difficulty,
+            correctAnswer(true);
 
-        question: 0,
+            return;
 
-        totalQuestions: 10,
+        }
 
-        score: 0,
+    }
 
-        lives: 3,
+    wrongAnswer();
 
-        combo: 0,
-
-        bestCombo: 0,
-
-        correct: 0,
-
-        wrong: 0,
-
-        used: [],
-
-        currentCountry: -1,
-
-        options: [],
-
-        type: 1,
-
-        hintUsed: false,
-
-        locked: false,
-
-        timeLeft: 0,
-
-        timer: null,
-
-        daily: true
-
-    };
+}
 
 
-    showScreen(
-        "gameScreen"
+// ============================================================
+// CORRECT
+// ============================================================
+
+function correctAnswer(savedByLucky=false) {
+
+    if (game.locked)
+        return;
+
+    game.locked = true;
+
+    const p = getProfile();
+
+    game.combo++;
+    game.correct++;
+
+    game.bestCombo =
+        Math.max(
+            game.bestCombo,
+            game.combo
+        );
+
+    let baseScore =
+        game.difficulty === 1
+        ? 100
+        : game.difficulty === 2
+        ? 150
+        : 200;
+
+    let gained =
+        baseScore +
+        (
+            game.combo >= 2
+            ? game.combo * 25
+            : 0
+        );
+
+    const skin =
+        getSkin();
+
+    gained =
+        Math.floor(
+            gained * skin.score
+        );
+
+    if (p.scoreBoost > 0) {
+
+        if (confirm("Use Score Boost?")) {
+
+            p.scoreBoost--;
+
+            gained =
+                Math.floor(
+                    gained * 1.25
+                );
+
+        }
+
+    }
+
+    game.score += gained;
+
+    let gainedXP =
+        50 +
+        game.combo * 10;
+
+    gainedXP =
+        Math.floor(
+            gainedXP * skin.xp
+        );
+
+    if (p.doubleXP > 0) {
+
+        if (confirm("Use Double XP?")) {
+
+            p.doubleXP--;
+
+            gainedXP *= 2;
+
+        }
+
+    }
+
+    addXP(gainedXP);
+
+    let coinReward =
+        20 +
+        game.combo * 5;
+
+    coinReward =
+        Math.floor(
+            coinReward * skin.coins
+        );
+
+    addCoins(coinReward);
+
+    p.totalCorrect++;
+    p.totalQuestions++;
+
+    save();
+
+    toast(
+        savedByLucky
+        ? `🍀 Lucky! +${gained} Score`
+        : `✅ Correct! +${gained} Score +${gainedXP} XP +${coinReward} Coins`
     );
 
+    setTimeout(
+        nextQuestion,
+        850
+    );
 
-    nextQuestion();
+}
+
+
+// ============================================================
+// WRONG
+// ============================================================
+
+function wrongAnswer() {
+
+    if (game.locked)
+        return;
+
+    game.locked = true;
+
+    const p = getProfile();
+
+    if (p.secondChance > 0) {
+
+        if (
+            confirm(
+                "Wrong answer!\nUse Second Chance?"
+            )
+        ) {
+
+            p.secondChance--;
+
+            game.wrong++;
+            game.combo = 0;
+
+            p.totalWrong++;
+            p.totalQuestions++;
+
+            save();
+
+            toast("🔄 Second Chance activated!");
+
+            setTimeout(
+                nextQuestion,
+                850
+            );
+
+            return;
+
+        }
+
+    }
+
+    if (p.answerShield > 0) {
+
+        if (
+            confirm(
+                "Wrong answer!\nUse Answer Shield?"
+            )
+        ) {
+
+            p.answerShield--;
+
+            game.wrong++;
+
+            p.totalWrong++;
+            p.totalQuestions++;
+
+            save();
+
+            toast(
+                "🛡️ Answer Shield protected your life!"
+            );
+
+            setTimeout(
+                nextQuestion,
+                850
+            );
+
+            return;
+
+        }
+
+    }
+
+    game.wrong++;
+    game.combo = 0;
+    game.lives--;
+
+    p.totalWrong++;
+    p.totalQuestions++;
+
+    save();
+
+    const correctCountry =
+        countries[
+            game.currentCountry
+        ][0];
+
+    toast(
+        `❌ Wrong! Correct: ${correctCountry}`
+    );
+
+    setTimeout(
+        nextQuestion,
+        1100
+    );
+
+}
+
+
+// ============================================================
+// HINT
+// ============================================================
+
+function useHint() {
+
+    if (game.locked)
+        return;
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    if (game.hintUsed) {
+
+        toast("Hint already used.");
+        return;
+
+    }
+
+    if (p.hints <= 0) {
+
+        toast("You don't have any Hint.");
+        return;
+
+    }
+
+    p.hints--;
+
+    game.hintUsed = true;
+
+    game.score =
+        Math.max(
+            0,
+            game.score - 25
+        );
+
+    const buttons =
+        Array.from(
+            document.querySelectorAll(
+                "#answers button"
+            )
+        );
+
+    const wrongButtons =
+        buttons.filter(
+            (button,index) =>
+                game.options[index] !==
+                game.currentCountry
+        );
+
+    shuffle(wrongButtons);
+
+    wrongButtons
+        .slice(0,2)
+        .forEach(button =>
+            button.classList.add("removed")
+        );
+
+    save();
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        game.score;
+
+    toast("💡 Hint used! -25 Score");
 
 }
 
@@ -3404,18 +2492,9 @@ function startDaily() {
 
 function finishGame() {
 
-    clearInterval(
-        game.timer
-    );
+    const p = getProfile();
 
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
+    if (!p) return;
 
     const completionReward =
         100 +
@@ -3429,150 +2508,60 @@ function finishGame() {
             game.difficulty === 3
             ? 100
             : 0
-        ) +
-        (
-            game.mode === "survival"
-            ? 150
-            : 0
-        ) +
-        (
-            game.mode === "timeattack"
-            ? 150
-            : 0
         );
 
-
-    addCoins(
-        completionReward
-    );
-
+    addCoins(completionReward);
 
     p.totalGames++;
 
+    p.bestCombo =
+        Math.max(
+            p.bestCombo,
+            game.bestCombo
+        );
 
-    if (
-        !p.modesPlayed[
-            game.mode
-        ]
-    ) {
+    let newHighScore = false;
 
-        p.modesPlayed[
-            game.mode
-        ] = 0;
-
-    }
-
-
-    p.modesPlayed[
-        game.mode
-    ]++;
-
-
-    if (
-        game.correct ===
-        game.totalQuestions
-    ) {
-
-        p.perfectGames++;
-
-    }
-
-
-    if (
-        game.score >
-        p.highScore
-    ) {
+    if (game.score > p.highScore) {
 
         p.highScore =
             game.score;
 
-    }
-
-
-    if (
-        game.mode ===
-        "daily"
-    ) {
-
-        const key =
-            todayKey();
-
-
-        if (
-            !p.dailyCompleted.includes(
-                key
-            )
-        ) {
-
-            p.dailyCompleted.push(
-                key
-            );
-
-
-            const config =
-                dailyConfig();
-
-
-            addCoins(
-                config.bonus
-            );
-
-        }
+        newHighScore = true;
 
     }
-
-
-    /*
-        Chest earning:
-        Every completed non-daily game
-        has a 35% chance to award a Chest.
-    */
-
-    let chestAward = null;
-
-
-    if (
-        game.mode !== "daily" &&
-        Math.random() < 0.35
-    ) {
-
-        chestAward =
-            randomChest();
-
-
-        p.chests.push(
-            chestAward
-        );
-
-    }
-
-
-    save();
-
 
     checkAchievements();
 
+    save();
 
-    document.getElementById(
-        "resultInfo"
-    ).innerHTML = `
+    let message;
+
+    if (newHighScore)
+        message = "🏆 NEW HIGH SCORE!";
+
+    else if (
+        game.correct ===
+        game.totalQuestions
+    )
+        message = "🎉 PERFECT GAME!";
+
+    else
+        message =
+            `Game reward: +${completionReward} Coins`;
+
+    const result =
+        document.getElementById("resultInfo");
+
+    result.innerHTML = `
 
         <div class="result-message">
-
-            ${
-                game.correct ===
-                game.totalQuestions
-                ? "🎉 PERFECT GAME!"
-                : "🏁 RUN COMPLETE"
-            }
-
+            ${message}
         </div>
 
         <div class="result-stat">
             <span>🎮 Mode</span>
-            <strong>
-                ${MODES[game.mode].name}
-            </strong>
+            <strong>Classic</strong>
         </div>
 
         <div class="result-stat">
@@ -3601,28 +2590,13 @@ function finishGame() {
         </div>
 
         <div class="result-stat">
-            <span>🏆 Rank</span>
-            <strong>${getRank(p.level)}</strong>
+            <span>🏆 Level</span>
+            <strong>${p.level} (${getRank(p.level)})</strong>
         </div>
-
-        ${
-            chestAward
-            ? `
-                <div class="result-message">
-                    🎁 You earned a
-                    ${CHESTS[chestAward].name}
-                    Chest!
-                </div>
-            `
-            : ""
-        }
 
     `;
 
-
-    showScreen(
-        "resultScreen"
-    );
+    showScreen("resultScreen");
 
 }
 
@@ -3633,11 +2607,8 @@ function finishGame() {
 
 function confirmQuitGame() {
 
-    if (
-        game.locked
-    )
+    if (game.locked)
         return;
-
 
     if (
         confirm(
@@ -3645,18 +2616,755 @@ function confirmQuitGame() {
         )
     ) {
 
-        clearInterval(
-            game.timer
-        );
-
-
-        game.locked =
-            true;
-
+        game.locked = true;
 
         goHome();
 
     }
+
+}
+
+
+// ============================================================
+// BOSS SYSTEM
+// ============================================================
+
+const bosses = [
+
+    {
+        name:"Iron Khan",
+        hp:1000,
+        rewardCoins:5000,
+        rewardXP:1000,
+        chest:"Rare",
+        item:"Khan's Compass"
+    },
+
+    {
+        name:"Dragon Emperor",
+        hp:2500,
+        rewardCoins:15000,
+        rewardXP:3000,
+        chest:"Epic",
+        item:"Dragon Scale"
+    },
+
+    {
+        name:"Celestial Guardian",
+        hp:5000,
+        rewardCoins:50000,
+        rewardXP:10000,
+        chest:"Legend",
+        item:"Celestial Seal"
+    },
+
+    {
+        name:"Mythic Sovereign",
+        hp:10000,
+        rewardCoins:150000,
+        rewardXP:30000,
+        chest:"Mythic",
+        item:"Sovereign Crown"
+    },
+
+    {
+        name:"DIVINE DRAGON",
+        hp:25000,
+        rewardCoins:500000,
+        rewardXP:100000,
+        chest:"Divine",
+        item:"Divine Dragon Heart"
+    }
+
+];
+
+
+let bossGame = {
+
+    boss:null,
+    hp:0,
+    maxHp:0,
+    question:0,
+    totalQuestions:15,
+    score:0,
+    correct:0,
+    locked:false
+
+};
+
+
+function startBossMode() {
+
+    const p = getProfile();
+
+    if (!p) {
+
+        toast("Create/select a profile first.");
+        openProfileMenu();
+        return;
+
+    }
+
+    const boss =
+        bosses[
+            Math.floor(
+                Math.random() *
+                bosses.length
+            )
+        ];
+
+    bossGame = {
+
+        boss,
+
+        hp:boss.hp,
+        maxHp:boss.hp,
+
+        question:0,
+
+        totalQuestions:15,
+
+        score:0,
+
+        correct:0,
+
+        locked:false
+
+    };
+
+    showScreen("bossScreen");
+
+    nextBossQuestion();
+
+}
+
+
+function nextBossQuestion() {
+
+    if (bossGame.question >= bossGame.totalQuestions) {
+
+        finishBoss(false);
+
+        return;
+
+    }
+
+    if (bossGame.hp <= 0) {
+
+        finishBoss(true);
+
+        return;
+
+    }
+
+    bossGame.question++;
+
+    bossGame.locked = false;
+
+    const correct =
+        Math.floor(
+            Math.random() *
+            countries.length
+        );
+
+    const options =
+        createOptions(correct,1);
+
+    bossGame.currentCountry = correct;
+    bossGame.options = options;
+
+    const c = countries[correct];
+
+    document.getElementById(
+        "bossName"
+    ).textContent =
+        `👹 ${bossGame.boss.name}`;
+
+    document.getElementById(
+        "bossHP"
+    ).textContent =
+        `${bossGame.hp}/${bossGame.maxHp}`;
+
+    document.getElementById(
+        "bossQuestion"
+    ).textContent =
+        `${bossGame.question}/${bossGame.totalQuestions}`;
+
+    document.getElementById(
+        "bossValue"
+    ).textContent =
+        c[1];
+
+    const answers =
+        document.getElementById(
+            "bossAnswers"
+        );
+
+    answers.innerHTML = "";
+
+    options.forEach((index,pos) => {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "answer-button";
+
+        button.textContent =
+            `${pos + 1}. ${countries[index][0]}`;
+
+        button.onclick =
+            () =>
+                answerBoss(pos);
+
+        answers.appendChild(button);
+
+    });
+
+}
+
+
+function answerBoss(position) {
+
+    if (bossGame.locked)
+        return;
+
+    bossGame.locked = true;
+
+    const selected =
+        bossGame.options[position];
+
+    const correct =
+        bossGame.currentCountry;
+
+    if (selected === correct) {
+
+        const damage =
+            100 +
+            Math.floor(
+                Math.random() * 151
+            );
+
+        bossGame.hp =
+            Math.max(
+                0,
+                bossGame.hp - damage
+            );
+
+        bossGame.correct++;
+
+        bossGame.score += damage;
+
+        toast(
+            `⚔️ HIT! Boss -${damage} HP`
+        );
+
+    }
+    else {
+
+        toast("❌ MISS! The boss attacks!");
+
+    }
+
+    setTimeout(
+        nextBossQuestion,
+        850
+    );
+
+}
+
+
+function finishBoss(victory) {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    const box =
+        document.getElementById("bossResult");
+
+    if (victory) {
+
+        p.bossWins++;
+
+        addCoins(
+            bossGame.boss.rewardCoins
+        );
+
+        addXP(
+            bossGame.boss.rewardXP
+        );
+
+        p.chests[
+            bossGame.boss.chest
+        ]++;
+
+        if (
+            !p.bossItems.includes(
+                bossGame.boss.item
+            )
+        ) {
+
+            p.bossItems.push(
+                bossGame.boss.item
+            );
+
+        }
+
+        checkAchievements();
+
+        save();
+
+        box.innerHTML = `
+
+            <div class="result-message boss-win">
+                👑 BOSS DEFEATED!
+            </div>
+
+            <div class="result-stat">
+                <span>👹 Boss</span>
+                <strong>${bossGame.boss.name}</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>⚔️ Damage</span>
+                <strong>${bossGame.score}</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>🪙 Coins</span>
+                <strong>+${bossGame.boss.rewardCoins}</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>✨ XP</span>
+                <strong>+${bossGame.boss.rewardXP}</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>🎁 Chest</span>
+                <strong>${bossGame.boss.chest}</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>👹 Exclusive Item</span>
+                <strong>${bossGame.boss.item}</strong>
+            </div>
+
+        `;
+
+    }
+    else {
+
+        box.innerHTML = `
+
+            <div class="result-message">
+                💀 BOSS SURVIVED
+            </div>
+
+            <div class="result-stat">
+                <span>👹 Boss HP Remaining</span>
+                <strong>${bossGame.hp}</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>⚔️ Damage Dealt</span>
+                <strong>${bossGame.score}</strong>
+            </div>
+
+        `;
+
+    }
+
+    showScreen("bossResultScreen");
+
+}
+
+
+// ============================================================
+// ACHIEVEMENTS
+// ============================================================
+
+const achievements = [
+
+    {
+        id:"first_game",
+        name:"First Steps",
+        description:"Complete your first game.",
+        reward:500
+    },
+
+    {
+        id:"perfect",
+        name:"Perfect!",
+        description:"Answer all 10 Classic questions correctly.",
+        reward:2000
+    },
+
+    {
+        id:"combo10",
+        name:"Combo Master",
+        description:"Reach a 10 combo.",
+        reward:3000
+    },
+
+    {
+        id:"rich",
+        name:"Rich Explorer",
+        description:"Own 50,000 Coins.",
+        reward:5000
+    },
+
+    {
+        id:"level20",
+        name:"Champion",
+        description:"Reach Level 20.",
+        reward:5000
+    },
+
+    {
+        id:"level50",
+        name:"Grandmaster",
+        description:"Reach Level 50.",
+        reward:15000
+    },
+
+    {
+        id:"level100",
+        name:"DIVINE",
+        description:"Reach Level 100.",
+        reward:100000
+    },
+
+    {
+        id:"boss1",
+        name:"Boss Hunter",
+        description:"Defeat your first boss.",
+        reward:5000
+    },
+
+    {
+        id:"boss10",
+        name:"Boss Slayer",
+        description:"Defeat 10 bosses.",
+        reward:25000
+    },
+
+    {
+        id:"skin",
+        name:"Fashion Explorer",
+        description:"Own 3 skins.",
+        reward:5000
+    },
+
+    {
+        id:"chest",
+        name:"Treasure Hunter",
+        description:"Open a chest.",
+        reward:1000
+    }
+
+];
+
+
+function checkAchievements() {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    achievements.forEach(a => {
+
+        if (p.achievements.includes(a.id))
+            return;
+
+        let unlocked = false;
+
+        if (a.id === "first_game")
+            unlocked = p.totalGames >= 1;
+
+        else if (a.id === "perfect")
+            unlocked =
+                game.correct === 10 &&
+                game.totalQuestions === 10;
+
+        else if (a.id === "combo10")
+            unlocked = p.bestCombo >= 10;
+
+        else if (a.id === "rich")
+            unlocked = p.coins >= 50000;
+
+        else if (a.id === "level20")
+            unlocked = p.level >= 20;
+
+        else if (a.id === "level50")
+            unlocked = p.level >= 50;
+
+        else if (a.id === "level100")
+            unlocked = p.level >= 100;
+
+        else if (a.id === "boss1")
+            unlocked = p.bossWins >= 1;
+
+        else if (a.id === "boss10")
+            unlocked = p.bossWins >= 10;
+
+        else if (a.id === "skin")
+            unlocked = p.skins.length >= 3;
+
+        if (unlocked) {
+
+            p.achievements.push(a.id);
+
+            addCoins(a.reward);
+
+            toast(
+                `🏅 ACHIEVEMENT: ${a.name}! +${a.reward} Coins`
+            );
+
+        }
+
+    });
+
+    save();
+
+}
+
+
+function openAchievements() {
+
+    const p = getProfile();
+
+    if (!p) {
+
+        toast("Create/select a profile first.");
+        openProfileMenu();
+        return;
+
+    }
+
+    const container =
+        document.getElementById(
+            "achievementList"
+        );
+
+    container.innerHTML = "";
+
+    achievements.forEach(a => {
+
+        const unlocked =
+            p.achievements.includes(a.id);
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "achievement-item" +
+            (unlocked ? " unlocked" : "");
+
+        div.innerHTML = `
+
+            <div>
+
+                <h3>
+                    ${unlocked ? "🏆" : "🔒"}
+                    ${a.name}
+                </h3>
+
+                <p>${a.description}</p>
+
+            </div>
+
+            <strong>
+                +${a.reward} 🪙
+            </strong>
+
+        `;
+
+        container.appendChild(div);
+
+    });
+
+    showScreen("achievementScreen");
+
+}
+
+
+// ============================================================
+// DAILY CHALLENGE
+// ============================================================
+
+function getTodayKey() {
+
+    const d = new Date();
+
+    return [
+        d.getFullYear(),
+        d.getMonth() + 1,
+        d.getDate()
+    ].join("-");
+
+}
+
+
+function getDailyState() {
+
+    const key = getTodayKey();
+
+    let state;
+
+    try {
+
+        state =
+            JSON.parse(
+                localStorage.getItem(DAILY_KEY)
+            );
+
+    }
+    catch (e) {
+
+        state = null;
+
+    }
+
+    if (
+        !state ||
+        state.date !== key
+    ) {
+
+        state = {
+
+            date:key,
+            completed:false,
+            score:0,
+            correct:0
+
+        };
+
+        localStorage.setItem(
+            DAILY_KEY,
+            JSON.stringify(state)
+        );
+
+    }
+
+    return state;
+
+}
+
+
+function openDailyChallenge() {
+
+    if (!getProfile()) {
+
+        toast("Create/select a profile first.");
+        openProfileMenu();
+        return;
+
+    }
+
+    const state =
+        getDailyState();
+
+    const info =
+        document.getElementById(
+            "dailyInfo"
+        );
+
+    if (state.completed) {
+
+        info.innerHTML = `
+            <div class="result-message">
+                ✅ Today's Challenge Completed!
+            </div>
+
+            <p>
+                Score: <strong>${state.score}</strong>
+            </p>
+
+            <p>
+                Correct:
+                <strong>${state.correct}/10</strong>
+            </p>
+        `;
+
+    }
+    else {
+
+        info.innerHTML = `
+            <div class="result-message">
+                🎯 10 questions • Special rewards
+            </div>
+
+            <p>
+                Reward:
+                🪙 5,000 Coins +
+                🎁 Rare Chest
+            </p>
+        `;
+
+    }
+
+    showScreen("dailyScreen");
+
+}
+
+
+function startDailyChallenge() {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    const state =
+        getDailyState();
+
+    if (state.completed) {
+
+        toast("Daily Challenge already completed today.");
+        return;
+
+    }
+
+    game = {
+
+        mode:"daily",
+
+        difficulty:3,
+
+        question:0,
+
+        totalQuestions:10,
+
+        score:0,
+
+        lives:3,
+
+        combo:0,
+
+        bestCombo:0,
+
+        correct:0,
+
+        wrong:0,
+
+        used:[],
+
+        currentCountry:-1,
+
+        options:[],
+
+        type:1,
+
+        hintUsed:false,
+
+        locked:false
+
+    };
+
+    showScreen("gameScreen");
+
+    nextQuestion();
 
 }
 
@@ -3668,86 +3376,168 @@ function confirmQuitGame() {
 function openCountries() {
 
     const container =
-        document.getElementById(
-            "countryList"
-        );
+        document.getElementById("countryList");
 
+    container.innerHTML = "";
 
     document.getElementById(
         "countryCount"
     ).textContent =
         countries.length;
 
+    countries.forEach((c,index) => {
 
-    container.innerHTML =
-        countries
-            .map(
-                (country,index) => `
+        const div =
+            document.createElement("div");
 
-                    <div class="country-card">
+        div.className =
+            "country-card";
 
-                        <h3>
-                            ${index + 1}.
-                            ${escapeHTML(country[0])}
-                        </h3>
+        div.innerHTML = `
 
-                        <p>
-                            🏛️ Capital:
-                            ${escapeHTML(country[1])}
-                        </p>
+            <h3>
+                ${index + 1}.
+                ${escapeHTML(c[0])}
+            </h3>
 
-                        <p>
-                            💰 Currency:
-                            ${escapeHTML(country[2])}
-                        </p>
+            <p>🏛️ Capital: ${escapeHTML(c[1])}</p>
+            <p>💰 Currency: ${escapeHTML(c[2])}</p>
+            <p>🌏 Region: ${escapeHTML(c[3])}</p>
 
-                        <p>
-                            🌏 Region:
-                            ${escapeHTML(country[3])}
-                        </p>
+        `;
 
-                    </div>
+        container.appendChild(div);
 
-                `
-            )
-            .join("");
+    });
 
-
-    showScreen(
-        "countriesScreen"
-    );
+    showScreen("countriesScreen");
 
 }
 
 
 // ============================================================
-// RULES / UPDATE / INFO
+// FINISH DAILY
+// ============================================================
+
+function finishDailyIfNeeded() {
+
+    if (game.mode !== "daily")
+        return false;
+
+    const state =
+        getDailyState();
+
+    if (state.completed)
+        return true;
+
+    state.completed = true;
+    state.score = game.score;
+    state.correct = game.correct;
+
+    localStorage.setItem(
+        DAILY_KEY,
+        JSON.stringify(state)
+    );
+
+    const p = getProfile();
+
+    if (p) {
+
+        p.dailyWins++;
+
+        addCoins(5000);
+
+        p.chests.Rare++;
+
+        save();
+
+    }
+
+    return true;
+
+}
+
+
+// ============================================================
+// OVERRIDE FINISH FOR DAILY
+// ============================================================
+
+const originalFinishGame = finishGame;
+
+finishGame = function() {
+
+    if (game.mode === "daily") {
+
+        const p = getProfile();
+
+        if (!p) return;
+
+        const completed =
+            finishDailyIfNeeded();
+
+        document.getElementById(
+            "resultInfo"
+        ).innerHTML = `
+
+            <div class="result-message">
+                🎯 DAILY CHALLENGE COMPLETE!
+            </div>
+
+            <div class="result-stat">
+                <span>⭐ Score</span>
+                <strong>${game.score}</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>✅ Correct</span>
+                <strong>${game.correct}</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>🪙 Reward</span>
+                <strong>+5,000 Coins</strong>
+            </div>
+
+            <div class="result-stat">
+                <span>🎁 Reward</span>
+                <strong>Rare Chest</strong>
+            </div>
+
+        `;
+
+        showScreen("resultScreen");
+
+        return;
+
+    }
+
+    originalFinishGame();
+
+};
+
+
+// ============================================================
+// RULES / INFO / UPDATE
 // ============================================================
 
 function openRules() {
-
-    showScreen(
-        "rulesScreen"
-    );
-
+    showScreen("rulesScreen");
 }
 
 
 function openUpdateLog() {
-
-    showScreen(
-        "updateScreen"
-    );
-
+    showScreen("updateScreen");
 }
 
 
 function openInfo() {
+    showScreen("infoScreen");
+}
 
-    showScreen(
-        "infoScreen"
-    );
 
+function goHome() {
+    showScreen("homeScreen");
+    updateMainProfile();
 }
 
 
@@ -3755,215 +3545,308 @@ function openInfo() {
 // OWNER PANEL
 // ============================================================
 //
-// NOT included in Update Log.
-// Shortcut: SHIFT + A
-//
-// Browser-only local owner tools.
-// This is NOT real server security.
+// IMPORTANT:
+// This is client-side only.
+// It is NOT real server security.
+// Do not store a real production secret here.
 // ============================================================
+
+let ownerMode = false;
 
 function openOwnerPanel() {
 
-    const panel =
-        document.getElementById(
-            "ownerPanel"
-        );
+    if (!ownerMode) {
 
+        const code =
+            prompt(
+                "OWNER ACCESS\nEnter Owner Code:"
+            );
 
-    panel.classList.add(
-        "owner-visible"
-    );
+        if (code !== "ASIA-OWNER-250")
+            return;
 
-}
+        ownerMode = true;
 
+    }
 
-function ownerClose() {
+    renderOwnerPanel();
 
-    document
-        .getElementById(
-            "ownerPanel"
-        )
-        .classList.remove(
-            "owner-visible"
-        );
+    showScreen("ownerScreen");
 
 }
 
 
-function ownerGiveCoins() {
+function renderOwnerPanel() {
 
-    const p =
-        getProfile();
+    const p = getProfile();
+
+    const container =
+        document.getElementById("ownerControls");
+
+    if (!container) return;
+
+    container.innerHTML = `
+
+        <div class="owner-warning">
+            👑 OWNER MODE ACTIVE
+        </div>
+
+        <button onclick="ownerAddCoins()">
+            🪙 Add 100,000 Coins
+        </button>
+
+        <button onclick="ownerAddXP()">
+            ✨ Add 50,000 XP
+        </button>
+
+        <button onclick="ownerLevelUp()">
+            🚀 Level +10
+        </button>
+
+        <button onclick="ownerGiveItems()">
+            🎁 Give Premium Items
+        </button>
+
+        <button onclick="ownerGiveChests()">
+            🎁 Give One of Every Chest
+        </button>
+
+        <button onclick="ownerUnlockSkins()">
+            🎨 Unlock All Skins
+        </button>
+
+        <button onclick="ownerUnlockAchievements()">
+            🏆 Unlock All Achievements
+        </button>
+
+        <button onclick="ownerBossReward()">
+            👹 Give Boss Exclusive Items
+        </button>
+
+        <button
+            class="danger"
+            onclick="ownerResetProfile()">
+            ⚠️ Reset Current Profile
+        </button>
+
+        <button
+            class="secondary"
+            onclick="ownerMode=false;goHome()">
+            Exit Owner Mode
+        </button>
+
+    `;
+
+}
 
 
-    if (!p)
-        return;
+function ownerAddCoins() {
 
+    const p = getProfile();
 
-    const amount =
-        Math.max(
-            0,
-            Number(
-                document.getElementById(
-                    "ownerCoins"
-                ).value
-            ) || 0
-        );
+    if (!p) return;
 
-
-    addCoins(
-        amount
-    );
-
+    addCoins(100000);
 
     save();
 
-
-    toast(
-        `Owner: +${amount} Coins`
-    );
+    toast("👑 Owner: +100,000 Coins");
 
 }
 
 
-function ownerGiveXP() {
+function ownerAddXP() {
 
-    const p =
-        getProfile();
+    const p = getProfile();
 
+    if (!p) return;
 
-    if (!p)
-        return;
-
-
-    const amount =
-        Math.max(
-            0,
-            Number(
-                document.getElementById(
-                    "ownerXP"
-                ).value
-            ) || 0
-        );
-
-
-    addXP(
-        amount
-    );
-
+    addXP(50000);
 
     save();
 
-
-    toast(
-        `Owner: +${amount} XP`
-    );
+    toast("👑 Owner: +50,000 XP");
 
 }
 
 
-function ownerAddChest() {
+function ownerLevelUp() {
 
-    const p =
-        getProfile();
+    const p = getProfile();
+
+    if (!p) return;
+
+    p.level =
+        Math.min(
+            100,
+            p.level + 10
+        );
+
+    p.xp =
+        Math.max(
+            p.xp,
+            (p.level - 1) * 500
+        );
+
+    save();
+
+    toast("👑 Owner: Level increased!");
+
+}
 
 
-    if (!p)
+function ownerGiveItems() {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    p.hints += 20;
+    p.extraLives += 20;
+    p.doubleXP += 20;
+    p.scoreBoost += 20;
+    p.secondChance += 20;
+    p.luckyAnswer += 20;
+    p.megaHint = (p.megaHint || 0) + 20;
+    p.timeFreeze = (p.timeFreeze || 0) + 20;
+    p.answerShield = (p.answerShield || 0) + 20;
+    p.phoenix = (p.phoenix || 0) + 20;
+
+    save();
+
+    toast("👑 Owner: Premium items granted!");
+
+}
+
+
+function ownerGiveChests() {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    Object.keys(p.chests)
+        .forEach(
+            type => p.chests[type]++
+        );
+
+    save();
+
+    toast("👑 Owner: All chests +1");
+
+}
+
+
+function ownerUnlockSkins() {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    skins.forEach(skin => {
+
+        if (!p.skins.includes(skin.name))
+            p.skins.push(skin.name);
+
+    });
+
+    save();
+
+    toast("👑 Owner: All skins unlocked!");
+
+}
+
+
+function ownerUnlockAchievements() {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    achievements.forEach(a => {
+
+        if (!p.achievements.includes(a.id))
+            p.achievements.push(a.id);
+
+    });
+
+    save();
+
+    toast("👑 Owner: All achievements unlocked!");
+
+}
+
+
+function ownerBossReward() {
+
+    const p = getProfile();
+
+    if (!p) return;
+
+    bosses.forEach(boss => {
+
+        if (!p.bossItems.includes(boss.item))
+            p.bossItems.push(boss.item);
+
+    });
+
+    save();
+
+    toast("👑 Owner: Boss items granted!");
+
+}
+
+
+function ownerResetProfile() {
+
+    if (!getProfile())
         return;
-
-
-    const type =
-        document.getElementById(
-            "ownerChest"
-        ).value;
-
 
     if (
-        !CHESTS[type]
+        !confirm(
+            "RESET CURRENT PROFILE?\nThis cannot be undone."
+        )
     )
         return;
 
+    const name =
+        getProfile().name;
 
-    p.chests.push(
-        type
-    );
-
+    profiles[currentProfile] =
+        newProfile(name);
 
     save();
 
+    toast("👑 Profile reset.");
 
-    toast(
-        `Owner: ${CHESTS[type].name} Chest added`
-    );
+    renderOwnerPanel();
 
 }
 
 
-function ownerResetDaily() {
+// ============================================================
+// OWNER HOTKEY
+// ============================================================
 
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    const key =
-        todayKey();
-
-
-    p.dailyCompleted =
-        p.dailyCompleted.filter(
-            item =>
-                item !== key
-        );
-
-
-    save();
-
-
-    toast(
-        "Owner: Daily Challenge reset."
-    );
-
-}
-
-
-function ownerClearAchievements() {
-
-    const p =
-        getProfile();
-
-
-    if (!p)
-        return;
-
-
-    p.achievements = [];
-
-
-    save();
-
-
-    toast(
-        "Owner: Achievements reset."
-    );
-
-}
-
-
-window.addEventListener(
+document.addEventListener(
     "keydown",
     event => {
 
         if (
-            event.shiftKey &&
-            event.key.toLowerCase() ===
-            "a"
+            event.key.toLowerCase() === "o" &&
+            !event.ctrlKey &&
+            !event.altKey &&
+            !event.shiftKey
         ) {
 
-            event.preventDefault();
+            const tag =
+                document.activeElement?.tagName;
+
+            if (
+                tag === "INPUT" ||
+                tag === "TEXTAREA"
+            )
+                return;
 
             openOwnerPanel();
 
@@ -3980,20 +3863,21 @@ window.addEventListener(
 function initialize() {
 
     if (
-        currentProfile >=
-        profiles.length
+        currentProfile >= 0 &&
+        !profiles[currentProfile]
     ) {
 
         currentProfile = -1;
 
     }
 
+    profiles.forEach(migrateProfile);
 
     updateHeader();
-
     updateMainProfile();
 
-}
+    renderChests();
 
+}
 
 initialize();
