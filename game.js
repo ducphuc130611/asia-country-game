@@ -3562,7 +3562,7 @@ function openOwnerPanel() {
                 "OWNER ACCESS\nEnter Owner Code:"
             );
 
-        if (code !== "PHUCDZ1306")
+        if (code !== "ASIA-OWNER-250")
             return;
 
         ownerMode = true;
