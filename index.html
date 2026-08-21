@@ -3,46 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Asia Country Guessing Game v1.5</title>
+  <title>Asia Quiz Adventure v2.0</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <div class="app-container">
-    <!-- Top Header -->
+    <!-- Top Bar -->
     <header>
       <div class="stat-badge">👤 <span id="topName">Player 1</span></div>
       <div class="stat-badge">⭐ Lv.<span id="topLevel">1</span></div>
       <div class="stat-badge">🪙 <span id="topCoins">100</span></div>
     </header>
 
-    <!-- 1. Home Screen -->
+    <!-- 1. Màn hình chính -->
     <div id="homeScreen" class="screen active">
-      <h1>🌏 Asia Guessing Quiz</h1>
-      <p class="subtitle">Khám phá thủ đô, tiền tệ và các vùng lãnh thổ Châu Á</p>
+      <h1>🌏 Asia Quiz v2.0</h1>
+      <p class="subtitle">Thử thách kiến thức địa lý, thủ đô & tiền tệ Châu Á</p>
       <div class="btn-grid">
-        <button onclick="startGameMenu()">▶ Bắt Đầu Chơi</button>
-        <button class="secondary" onclick="openShop()">🛒 Cửa Hàng Trang Bị</button>
-        <button class="secondary" onclick="openInventory()">🎒 Túi Đồ</button>
-        <button class="secondary" onclick="openCountries()">📖 Tra Cứu Quốc Gia</button>
-        <button class="secondary" onclick="openProfileMenu()">👤 Hồ Sơ & Đổi Tên</button>
-        <button class="secondary" onclick="openRules()">📜 Luật Chơi</button>
+        <button id="btnPlay">▶ Bắt Đầu Chơi</button>
+        <button class="secondary" id="btnShop">🛒 Cửa Hàng Vật Phẩm</button>
+        <button class="secondary" id="btnInventory">🎒 Túi Đồ</button>
+        <button class="secondary" id="btnCountries">📖 Tra Cứu Quốc Gia</button>
+        <button class="secondary" id="btnProfile">👤 Hồ Sơ & Đổi Tên</button>
+        <button class="secondary" id="btnRules">📜 Luật Chơi</button>
       </div>
     </div>
 
-    <!-- 2. Difficulty Selection -->
+    <!-- 2. Màn hình chọn độ khó -->
     <div id="difficultyScreen" class="screen">
       <h2>Chọn Độ Khó</h2>
-      <p class="subtitle">Độ khó càng cao thì càng đa dạng câu hỏi và nhận nhiều thưởng hơn</p>
+      <p class="subtitle">Mức độ càng cao, phần thưởng XP và Xu càng lớn</p>
       <div class="btn-grid">
-        <button onclick="startGame(1)">Dễ (Đoán Thủ Đô)</button>
-        <button class="warning" onclick="startGame(2)">Bình Thường (Đoán Ngược Thủ Đô / Quốc Gia)</button>
-        <button class="danger" onclick="startGame(3)">Khó (Đoán Cả Tiền Tệ & Vị Trí Vùng)</button>
-        <button class="secondary" onclick="goHome()">⬅ Quay Lại</button>
+        <button class="diff-btn" data-diff="1">Dễ (Thủ đô cơ bản)</button>
+        <button class="warning diff-btn" data-diff="2">Bình Thường (Đoán ngược Quốc gia / Thủ đô)</button>
+        <button class="danger diff-btn" data-diff="3">Khó (Đoán cả Tiền tệ & Khu vực)</button>
+        <button class="secondary nav-home">⬅ Quay Lại</button>
       </div>
     </div>
 
-    <!-- 3. Quiz Game Screen -->
+    <!-- 3. Màn hình chơi game -->
     <div id="gameScreen" class="screen">
       <div class="game-stats">
         <span>Câu: <strong id="questionNumber">1/10</strong></span>
@@ -55,7 +55,7 @@
       </div>
 
       <div class="question-card">
-        <span class="type" id="questionType">Country to Capital</span>
+        <span class="type" id="questionType">QUỐC GIA ➔ THỦ ĐÔ</span>
         <h3 id="questionText">Thủ đô của quốc gia này là gì?</h3>
         <h2 id="questionValue">Japan</h2>
       </div>
@@ -63,86 +63,86 @@
       <div id="answers" class="answers-grid"></div>
 
       <div style="display: flex; gap: 0.5rem; margin-top: auto;">
-        <button class="secondary" style="flex: 1;" onclick="useHint()">💡 Gợi ý (Loại 2 đáp án)</button>
-        <button class="danger" style="flex: 1;" onclick="confirmQuitGame()">🏳 Thoát</button>
+        <button class="secondary" style="flex: 1;" id="btnUseHint">💡 Gợi ý (-2 đáp án)</button>
+        <button class="danger" style="flex: 1;" id="btnQuitGame">🏳 Thoát</button>
       </div>
     </div>
 
-    <!-- 4. Result Screen -->
+    <!-- 4. Màn hình kết quả -->
     <div id="resultScreen" class="screen">
       <h2>Kết Quả Lượt Chơi</h2>
       <div id="resultInfo" style="margin: 1.5rem 0;"></div>
       <div class="btn-grid">
-        <button onclick="startGameMenu()">🔄 Chơi Tiếp Lượt Mới</button>
-        <button class="secondary" onclick="goHome()">🏠 Về Màn Hình Chính</button>
+        <button id="btnPlayAgain">🔄 Chơi Lượt Mới</button>
+        <button class="secondary nav-home">🏠 Về Trang Chủ</button>
       </div>
     </div>
 
-    <!-- 5. Shop Screen -->
+    <!-- 5. Màn hình cửa hàng -->
     <div id="shopScreen" class="screen">
-      <h2>🛒 Cửa Hàng Vật Phẩm</h2>
-      <p class="subtitle">Tiền hiện có: 🪙 <strong id="shopCoins">0</strong></p>
+      <h2>🛒 Cửa Hàng</h2>
+      <p class="subtitle">Số dư hiện tại: 🪙 <strong id="shopCoins">0</strong></p>
       <div class="list-container">
         <div class="item-card">
-          <div><strong>💡 Thẻ Gợi Ý</strong><br><small style="color:var(--text-muted)">Bỏ bớt 2 đáp án sai trong câu hỏi</small></div>
-          <button onclick="buyItem('hints', 30)">30 🪙</button>
+          <div><strong>💡 Thẻ Gợi Ý</strong><br><small class="text-muted">Loại bỏ 2 phương án sai</small></div>
+          <button class="shop-buy-btn" data-item="hints" data-cost="30">30 🪙</button>
         </div>
         <div class="item-card">
-          <div><strong>❤️ Thêm 1 Mạng</strong><br><small style="color:var(--text-muted)">Bắt đầu ván đấu với 4 mạng</small></div>
-          <button onclick="buyItem('extraLives', 50)">50 🪙</button>
+          <div><strong>❤️ Thêm 1 Mạng</strong><br><small class="text-muted">Bắt đầu trận với 4 mạng</small></div>
+          <button class="shop-buy-btn" data-item="extraLives" data-cost="50">50 🪙</button>
         </div>
         <div class="item-card">
-          <div><strong>✨ Nhân Đôi XP</strong><br><small style="color:var(--text-muted)">Gấp đôi điểm kinh nghiệm câu tiếp theo</small></div>
-          <button onclick="buyItem('doubleXP', 40)">40 🪙</button>
+          <div><strong>✨ Nhân Đôi XP</strong><br><small class="text-muted">x2 XP cho câu trả lời đúng tiếp theo</small></div>
+          <button class="shop-buy-btn" data-item="doubleXP" data-cost="40">40 🪙</button>
         </div>
         <div class="item-card">
-          <div><strong>🔄 Thẻ Hồi Sinh</strong><br><small style="color:var(--text-muted)">Không mất mạng khi trả lời sai 1 lần</small></div>
-          <button onclick="buyItem('secondChance', 60)">60 🪙</button>
+          <div><strong>🔄 Thẻ Bảo Hiểm</strong><br><small class="text-muted">Không mất mạng khi sai lần đầu</small></div>
+          <button class="shop-buy-btn" data-item="secondChance" data-cost="60">60 🪙</button>
         </div>
       </div>
-      <button class="secondary" onclick="goHome()">⬅ Quay Lại</button>
+      <button class="secondary nav-home">⬅ Quay Lại</button>
     </div>
 
-    <!-- 6. Inventory Screen -->
+    <!-- 6. Túi đồ -->
     <div id="inventoryScreen" class="screen">
-      <h2>🎒 Túi Đồ Của Bạn</h2>
+      <h2>🎒 Túi Đồ</h2>
       <div id="inventoryList" class="list-container"></div>
-      <button class="secondary" onclick="goHome()">⬅ Quay Lại</button>
+      <button class="secondary nav-home">⬅ Quay Lại</button>
     </div>
 
-    <!-- 7. Country DB Screen -->
+    <!-- 7. Tra cứu -->
     <div id="countriesScreen" class="screen">
-      <h2>📖 Bách Khoa Châu Á (<span id="countryCount">0</span>)</h2>
-      <input type="text" id="countrySearch" placeholder="🔍 Tìm kiếm quốc gia, thủ đô, tiền tệ..." oninput="filterCountries()" />
+      <h2>📖 Bách Khoa Toàn Thư (<span id="countryCount">0</span>)</h2>
+      <input type="text" id="countrySearch" placeholder="🔍 Gõ tên nước, thủ đô, tiền tệ..." />
       <div id="countryList" class="list-container"></div>
-      <button class="secondary" onclick="goHome()">⬅ Quay Lại</button>
+      <button class="secondary nav-home">⬅ Quay Lại</button>
     </div>
 
-    <!-- 8. Profile Screen -->
+    <!-- 8. Hồ sơ cá nhân -->
     <div id="profileScreen" class="screen">
       <h2>👤 Quản Lý Hồ Sơ</h2>
-      <div id="mainProfileInfo" style="margin-bottom: 1rem; background: #0f172a; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);"></div>
+      <div id="mainProfileInfo"></div>
       <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-        <input type="text" id="profileNameInput" placeholder="Tên hồ sơ mới..." style="margin-bottom: 0;" />
-        <button onclick="createProfileFromInput()">Tạo Mới</button>
+        <input type="text" id="profileNameInput" placeholder="Nhập tên người chơi mới..." style="margin-bottom: 0;" />
+        <button id="btnCreateProfile">Tạo Mới</button>
       </div>
       <div id="profileList" class="list-container"></div>
       <div style="display: flex; gap: 0.5rem;">
-        <button class="danger" style="flex: 1;" onclick="deleteProfile()">Xoá Hồ Sơ</button>
-        <button class="secondary" style="flex: 1;" onclick="goHome()">⬅ Quay Lại</button>
+        <button class="danger" style="flex: 1;" id="btnDeleteProfile">Xoá Hồ Sơ</button>
+        <button class="secondary nav-home" style="flex: 1;">⬅ Quay Lại</button>
       </div>
     </div>
 
-    <!-- 9. Rules Screen -->
+    <!-- 9. Luật chơi -->
     <div id="rulesScreen" class="screen">
-      <h2>📜 Hướng Dẫn & Luật Chơi</h2>
+      <h2>📜 Luật Chơi v2.0</h2>
       <div class="list-container" style="line-height: 1.6; font-size: 0.95rem;">
-        <p>• Mỗi lượt chơi gồm <strong>10 câu hỏi trắc nghiệm</strong> ngẫu nhiên.</p>
-        <p>• Bạn bắt đầu với <strong>3 mạng (❤️)</strong>. Trả lời sai sẽ mất 1 mạng.</p>
-        <p>• Trả lời đúng liên tiếp sẽ tích lũy <strong>Combo (🔥)</strong> để nhận thêm nhiều Xu (🪙) và XP (⭐).</p>
-        <p>• Tích luỹ XP để thăng cấp và dùng Xu mua trang bị hỗ trợ trong Cửa Hàng.</p>
+        <p>• Mỗi vòng chơi có <strong>10 câu hỏi</strong> trắc nghiệm ngẫu nhiên.</p>
+        <p>• Bắt đầu với <strong>3 mạng (❤️)</strong>. Hết mạng là trò chơi kết thúc.</p>
+        <p>• Chuỗi trả lời đúng <strong>Combo (🔥)</strong> tăng hệ số thưởng Xu và Điểm.</p>
+        <p>• Dùng Xu kiếm được để mua trang bị hỗ trợ trong Cửa Hàng.</p>
       </div>
-      <button class="secondary" onclick="goHome()">⬅ Quay Lại</button>
+      <button class="secondary nav-home">⬅ Quay Lại</button>
     </div>
   </div>
 
