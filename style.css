@@ -10,6 +10,7 @@ body {
 }
 
 body {
+
     font-family:
         Arial,
         Helvetica,
@@ -28,12 +29,12 @@ body {
 }
 
 button,
-input,
-select {
+input {
     font: inherit;
 }
 
 button {
+
     border: none;
 
     border-radius: 12px;
@@ -52,17 +53,24 @@ button {
 
     transition:
         transform .15s,
-        opacity .15s;
+        opacity .15s,
+        box-shadow .15s;
 }
 
 button:hover {
+
     transform:
         translateY(-2px);
 
     opacity: .9;
+
+    box-shadow:
+        0 8px 20px
+        rgba(22,119,255,.25);
 }
 
 button:active {
+
     transform:
         scale(.97);
 }
@@ -76,6 +84,7 @@ button.danger {
 }
 
 button.big-button {
+
     width: 100%;
 
     min-height: 70px;
@@ -83,7 +92,23 @@ button.big-button {
     font-size: 20px;
 }
 
+button.boss-button {
+
+    background:
+        linear-gradient(
+            135deg,
+            #991b1b,
+            #dc2626,
+            #7f1d1d
+        );
+
+    box-shadow:
+        0 0 25px
+        rgba(220,38,38,.25);
+}
+
 #app {
+
     min-height:
         calc(100vh - 80px);
 }
@@ -94,6 +119,7 @@ button.big-button {
 ============================================================ */
 
 .header {
+
     position: sticky;
 
     top: 0;
@@ -109,7 +135,8 @@ button.big-button {
 
     gap: 20px;
 
-    padding: 18px 5%;
+    padding:
+        18px 5%;
 
     background:
         rgba(4,14,28,.96);
@@ -117,24 +144,32 @@ button.big-button {
     border-bottom:
         1px solid
         rgba(255,255,255,.1);
+
+    backdrop-filter:
+        blur(10px);
 }
 
 .header-title h1 {
+
     margin: 0;
 
     font-size: 26px;
 }
 
 .header-title p {
-    margin: 5px 0 0;
 
-    color: #aebfd1;
+    margin:
+        5px 0 0;
+
+    color:
+        #aebfd1;
 }
 
 .header-profile {
+
     display: flex;
 
-    gap: 15px;
+    gap: 12px;
 
     align-items: center;
 
@@ -147,6 +182,7 @@ button.big-button {
 ============================================================ */
 
 .screen {
+
     display: none;
 
     width: 100%;
@@ -155,7 +191,8 @@ button.big-button {
 
     margin: auto;
 
-    padding: 30px 20px;
+    padding:
+        30px 20px;
 }
 
 .screen.active {
@@ -168,6 +205,7 @@ button.big-button {
 ============================================================ */
 
 .card {
+
     background:
         rgba(15,31,50,.95);
 
@@ -191,9 +229,11 @@ button.big-button {
 }
 
 .hero-card {
+
     text-align: center;
 
-    padding: 40px 25px;
+    padding:
+        40px 25px;
 }
 
 .hero-card h2 {
@@ -201,9 +241,11 @@ button.big-button {
 }
 
 .centered {
+
     max-width: 650px;
 
-    margin: 40px auto;
+    margin:
+        40px auto;
 }
 
 
@@ -211,8 +253,8 @@ button.big-button {
    MENU
 ============================================================ */
 
-.menu-grid,
-.mode-grid {
+.menu-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -222,27 +264,10 @@ button.big-button {
 }
 
 .menu-grid button {
+
     min-height: 65px;
 
     font-size: 16px;
-}
-
-.mode-grid button {
-    min-height: 90px;
-
-    text-align: left;
-
-    font-size: 18px;
-}
-
-.mode-grid small {
-    display: block;
-
-    margin-top: 6px;
-
-    color: #cbd5e1;
-
-    font-weight: normal;
 }
 
 
@@ -251,6 +276,7 @@ button.big-button {
 ============================================================ */
 
 #profileList {
+
     display: flex;
 
     flex-direction: column;
@@ -259,6 +285,7 @@ button.big-button {
 }
 
 .profile-item {
+
     display: flex;
 
     justify-content:
@@ -281,12 +308,24 @@ button.big-button {
 }
 
 .profile-item.selected {
+
     border-color:
         #1677ff;
+
+    box-shadow:
+        0 0 20px
+        rgba(22,119,255,.15);
 }
 
-input,
-select {
+.profile-actions {
+
+    display: flex;
+
+    gap: 8px;
+}
+
+input {
+
     width: 100%;
 
     padding: 14px;
@@ -307,10 +346,104 @@ select {
     outline: none;
 }
 
-input:focus,
-select:focus {
+input:focus {
+
     border-color:
         #1677ff;
+}
+
+.profile-summary {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 10px;
+}
+
+.profile-summary > div {
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,.05);
+}
+
+.profile-summary span {
+
+    display: block;
+
+    color:
+        #94a3b8;
+}
+
+.profile-summary strong {
+
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 18px;
+}
+
+.profile-detail-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 12px;
+}
+
+.profile-detail-grid > div {
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,.05);
+}
+
+.profile-detail-grid strong {
+
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 20px;
+}
+
+
+/* ============================================================
+   DIFFICULTY
+============================================================ */
+
+.difficulty {
+
+    display: block;
+
+    width: 100%;
+
+    min-height: 70px;
+
+    text-align: left;
+
+    font-size: 18px;
+}
+
+.difficulty small {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color:
+        #cbd5e1;
 }
 
 
@@ -319,6 +452,7 @@ select:focus {
 ============================================================ */
 
 .game-top {
+
     display: grid;
 
     grid-template-columns:
@@ -331,6 +465,7 @@ select:focus {
 
 .game-top div,
 .stats-bar div {
+
     padding: 14px;
 
     text-align: center;
@@ -341,16 +476,8 @@ select:focus {
         rgba(15,31,50,.95);
 }
 
-.game-top strong,
-.stats-bar strong {
-    display: block;
-
-    margin-top: 5px;
-
-    font-size: 20px;
-}
-
 .stats-bar {
+
     display: grid;
 
     grid-template-columns:
@@ -358,30 +485,27 @@ select:focus {
 
     gap: 10px;
 
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
-.timer-box {
-    display: none;
+.stats-bar strong {
 
-    text-align: center;
+    display: block;
 
-    background:
-        #7f1d1d;
+    margin-top: 5px;
 
-    padding: 12px;
-
-    border-radius: 12px;
-
-    margin-bottom: 15px;
+    font-size: 20px;
 }
 
 .question-card {
+
     text-align: center;
 }
 
 .question-type {
-    color: #60a5fa;
+
+    color:
+        #60a5fa;
 
     font-size: 14px;
 
@@ -393,6 +517,7 @@ select:focus {
 }
 
 #questionText {
+
     font-size: 28px;
 
     margin:
@@ -400,6 +525,7 @@ select:focus {
 }
 
 .question-value {
+
     padding: 20px;
 
     margin-bottom: 20px;
@@ -420,6 +546,7 @@ select:focus {
 ============================================================ */
 
 .answers {
+
     display: grid;
 
     grid-template-columns:
@@ -429,6 +556,7 @@ select:focus {
 }
 
 .answer-button {
+
     min-height: 70px;
 
     font-size: 17px;
@@ -438,12 +566,14 @@ select:focus {
 }
 
 .answer-button.removed {
+
     opacity: .25;
 
     pointer-events: none;
 }
 
 .game-tools {
+
     display: flex;
 
     gap: 10px;
@@ -461,11 +591,12 @@ select:focus {
 ============================================================ */
 
 .shop-balance {
+
     font-size: 20px;
 }
 
-.shop-grid,
-.chest-grid {
+.shop-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -475,8 +606,9 @@ select:focus {
 }
 
 .shop-item,
-.chest-item,
-.achievement {
+.skin-card,
+.chest-card {
+
     padding: 20px;
 
     border-radius: 14px;
@@ -490,56 +622,131 @@ select:focus {
 }
 
 .shop-item h3,
-.chest-item h3,
-.achievement h3 {
+.skin-card h3,
+.chest-card h3 {
+
     margin-top: 0;
 }
 
 .shop-item p,
-.achievement p {
-    min-height: 45px;
+.skin-card p,
+.chest-card p {
 
-    color: #cbd5e1;
+    color:
+        #cbd5e1;
+
+    min-height: 45px;
+}
+
+.shop-item small {
+
+    display: block;
+
+    margin:
+        10px 0;
+
+    color:
+        #94a3b8;
 }
 
 .shop-item button,
-.chest-item button {
+.skin-card button,
+.chest-card button {
+
     width: 100%;
+}
+
+.skin-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+.skin-card.equipped {
+
+    border-color:
+        #facc15;
+
+    box-shadow:
+        0 0 25px
+        rgba(250,204,21,.15);
+}
+
+.chest-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+.chest-card {
+
+    text-align: center;
+}
+
+.chest-card.common {
+    border-color: #94a3b8;
+}
+
+.chest-card.rare {
+    border-color: #3b82f6;
+}
+
+.chest-card.epic {
+    border-color: #a855f7;
+}
+
+.chest-card.legend {
+    border-color: #f59e0b;
+}
+
+.chest-card.mythic {
+    border-color: #ef4444;
+}
+
+.chest-card.divine {
+
+    border-color:
+        #facc15;
+
+    box-shadow:
+        0 0 25px
+        rgba(250,204,21,.2);
 }
 
 
 /* ============================================================
-   CHEST RARITIES
+   INVENTORY
 ============================================================ */
 
-.rarity-common {
-    border-color:
-        #94a3b8;
-}
+.inventory-item {
 
-.rarity-rare {
-    border-color:
-        #60a5fa;
-}
+    display: flex;
 
-.rarity-epic {
-    border-color:
-        #a78bfa;
-}
+    justify-content:
+        space-between;
 
-.rarity-legend {
-    border-color:
-        #f59e0b;
-}
+    align-items: center;
 
-.rarity-mythic {
-    border-color:
-        #ef4444;
-}
+    padding: 15px;
 
-.rarity-divine {
-    border-color:
-        #f8fafc;
+    margin-bottom: 8px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,255,255,.05);
 }
 
 
@@ -547,7 +754,8 @@ select:focus {
    ACHIEVEMENT
 ============================================================ */
 
-.achievement-list {
+.achievement-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -556,30 +764,116 @@ select:focus {
     gap: 12px;
 }
 
-.achievement.done {
-    border-color:
-        #22c55e;
-}
+.achievement-item {
 
-
-/* ============================================================
-   INVENTORY / RESULT
-============================================================ */
-
-.inventory-item,
-.result-stat {
     display: flex;
 
     justify-content:
         space-between;
 
-    align-items: center;
+    gap: 15px;
 
-    padding: 13px;
+    padding: 18px;
 
-    border-bottom:
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    opacity: .55;
+}
+
+.achievement-item.unlocked {
+
+    opacity: 1;
+
+    border-color:
+        #facc15;
+
+    background:
+        rgba(250,204,21,.08);
+}
+
+.achievement-item h3 {
+    margin-top: 0;
+}
+
+.achievement-item p {
+    color:
+        #cbd5e1;
+}
+
+
+/* ============================================================
+   BOSS
+============================================================ */
+
+.boss-card {
+
+    text-align: center;
+
+    border:
+        1px solid
+        rgba(220,38,38,.4);
+
+    box-shadow:
+        0 0 35px
+        rgba(220,38,38,.12);
+}
+
+.boss-card h2 {
+
+    font-size: 32px;
+
+    color:
+        #f87171;
+}
+
+.boss-hp {
+
+    width: 100%;
+
+    height: 28px;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    background:
+        #1e293b;
+
+    border:
         1px solid
         rgba(255,255,255,.1);
+}
+
+.boss-hp-fill {
+
+    height: 100%;
+
+    width: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #dc2626,
+            #f97316
+        );
+}
+
+.boss-win {
+
+    border:
+        1px solid
+        #facc15;
+
+    box-shadow:
+        0 0 30px
+        rgba(250,204,21,.2);
 }
 
 
@@ -588,6 +882,7 @@ select:focus {
 ============================================================ */
 
 #countryList {
+
     display: grid;
 
     grid-template-columns:
@@ -603,6 +898,7 @@ select:focus {
 }
 
 .country-card {
+
     padding: 15px;
 
     border-radius: 12px;
@@ -612,13 +908,17 @@ select:focus {
 }
 
 .country-card h3 {
+
     margin-top: 0;
 
-    color: #60a5fa;
+    color:
+        #60a5fa;
 }
 
 .country-card p {
-    color: #dbeafe;
+
+    color:
+        #dbeafe;
 }
 
 
@@ -627,6 +927,7 @@ select:focus {
 ============================================================ */
 
 .rules-list li {
+
     margin: 12px 0;
 
     line-height: 1.5;
@@ -638,6 +939,7 @@ select:focus {
 ============================================================ */
 
 .update-entry {
+
     padding: 20px;
 
     border-radius: 14px;
@@ -648,19 +950,25 @@ select:focus {
 
     background:
         rgba(255,255,255,.05);
+
+    margin-bottom: 20px;
 }
 
 .update-entry h3 {
+
     margin-top: 0;
 
     font-size: 25px;
 }
 
 .date {
-    color: #94a3b8;
+
+    color:
+        #94a3b8;
 }
 
 .update-entry li {
+
     margin: 9px 0;
 }
 
@@ -670,15 +978,33 @@ select:focus {
 ============================================================ */
 
 .result-card {
+
     max-width: 700px;
 
-    margin: 60px auto;
+    margin:
+        60px auto;
 
     text-align: center;
 }
 
+.result-stat {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    padding: 13px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.1);
+}
+
 .result-message {
-    margin: 20px 0;
+
+    margin:
+        20px 0;
 
     padding: 18px;
 
@@ -694,10 +1020,64 @@ select:focus {
 
 
 /* ============================================================
+   OWNER
+============================================================ */
+
+.owner-card {
+
+    border:
+        1px solid
+        rgba(239,68,68,.5);
+
+    box-shadow:
+        0 0 40px
+        rgba(239,68,68,.1);
+}
+
+.owner-warning {
+
+    padding: 15px;
+
+    margin-bottom: 15px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(220,38,38,.15);
+
+    border:
+        1px solid
+        rgba(220,38,38,.4);
+
+    color:
+        #fca5a5;
+
+    font-weight: bold;
+}
+
+#ownerControls {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 10px;
+}
+
+#ownerControls .owner-warning {
+
+    grid-column:
+        1 / -1;
+}
+
+
+/* ============================================================
    TOAST
 ============================================================ */
 
 #toast {
+
     position: fixed;
 
     left: 50%;
@@ -712,7 +1092,8 @@ select:focus {
 
     opacity: 0;
 
-    padding: 15px 25px;
+    padding:
+        15px 25px;
 
     border-radius: 12px;
 
@@ -733,6 +1114,7 @@ select:focus {
 }
 
 #toast.show {
+
     opacity: 1;
 
     transform:
@@ -742,64 +1124,17 @@ select:focus {
 
 
 /* ============================================================
-   OWNER PANEL
-============================================================ */
-
-#ownerPanel {
-    display: none;
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 2000;
-
-    background:
-        rgba(0,0,0,.75);
-
-    padding: 30px;
-}
-
-.owner-visible {
-    display: block !important;
-}
-
-.owner-card {
-    max-width: 520px;
-
-    margin: 60px auto;
-
-    background:
-        #0f1f32;
-
-    border:
-        1px solid
-        #334155;
-
-    border-radius: 18px;
-
-    padding: 25px;
-
-    box-shadow:
-        0 20px 70px
-        #000;
-}
-
-.owner-card button {
-    width: 100%;
-}
-
-
-/* ============================================================
    FOOTER
 ============================================================ */
 
 footer {
+
     text-align: center;
 
     padding: 20px;
 
-    color: #94a3b8;
+    color:
+        #94a3b8;
 }
 
 
@@ -807,25 +1142,24 @@ footer {
    MOBILE
 ============================================================ */
 
-@media (max-width: 700px) {
+@media (max-width:700px) {
 
     .header {
 
         position: relative;
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        align-items: flex-start;
+        align-items:
+            flex-start;
 
         padding: 15px;
-
     }
-
 
     .header-title h1 {
         font-size: 21px;
     }
-
 
     .header-profile {
 
@@ -834,109 +1168,105 @@ footer {
         justify-content:
             space-between;
 
+        flex-wrap: wrap;
+
         gap: 8px;
 
         font-size: 13px;
-
     }
-
 
     .screen {
         padding: 15px;
     }
 
-
-    .menu-grid,
-    .mode-grid,
-    .achievement-list,
-    .shop-grid,
-    .chest-grid,
-    #countryList {
-
-        grid-template-columns:
-            1fr;
-
+    .menu-grid {
+        grid-template-columns: 1fr;
     }
-
 
     .game-top {
 
+        grid-template-columns:
+            repeat(3,1fr);
+
         font-size: 13px;
-
     }
-
 
     .stats-bar {
 
         grid-template-columns:
             repeat(2,1fr);
-
     }
-
 
     .answers {
-
-        grid-template-columns:
-            1fr;
-
+        grid-template-columns: 1fr;
     }
-
 
     #questionText {
-
         font-size: 22px;
-
     }
-
 
     .question-value {
-
         font-size: 19px;
-
     }
 
+    .shop-grid,
+    .skin-grid,
+    .chest-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #countryList {
+        grid-template-columns: 1fr;
+        max-height: none;
+    }
 
     .game-tools {
-
         flex-direction: column;
-
     }
-
 
     .profile-item {
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        align-items: stretch;
-
+        align-items:
+            stretch;
     }
 
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-summary,
+    .profile-detail-grid,
+    .achievement-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #ownerControls {
+        grid-template-columns: 1fr;
+    }
 
     button {
-
         min-height: 50px;
-
     }
 
 }
 
 
-@media (max-width: 400px) {
+@media (max-width:400px) {
 
     .card {
         padding: 17px;
     }
 
-
     .game-top {
         font-size: 12px;
     }
 
-
     .stats-bar {
         font-size: 13px;
     }
-
 
     .stats-bar strong {
         font-size: 17px;
