@@ -14,7 +14,7 @@
         content="#07111f">
 
     <title>
-        Asia Country Guessing Game
+        Asia Country Guessing Game v2.0
     </title>
 
     <link
@@ -23,1092 +23,1320 @@
 
 </head>
 
-
 <body>
 
 <div id="app">
 
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-<!-- ========================================================
-     HEADER
-========================================================= -->
+    <header class="header">
 
-<header class="header">
+        <div class="header-title">
 
-    <div class="header-title">
+            <h1>
+                🌏 Asia Country Guessing Game
+            </h1>
 
-        <h1>
-            🌏 Asia Country Guessing Game
-        </h1>
+            <p>
+                Major Update v2.0
+            </p>
 
-        <p>
-            Version 2.5 • The Ultimate Asia Challenge
-        </p>
+        </div>
 
-    </div>
+        <div class="header-profile">
 
+            <span>
+                👤
+                <strong id="topName">
+                    Guest
+                </strong>
+            </span>
 
-    <div class="header-profile">
+            <span>
+                ⭐ Lv.
+                <strong id="topLevel">
+                    1
+                </strong>
+            </span>
 
-        <span>
-            👤
-            <strong id="topName">Guest</strong>
-        </span>
+            <span>
+                🪙
+                <strong id="topCoins">
+                    0
+                </strong>
+            </span>
 
-        <span>
-            ⭐ Lv.
-            <strong id="topLevel">1</strong>
-        </span>
+        </div>
 
-        <span>
-            🪙
-            <strong id="topCoins">0</strong>
-        </span>
-
-        <button
-            onclick="openProfileMenu()">
-            👤 Profile
-        </button>
-
-    </div>
-
-</header>
-
-
-<!-- ========================================================
-     HOME
-========================================================= -->
-
-<section
-    id="homeScreen"
-    class="screen active">
-
-    <div class="card hero-card">
-
-        <h2>
-            🌏 Asia Country Guessing Game
-        </h2>
-
-        <p>
-            How well do you know Asia?
-        </p>
-
-        <button
-            class="big-button"
-            onclick="startGameMenu()">
-
-            🎮 Classic Mode
-
-        </button>
-
-        <button
-            class="big-button boss-button"
-            onclick="startBossMode()">
-
-            👹 Boss Mode
-
-        </button>
-
-    </div>
+    </header>
 
 
-    <div class="card">
+    <!-- =====================================================
+         HOME
+    ====================================================== -->
 
-        <h2>
-            🎮 Game Modes
-        </h2>
+    <section
+        id="homeScreen"
+        class="screen active">
 
-        <div class="menu-grid">
+        <div class="card hero-card">
+
+            <h2>
+                🌏 Asia Country Guessing Game
+            </h2>
+
+            <p>
+                Explore Asia through multiple
+                challenging game modes.
+            </p>
 
             <button
-                onclick="startGameMenu()">
+                class="big-button"
+                onclick="openModeMenu()">
 
-                🎮 Classic Mode
-
-            </button>
-
-            <button
-                onclick="startBossMode()">
-
-                👹 Boss Mode
-
-            </button>
-
-            <button
-                onclick="openDailyChallenge()">
-
-                🎯 Daily Challenge
+                🎮 Play
 
             </button>
 
         </div>
 
-    </div>
 
+        <div class="card">
 
-    <div class="card">
+            <h2>
+                🏠 Main Menu
+            </h2>
 
-        <h2>
-            🏠 Main Menu
-        </h2>
+            <div class="menu-grid">
 
-        <div class="menu-grid">
+                <button onclick="openModeMenu()">
+                    🎮 Game Modes
+                </button>
 
-            <button onclick="openProfileMenu()">
-                👤 Profile
-            </button>
+                <button onclick="openProfileMenu()">
+                    👤 Profiles
+                </button>
 
-            <button onclick="openShop()">
-                🛒 Shop
-            </button>
+                <button onclick="openShop()">
+                    🛒 Shop
+                </button>
 
-            <button onclick="openInventory()">
-                🎒 Inventory
-            </button>
+                <button onclick="openChests()">
+                    🎁 Chests
+                </button>
 
-            <button onclick="openAchievements()">
-                🏆 Achievements
-            </button>
+                <button onclick="openInventory()">
+                    🎒 Inventory
+                </button>
 
-            <button onclick="openCountries()">
-                🌏 Country Database
-            </button>
+                <button onclick="openAchievements()">
+                    🏆 Achievements
+                </button>
 
-            <button onclick="openRules()">
-                📖 Game Rules
-            </button>
+                <button onclick="openDaily()">
+                    📅 Daily Challenge
+                </button>
 
-            <button onclick="openUpdateLog()">
-                📝 Update Log
-            </button>
+                <button onclick="openCountries()">
+                    🌏 Country Database
+                </button>
 
-            <button onclick="openInfo()">
-                ℹ️ About
-            </button>
+                <button onclick="openRules()">
+                    📖 Game Rules
+                </button>
 
-        </div>
+                <button onclick="openUpdateLog()">
+                    📝 Update Log
+                </button>
 
-    </div>
+                <button onclick="openInfo()">
+                    ℹ️ About
+                </button>
 
-
-    <div class="card">
-
-        <h2>
-            📊 Current Profile
-        </h2>
-
-        <div id="mainProfileInfo">
-            No profile selected.
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     DIFFICULTY
-========================================================= -->
-
-<section
-    id="difficultyScreen"
-    class="screen">
-
-    <div class="card centered">
-
-        <h2>
-            🎯 Classic Mode
-        </h2>
-
-        <button
-            class="difficulty easy"
-            onclick="startGame(1)">
-
-            🟢 EASY
-
-            <small>
-                Capital questions only
-            </small>
-
-        </button>
-
-
-        <button
-            class="difficulty normal"
-            onclick="startGame(2)">
-
-            🟡 NORMAL
-
-            <small>
-                Capital + country questions
-            </small>
-
-        </button>
-
-
-        <button
-            class="difficulty hard"
-            onclick="startGame(3)">
-
-            🔴 HARD
-
-            <small>
-                Capital + Country + Currency + Region
-            </small>
-
-        </button>
-
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     GAME
-========================================================= -->
-
-<section
-    id="gameScreen"
-    class="screen">
-
-    <div class="game-top">
-
-        <div>
-            ❓ Question
-            <strong id="questionNumber">
-                1/10
-            </strong>
-        </div>
-
-        <div>
-            ❤️ Lives
-            <strong id="lives">
-                3
-            </strong>
-        </div>
-
-        <div>
-            🔥 Combo
-            <strong id="combo">
-                0
-            </strong>
-        </div>
-
-    </div>
-
-
-    <div class="stats-bar">
-
-        <div>
-            ⭐ Score
-            <strong id="score">0</strong>
-        </div>
-
-        <div>
-            ✨ XP
-            <strong id="gameXP">0</strong>
-        </div>
-
-        <div>
-            🪙 Coins
-            <strong id="gameCoins">0</strong>
-        </div>
-
-        <div>
-            🏆 Level
-            <strong id="gameLevel">1</strong>
-        </div>
-
-    </div>
-
-
-    <div class="card question-card">
-
-        <div
-            id="questionType"
-            class="question-type">
-
-            Question
-
-        </div>
-
-
-        <h2 id="questionText">
-            Choose the correct answer
-        </h2>
-
-
-        <div
-            id="questionValue"
-            class="question-value">
-        </div>
-
-
-        <div
-            id="answers"
-            class="answers">
-        </div>
-
-
-        <div class="game-tools">
-
-            <button onclick="useHint()">
-                💡 Hint
-            </button>
-
-            <button
-                onclick="openInventoryDuringGame()">
-
-                🎒 Inventory
-
-            </button>
-
-            <button
-                class="secondary"
-                onclick="confirmQuitGame()">
-
-                🚪 Quit
-
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     BOSS
-========================================================= -->
-
-<section
-    id="bossScreen"
-    class="screen">
-
-    <div class="card boss-card">
-
-        <h2 id="bossName">
-            👹 Boss
-        </h2>
-
-        <div class="boss-hp">
-
-            <div
-                id="bossHPBar"
-                class="boss-hp-fill">
             </div>
 
         </div>
 
-        <p>
-            HP:
-            <strong id="bossHP">
-                0/0
+
+        <div class="card">
+
+            <h2>
+                📊 Current Profile
+            </h2>
+
+            <div id="mainProfileInfo">
+                No profile selected.
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MODE MENU
+    ====================================================== -->
+
+    <section
+        id="modeScreen"
+        class="screen">
+
+        <div class="card centered">
+
+            <h2>
+                🎮 Game Modes
+            </h2>
+
+            <div class="mode-grid">
+
+                <button
+                    onclick="openDifficulty('classic')">
+
+                    🎯 Classic Mode
+
+                    <small>
+                        The original experience.
+                    </small>
+
+                </button>
+
+
+                <button
+                    onclick="openDifficulty('survival')">
+
+                    ❤️ Survival Mode
+
+                    <small>
+                        20 questions.
+                        Survive your lives.
+                    </small>
+
+                </button>
+
+
+                <button
+                    onclick="openDifficulty('timeattack')">
+
+                    ⏱️ Time Attack
+
+                    <small>
+                        10 questions /
+                        60 seconds.
+                    </small>
+
+                </button>
+
+
+                <button
+                    onclick="openDaily()">
+
+                    📅 Daily Challenge
+
+                    <small>
+                        One challenge per day.
+                    </small>
+
+                </button>
+
+            </div>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DIFFICULTY
+    ====================================================== -->
+
+    <section
+        id="difficultyScreen"
+        class="screen">
+
+        <div class="card centered">
+
+            <h2 id="difficultyTitle">
+                🎯 Select Difficulty
+            </h2>
+
+            <input
+                type="hidden"
+                id="selectedMode"
+                value="classic">
+
+
+            <select id="difficultySelect">
+
+                <option value="1">
+                    🟢 Easy —
+                    Capital questions
+                </option>
+
+                <option value="2">
+                    🟡 Normal —
+                    Capital + country questions
+                </option>
+
+                <option value="3">
+                    🔴 Hard —
+                    Advanced capital questions
+                </option>
+
+            </select>
+
+
+            <button
+                class="big-button"
+                onclick="startSelectedMode()">
+
+                🚀 Start
+
+            </button>
+
+
+            <button
+                class="secondary"
+                onclick="showScreen('modeScreen')">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         GAME
+    ====================================================== -->
+
+    <section
+        id="gameScreen"
+        class="screen">
+
+        <div class="game-top">
+
+            <div>
+
+                ❓ Question
+
+                <strong id="questionNumber">
+                    0/10
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                ❤️ Lives
+
+                <strong id="lives">
+                    3
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                🔥 Combo
+
+                <strong id="combo">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="timerBox"
+            class="timer-box">
+
+            ⏱️ Time Left:
+
+            <strong id="timer">
+                —
             </strong>
-        </p>
 
-        <p>
-            Question:
-            <strong id="bossQuestion">
-                1/15
-            </strong>
-        </p>
-
-
-        <div class="question-value">
-            <span id="bossValue"></span>
         </div>
 
 
-        <div
-            id="bossAnswers"
-            class="answers">
-        </div>
+        <div class="stats-bar">
 
-    </div>
+            <div>
 
-</section>
+                ⭐ Score
 
+                <strong id="score">
+                    0
+                </strong>
 
-<!-- ========================================================
-     BOSS RESULT
-========================================================= -->
-
-<section
-    id="bossResultScreen"
-    class="screen">
-
-    <div class="card result-card">
-
-        <h2>
-            👹 Boss Battle Result
-        </h2>
-
-        <div id="bossResult"></div>
-
-        <button onclick="startBossMode()">
-            👹 Fight Another Boss
-        </button>
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            🏠 Main Menu
-
-        </button>
-
-    </div>
-
-</section>
+            </div>
 
 
-<!-- ========================================================
-     PROFILE
-========================================================= -->
+            <div>
 
-<section
-    id="profileScreen"
-    class="screen">
+                ✨ XP
 
-    <div class="card">
+                <strong id="gameXP">
+                    0
+                </strong>
 
-        <h2>
-            👤 Profiles
-        </h2>
-
-        <div id="profileList">
-            No profiles.
-        </div>
-
-    </div>
+            </div>
 
 
-    <div class="card">
+            <div>
 
-        <h2>
-            ➕ Create Profile
-        </h2>
+                🪙 Coins
 
-        <input
-            id="profileNameInput"
-            type="text"
-            maxlength="20"
-            placeholder="Enter profile name">
+                <strong id="gameCoins">
+                    0
+                </strong>
 
-        <button
-            onclick="createProfileFromInput()">
-
-            Create Profile
-
-        </button>
+            </div>
 
 
-        <button
-            class="danger"
-            onclick="deleteProfile()">
+            <div>
 
-            🗑️ Delete Selected Profile
+                🏆 Level
 
-        </button>
+                <strong id="gameLevel">
+                    1
+                </strong>
 
+            </div>
 
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     PROFILE VIEW
-========================================================= -->
-
-<section
-    id="profileViewScreen"
-    class="screen">
-
-    <div class="card">
-
-        <h2>
-            👤 Profile
-        </h2>
-
-        <div id="profileDetails"></div>
-
-        <button
-            class="secondary"
-            onclick="openProfileMenu()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     SHOP
-========================================================= -->
-
-<section
-    id="shopScreen"
-    class="screen">
-
-    <div class="card">
-
-        <h2>
-            🛒 Shop
-        </h2>
-
-        <p class="shop-balance">
-            Your Coins:
-            🪙
-            <strong id="shopCoins">
-                0
-            </strong>
-        </p>
-
-
-        <h2>
-            🧰 Items
-        </h2>
-
-        <div
-            id="shopItems"
-            class="shop-grid">
         </div>
 
 
-        <h2>
-            🎨 Skins
-        </h2>
+        <div class="card question-card">
 
-        <div
-            id="skinShop"
-            class="skin-grid">
+            <div
+                id="questionType"
+                class="question-type">
+
+                Question
+
+            </div>
+
+
+            <h2 id="questionText">
+                Choose the correct answer
+            </h2>
+
+
+            <div
+                id="questionValue"
+                class="question-value">
+            </div>
+
+
+            <div
+                id="answers"
+                class="answers">
+            </div>
+
+
+            <div class="game-tools">
+
+                <button onclick="useHint()">
+                    💡 Hint
+                </button>
+
+                <button onclick="openInventory()">
+                    🎒 Inventory
+                </button>
+
+                <button
+                    class="secondary"
+                    onclick="confirmQuitGame()">
+
+                    🚪 Quit
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PROFILE
+    ====================================================== -->
+
+    <section
+        id="profileScreen"
+        class="screen">
+
+        <div class="card">
+
+            <h2>
+                👤 Profiles
+            </h2>
+
+            <div id="profileList">
+                No profiles.
+            </div>
+
         </div>
 
 
-        <h2>
-            🎁 Chests
-        </h2>
+        <div class="card">
 
-        <div
-            id="chestShop"
-            class="chest-grid">
+            <h2>
+                ➕ Create Profile
+            </h2>
+
+
+            <input
+                id="profileNameInput"
+                maxlength="20"
+                placeholder="Enter profile name">
+
+
+            <button
+                onclick="createProfileFromInput()">
+
+                Create Profile
+
+            </button>
+
+
+            <button
+                class="danger"
+                onclick="deleteProfile()">
+
+                🗑️ Delete Selected Profile
+
+            </button>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
         </div>
 
+    </section>
 
-        <button
-            class="secondary"
-            onclick="goHome()">
 
-            ← Back
+    <!-- =====================================================
+         SHOP
+    ====================================================== -->
 
-        </button>
+    <section
+        id="shopScreen"
+        class="screen">
 
-    </div>
+        <div class="card">
 
-</section>
+            <h2>
+                🛒 Shop
+            </h2>
 
 
-<!-- ========================================================
-     INVENTORY
-========================================================= -->
+            <p class="shop-balance">
 
-<section
-    id="inventoryScreen"
-    class="screen">
+                Coins:
 
-    <div class="card">
+                🪙
 
-        <h2>
-            🎒 Inventory
-        </h2>
+                <strong id="shopCoins">
+                    0
+                </strong>
 
-        <div id="inventoryList"></div>
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     ACHIEVEMENTS
-========================================================= -->
-
-<section
-    id="achievementScreen"
-    class="screen">
-
-    <div class="card">
-
-        <h2>
-            🏆 Achievements
-        </h2>
-
-        <div
-            id="achievementList"
-            class="achievement-grid">
-        </div>
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     DAILY
-========================================================= -->
-
-<section
-    id="dailyScreen"
-    class="screen">
-
-    <div class="card centered">
-
-        <h2>
-            🎯 Daily Challenge
-        </h2>
-
-        <div id="dailyInfo"></div>
-
-        <button
-            class="big-button"
-            onclick="startDailyChallenge()">
-
-            🎯 Start Today's Challenge
-
-        </button>
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     COUNTRY DATABASE
-========================================================= -->
-
-<section
-    id="countriesScreen"
-    class="screen">
-
-    <div class="card">
-
-        <h2>
-            🌏 Country Database
-        </h2>
-
-        <p>
-            Countries:
-            <strong id="countryCount">
-                0
-            </strong>
-        </p>
-
-        <div id="countryList"></div>
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     RULES
-========================================================= -->
-
-<section
-    id="rulesScreen"
-    class="screen">
-
-    <div class="card">
-
-        <h2>
-            📖 Game Rules
-        </h2>
-
-        <ol class="rules-list">
-
-            <li>
-                Classic Mode contains 10 questions.
-            </li>
-
-            <li>
-                You start with 3 Lives.
-            </li>
-
-            <li>
-                Correct answers give Score, XP and Coins.
-            </li>
-
-            <li>
-                Combo increases your rewards.
-            </li>
-
-            <li>
-                Hard Mode contains Currency and Region questions.
-            </li>
-
-            <li>
-                Currency and Region questions use an additional
-                capital clue to guarantee a unique answer.
-            </li>
-
-            <li>
-                Boss Mode contains powerful bosses.
-            </li>
-
-            <li>
-                Bosses reward Coins, XP, Chests and exclusive items.
-            </li>
-
-            <li>
-                Skins provide permanent bonuses.
-            </li>
-
-            <li>
-                Daily Challenge can be completed once per day.
-            </li>
-
-        </ol>
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     UPDATE LOG
-========================================================= -->
-
-<section
-    id="updateScreen"
-    class="screen">
-
-    <div class="card">
-
-        <h2>
-            📝 Update Log
-        </h2>
-
-
-        <div class="update-entry">
-
-            <h3>
-                🚀 Version 2.5
-            </h3>
-
-            <p class="date">
-                Major Gameplay Expansion
             </p>
 
-            <ul>
 
-                <li>
-                    🎨 Added Skin System.
-                </li>
+            <div class="shop-grid">
 
-                <li>
-                    💪 Skins now provide different gameplay bonuses.
-                </li>
 
-                <li>
-                    🛒 Expanded Shop with stronger premium items.
-                </li>
+                <div class="shop-item">
 
-                <li>
-                    🧰 Added Mega Hint.
-                </li>
+                    <h3>
+                        💡 Hint
+                    </h3>
 
-                <li>
-                    🛡️ Added Answer Shield.
-                </li>
+                    <p>
+                        Remove two wrong answers.
+                    </p>
 
-                <li>
-                    ❄️ Added Time Freeze.
-                </li>
+                    <strong>
+                        100 🪙
+                    </strong>
 
-                <li>
-                    🔥 Added Phoenix Save.
-                </li>
+                    <button
+                        onclick="buyItem('hints',100)">
 
-                <li>
-                    👹 Added Boss Mode.
-                </li>
+                        Buy
 
-                <li>
-                    ⚔️ Added Boss HP and damage system.
-                </li>
+                    </button>
 
-                <li>
-                    🎁 Bosses can reward Chests.
-                </li>
+                </div>
 
-                <li>
-                    👹 Added Boss-exclusive items.
-                </li>
 
-                <li>
-                    🎁 Added six Chest rarities:
-                    Common, Rare, Epic, Legend, Mythic and Divine.
-                </li>
+                <div class="shop-item">
 
-                <li>
-                    🧠 Restored Currency questions in Hard Mode
-                    with unique multi-clue answers.
-                </li>
+                    <h3>
+                        ❤️ Extra Life
+                    </h3>
 
-                <li>
-                    🌏 Restored Region questions in Hard Mode
-                    with unique multi-clue answers.
-                </li>
+                    <p>
+                        Start with +1 life.
+                    </p>
 
-                <li>
-                    🐛 Fixed ambiguous-answer problems.
-                </li>
+                    <strong>
+                        250 🪙
+                    </strong>
 
-                <li>
-                    👤 Added dedicated Profile viewing.
-                </li>
+                    <button
+                        onclick="buyItem('extraLives',250)">
 
-                <li>
-                    💾 Improved profile data migration.
-                </li>
+                        Buy
 
-                <li>
-                    🏆 Improved achievement tracking.
-                </li>
+                    </button>
 
-                <li>
-                    🎮 Improved overall game balance.
-                </li>
+                </div>
 
-            </ul>
+
+                <div class="shop-item">
+
+                    <h3>
+                        ✨ Double XP
+                    </h3>
+
+                    <p>
+                        Double one XP reward.
+                    </p>
+
+                    <strong>
+                        500 🪙
+                    </strong>
+
+                    <button
+                        onclick="buyItem('doubleXP',500)">
+
+                        Buy
+
+                    </button>
+
+                </div>
+
+
+                <div class="shop-item">
+
+                    <h3>
+                        📈 Score Boost
+                    </h3>
+
+                    <p>
+                        Increase one score reward
+                        by 25%.
+                    </p>
+
+                    <strong>
+                        500 🪙
+                    </strong>
+
+                    <button
+                        onclick="buyItem('scoreBoost',500)">
+
+                        Buy
+
+                    </button>
+
+                </div>
+
+
+                <div class="shop-item">
+
+                    <h3>
+                        🔄 Second Chance
+                    </h3>
+
+                    <p>
+                        Prevent one life loss.
+                    </p>
+
+                    <strong>
+                        750 🪙
+                    </strong>
+
+                    <button
+                        onclick="buyItem('secondChance',750)">
+
+                        Buy
+
+                    </button>
+
+                </div>
+
+
+                <div class="shop-item">
+
+                    <h3>
+                        🍀 Lucky Answer
+                    </h3>
+
+                    <p>
+                        Turn one wrong answer
+                        into a correct answer.
+                    </p>
+
+                    <strong>
+                        1500 🪙
+                    </strong>
+
+                    <button
+                        onclick="buyItem('luckyAnswer',1500)">
+
+                        Buy
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CHESTS
+    ====================================================== -->
+
+    <section
+        id="chestScreen"
+        class="screen">
+
+        <div class="card">
+
+            <h2>
+                🎁 Chest Inventory
+            </h2>
+
+            <div
+                id="chestList"
+                class="chest-grid">
+            </div>
 
         </div>
 
 
-        <div class="update-entry">
+        <div class="card">
 
-            <h3>
-                🚀 Version 2.0
-            </h3>
+            <h2>
+                🛒 Chest Shop
+            </h2>
 
-            <ul>
+            <div
+                id="chestShop"
+                class="shop-grid">
+            </div>
 
-                <li>
-                    Added multiple game modes.
-                </li>
 
-                <li>
-                    Added Achievement System.
-                </li>
+            <button
+                class="secondary"
+                onclick="goHome()">
 
-                <li>
-                    Added Daily Challenge.
-                </li>
+                ← Back
 
-                <li>
-                    Added Chest System.
-                </li>
-
-                <li>
-                    Added six Chest rarities.
-                </li>
-
-                <li>
-                    Expanded Rank System to Level 100.
-                </li>
-
-            </ul>
+            </button>
 
         </div>
 
+    </section>
 
-        <button
-            class="secondary"
-            onclick="goHome()">
 
-            ← Back
+    <!-- =====================================================
+         INVENTORY
+    ====================================================== -->
 
-        </button>
+    <section
+        id="inventoryScreen"
+        class="screen">
+
+        <div class="card">
+
+            <h2>
+                🎒 Inventory
+            </h2>
+
+            <div id="inventoryList">
+            </div>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ACHIEVEMENTS
+    ====================================================== -->
+
+    <section
+        id="achievementScreen"
+        class="screen">
+
+        <div class="card">
+
+            <h2>
+                🏆 Achievements
+            </h2>
+
+            <div
+                id="achievementList"
+                class="achievement-list">
+            </div>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DAILY
+    ====================================================== -->
+
+    <section
+        id="dailyScreen"
+        class="screen">
+
+        <div class="card centered">
+
+            <h2>
+                📅 Daily Challenge
+            </h2>
+
+
+            <div id="dailyInfo">
+            </div>
+
+
+            <button onclick="startDaily()">
+
+                🔥 Start Challenge
+
+            </button>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DATABASE
+    ====================================================== -->
+
+    <section
+        id="countriesScreen"
+        class="screen">
+
+        <div class="card">
+
+            <h2>
+                🌏 Country Database
+            </h2>
+
+
+            <p>
+
+                Countries:
+
+                <strong id="countryCount">
+                    0
+                </strong>
+
+            </p>
+
+
+            <div id="countryList">
+            </div>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RULES
+    ====================================================== -->
+
+    <section
+        id="rulesScreen"
+        class="screen">
+
+        <div class="card">
+
+            <h2>
+                📖 Game Rules
+            </h2>
+
+
+            <ol class="rules-list">
+
+                <li>
+                    Classic Mode is the original
+                    10-question game.
+                </li>
+
+                <li>
+                    Survival Mode contains
+                    up to 20 questions.
+                </li>
+
+                <li>
+                    Time Attack gives you
+                    60 seconds.
+                </li>
+
+                <li>
+                    Daily Challenge can be
+                    completed once per day.
+                </li>
+
+                <li>
+                    Hard Mode uses only
+                    unique capital/country
+                    questions.
+                </li>
+
+                <li>
+                    Correct answers give
+                    Score, XP and Coins.
+                </li>
+
+                <li>
+                    Wrong answers reset Combo
+                    and reduce Lives.
+                </li>
+
+                <li>
+                    Chests can be earned
+                    or purchased.
+                </li>
+
+                <li>
+                    Chest rarities:
+                    Common, Rare, Epic,
+                    Legend, Mythic, Divine.
+                </li>
+
+                <li>
+                    Higher ranks provide
+                    XP and Coin bonuses.
+                </li>
+
+            </ol>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         UPDATE LOG
+    ====================================================== -->
+
+    <section
+        id="updateScreen"
+        class="screen">
+
+        <div class="card">
+
+            <h2>
+                📝 Update Log
+            </h2>
+
+
+            <div class="update-entry">
+
+                <h3>
+                    🚀 Version 2.0
+                    — Major Update
+                </h3>
+
+                <p class="date">
+                    Major Update
+                </p>
+
+
+                <ul>
+
+                    <li>
+                        🎮 Added multiple game modes:
+                        Classic, Survival and
+                        Time Attack.
+                    </li>
+
+                    <li>
+                        📅 Added Daily Challenge.
+                    </li>
+
+                    <li>
+                        🏆 Added Achievement System.
+                    </li>
+
+                    <li>
+                        🛒 Expanded the Shop.
+                    </li>
+
+                    <li>
+                        🎁 Added Chest System.
+                    </li>
+
+                    <li>
+                        ⚪ Added Common Chest.
+                    </li>
+
+                    <li>
+                        🔵 Added Rare Chest.
+                    </li>
+
+                    <li>
+                        🟣 Added Epic Chest.
+                    </li>
+
+                    <li>
+                        🟠 Added Legend Chest.
+                    </li>
+
+                    <li>
+                        🔴 Added Mythic Chest.
+                    </li>
+
+                    <li>
+                        ⚪ Added Divine Chest.
+                    </li>
+
+                    <li>
+                        🎲 Chests can be earned
+                        through gameplay.
+                    </li>
+
+                    <li>
+                        🛒 Chests can be purchased
+                        from the Shop.
+                    </li>
+
+                    <li>
+                        👑 Expanded Rank system
+                        from Lv.20 to Lv.100+.
+                    </li>
+
+                    <li>
+                        ⚡ Added real XP/Coins
+                        effects to ranks.
+                    </li>
+
+                    <li>
+                        ⚖️ Fixed Hard Mode
+                        ambiguous answers.
+                    </li>
+
+                    <li>
+                        🛠️ Fixed gameplay,
+                        saving and state issues.
+                    </li>
+
+                    <li>
+                        📱 Improved responsive UI.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INFO
+    ====================================================== -->
+
+    <section
+        id="infoScreen"
+        class="screen">
+
+        <div class="card">
+
+            <h2>
+                ℹ️ About
+            </h2>
+
+            <p>
+                Asia Country Guessing Game is
+                a browser-based educational
+                game about Asian countries.
+            </p>
+
+            <p>
+                <strong>
+                    Version 2.0
+                </strong>
+                · Major Update
+            </p>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                ← Back
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         RESULT
+    ====================================================== -->
+
+    <section
+        id="resultScreen"
+        class="screen">
+
+        <div
+            class="card result-card">
+
+            <h2>
+                🏆 Game Over
+            </h2>
+
+
+            <div id="resultInfo">
+            </div>
+
+
+            <button
+                onclick="startGame(
+                    game.difficulty,
+                    game.mode
+                )">
+
+                🎮 Play Again
+
+            </button>
+
+
+            <button
+                class="secondary"
+                onclick="goHome()">
+
+                🏠 Main Menu
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         OWNER PANEL
+         NOT MENTIONED IN UPDATE LOG
+    ====================================================== -->
+
+    <div id="ownerPanel">
+
+        <div class="owner-card">
+
+            <h2>
+                🔐 Owner Panel
+            </h2>
+
+            <p>
+                Local owner tools.
+            </p>
+
+            <input
+                id="ownerCoins"
+                type="number"
+                placeholder="Coins">
+
+            <button
+                onclick="ownerGiveCoins()">
+
+                Give Coins
+
+            </button>
+
+
+            <input
+                id="ownerXP"
+                type="number"
+                placeholder="XP">
+
+            <button
+                onclick="ownerGiveXP()">
+
+                Give XP
+
+            </button>
+
+
+            <select id="ownerChest">
+
+                <option value="common">
+                    Common
+                </option>
+
+                <option value="rare">
+                    Rare
+                </option>
+
+                <option value="epic">
+                    Epic
+                </option>
+
+                <option value="legend">
+                    Legend
+                </option>
+
+                <option value="mythic">
+                    Mythic
+                </option>
+
+                <option value="divine">
+                    Divine
+                </option>
+
+            </select>
+
+
+            <button
+                onclick="ownerAddChest()">
+
+                Add Chest
+
+            </button>
+
+
+            <button
+                onclick="ownerResetDaily()">
+
+                Reset Daily
+
+            </button>
+
+
+            <button
+                onclick="ownerClearAchievements()">
+
+                Reset Achievements
+
+            </button>
+
+
+            <button
+                class="secondary"
+                onclick="ownerClose()">
+
+                Close
+
+            </button>
+
+        </div>
 
     </div>
 
-</section>
 
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
 
-<!-- ========================================================
-     ABOUT
-========================================================= -->
-
-<section
-    id="infoScreen"
-    class="screen">
-
-    <div class="card">
-
-        <h2>
-            ℹ️ About
-        </h2>
-
-        <p>
-            Asia Country Guessing Game is a browser-based
-            educational game about Asian countries.
-        </p>
-
-        <p>
-            Current Version:
-            <strong>2.5</strong>
-        </p>
-
-        <p>
-            Modes:
-            <strong>
-                Classic • Boss • Daily Challenge
-            </strong>
-        </p>
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            ← Back
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     RESULT
-========================================================= -->
-
-<section
-    id="resultScreen"
-    class="screen">
-
-    <div class="card result-card">
-
-        <h2>
-            🏆 Game Over
-        </h2>
-
-        <div id="resultInfo"></div>
-
-        <button
-            onclick="startGame(game.difficulty)">
-
-            🎮 Play Again
-
-        </button>
-
-        <button
-            class="secondary"
-            onclick="goHome()">
-
-            🏠 Main Menu
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     OWNER
-========================================================= -->
-
-<section
-    id="ownerScreen"
-    class="screen">
-
-    <div class="card owner-card">
-
-        <h2>
-            👑 OWNER PANEL
-        </h2>
-
-        <p>
-            Owner-only administration panel.
-        </p>
-
-        <div id="ownerControls"></div>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================
-     TOAST
-========================================================= -->
-
-<div id="toast"></div>
-
+    <div id="toast"></div>
 
 </div>
 
@@ -1116,8 +1344,10 @@
 <footer>
 
     Asia Country Guessing Game
+
     <br>
-    Version 2.5
+
+    Version 2.0
 
 </footer>
 
