@@ -20,3 +20,6 @@ export const DIFFICULTIES={
  nightmare:{name:'Nightmare',types:['capital','country','currency','region','language','population','area','continent']}
 };
 export const MODES=['classic','survival','timeAttack','suddenDeath','endless','boss','daily','streak','hardcore','ranked'];
+
+// Bootstrap the preserved owner/testing panel without changing the game data model.
+import('./owner-v4.js').catch(err=>console.error('Owner panel bootstrap failed:',err));
