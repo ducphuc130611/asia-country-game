@@ -1,4 +1,4 @@
-export const VERSION='4.1.0';
+export const VERSION='4.0.0';
 export const SAVE_KEY='asia_country_game_v400';
 export const LEGACY_SAVE_KEYS=['asia_country_game_v355','asia_country_game_v35','asia_country_game_v30','asia_country_game_v25','asia_country_game_v20'];
 export const OWNER_PASSWORD='OWNERV40';
