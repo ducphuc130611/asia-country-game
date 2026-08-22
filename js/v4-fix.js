@@ -1,0 +1,14 @@
+import {load,normalize} from './core/storage.js';
+import {countries,searchCountries} from './data/registry.js';
+import {ITEMS,ACHIEVEMENTS,RULES,UPDATE_LOG} from './data/content.js';
+const state=load();const p=()=>normalize(state.profile||{});const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const show=n=>{document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(n+'Screen')?.classList.add('active')};
+function profile(){show('profile');const q=p();$('profileContent').innerHTML=`<div class="profile-grid"><div>👤 Name<b>${esc(q.name)}</b></div><div>📈 Level<b>${q.level}</b></div><div>✨ XP<b>${q.xp.toLocaleString()}</b></div><div>🪙 Coins<b>${q.coins.toLocaleString()}</b></div><div>🏆 Rating<b>${q.rating}</b></div><div>🎮 Games<b>${q.totalGames}</b></div><div>🎯 Correct<b>${q.totalCorrect}</b></div><div>🔥 Best Combo<b>${q.bestCombo}</b></div><div>🌍 Countries<b>${q.discovered}/${countries.length}</b></div><div>🏆 Achievements<b>${q.achievements.length}/${ACHIEVEMENTS.length}</b></div></div>`}
+function shop(){show('shop')}
+function inventory(){show('inventory');$('inventoryContent').innerHTML=Object.entries(ITEMS).map(([n,x])=>`<article class="inventory-card"><div><strong>${x.icon} ${esc(n)}</strong><small>${x.desc}</small></div><b>x${p().inventory[n]||0}</b></article>`).join('')}
+function achievements(){show('achievements');$('achievementContent').innerHTML=ACHIEVEMENTS.map(a=>`<article class="achievement ${p().achievements.includes(a.id)?'unlocked':''}"><h3>${a.name}</h3><p>${a.desc}</p><b>${p().achievements.includes(a.id)?'✅ Unlocked':'🔒 Locked'} · +${a.reward.toLocaleString()} 🪙</b></article>`).join('')}
+function countriesView(){show('countries');const list=searchCountries($('countrySearch')?.value||'','All');$('countryCount').textContent=list.length;$('countryList').innerHTML=list.map(c=>`<article class="country"><h3>${esc(c.name)}</h3><p>🏛️ ${esc(c.capital)} · 💰 ${esc(c.currency)} · 🌐 ${esc(c.region)}</p><p>🌍 ${esc(c.continent)} · 👥 ${c.population?Number(c.population).toLocaleString():'Updating…'} · 📏 ${c.area?Number(c.area).toLocaleString()+' km²':'Updating…'}</p><p>🗣️ ${esc(c.languages||'Updating…')}</p></article>`).join('')}
+function rules(){show('rules');$('rulesContent').innerHTML=RULES.map(x=>`<li>${x}</li>`).join('')}
+function updates(){show('updates');$('updatesContent').innerHTML=UPDATE_LOG.map(u=>`<article class="update-entry"><h3>${u.title}</h3><ul>${u.items.map(x=>`<li>${x}</li>`).join('')}</ul></article>`).join('')}
+window.openProfileMenu=profile;window.openShop=shop;window.openInventory=inventory;window.openAchievements=achievements;window.openCountries=countriesView;window.openRules=rules;window.openUpdates=updates;
+window.addEventListener('countryDataReady',()=>{if(document.getElementById('countriesScreen')?.classList.contains('active'))countriesView()});
