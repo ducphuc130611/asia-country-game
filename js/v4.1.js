@@ -1,4 +1,4 @@
-/* V4.1 HOTFIX — MODE LAUNCH ROUTER */
+/* V4.1 HOTFIX — MODE LAUNCH ROUTER + ENGINE BOOT */
 (() => {
   const MODES = [
     ['classic','🎮','Classic','Original mode + 5 difficulties'],
@@ -13,32 +13,47 @@
     ['ranked','🏆','Ranked','10 questions • Elo climb']
   ];
 
-  function launchMode(mode) {
-    const select = window.v4Select;
-    const start = window.v4Start;
+  let enginePromise = null;
 
-    if (typeof select === 'function') {
-      try {
-        return select(mode);
-      } catch (err) {
-        console.error('[V4.1] v4Select failed:', err);
-      }
+  function toast(message) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.add('show');
+    clearTimeout(el._v41Timer);
+    el._v41Timer = setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  async function ensureEngine() {
+    if (typeof window.v4Select === 'function' && typeof window.v4Start === 'function') return true;
+
+    if (!enginePromise) {
+      enginePromise = import('./v4.js').catch(err => {
+        console.error('[V4.1] Failed to load game engine:', err);
+        enginePromise = null;
+        throw err;
+      });
     }
 
-    if (typeof start === 'function') {
-      if (mode === 'classic') {
-        if (typeof window.goModes === 'function') return window.goModes();
+    await enginePromise;
+    return typeof window.v4Select === 'function' && typeof window.v4Start === 'function';
+  }
+
+  async function launchMode(mode) {
+    try {
+      toast('⏳ Loading game engine…');
+      const ready = await ensureEngine();
+      if (!ready) throw new Error('V4 engine loaded but did not expose its public API.');
+
+      if (typeof window.v4Select === 'function') {
+        window.v4Select(mode);
         return;
       }
-      return start(mode, mode === 'hardcore' ? 'nightmare' : 'normal');
-    }
 
-    const msg = document.getElementById('toast');
-    if (msg) {
-      msg.textContent = '⚠️ Game engine is still loading. Please try again.';
-      msg.classList.add('show');
-      clearTimeout(msg._v41Timer);
-      msg._v41Timer = setTimeout(() => msg.classList.remove('show'), 2500);
+      throw new Error('v4Select is unavailable.');
+    } catch (err) {
+      console.error('[V4.1] Mode launch failed:', mode, err);
+      toast('❌ Failed to start this mode. Check the console for details.');
     }
   }
 
@@ -60,27 +75,29 @@
 
   function modesReady() {
     const grid = document.getElementById('modeGrid');
-    return !!grid && ['classic','survival','timeAttack','suddenDeath','endless','boss','daily','streak','hardcore','ranked']
-      .every(id => grid.querySelector(`[data-v41-mode="${id}"]`));
+    return !!grid && MODES.every(([id]) => grid.querySelector(`[data-v41-mode="${id}"]`));
   }
 
   function boot() {
     if (!modesReady()) renderModesHotfix();
     const grid = document.getElementById('modeGrid');
-    if (!grid) return;
-    if (!grid.dataset.v41Observer) {
-      grid.dataset.v41Observer = '1';
-      const observer = new MutationObserver(() => {
-        if (!modesReady()) renderModesHotfix();
-      });
-      observer.observe(grid, { childList: true });
-    }
+    if (!grid || grid.dataset.v41Observer) return;
+
+    grid.dataset.v41Observer = '1';
+    const observer = new MutationObserver(() => {
+      if (!modesReady()) renderModesHotfix();
+    });
+    observer.observe(grid, { childList: true });
   }
+
+  window.v41EnsureEngine = ensureEngine;
+  window.v41LaunchMode = launchMode;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });
   } else {
     boot();
   }
+
   window.addEventListener('load', boot, { once: true });
 })();
