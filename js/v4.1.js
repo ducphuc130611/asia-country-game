@@ -1,4 +1,4 @@
-/* V4.1 HOTFIX */
+/* V4.1 HOTFIX — MODE VISIBILITY */
 (() => {
   const MODES = [
     ['classic','🎮','Classic','Original mode + 5 difficulties'],
@@ -16,17 +16,35 @@
   function renderModesHotfix() {
     const grid = document.getElementById('modeGrid');
     if (!grid) return;
+
     grid.innerHTML = MODES.map(([id, icon, name, desc]) =>
-      `<button class="mode-card" data-mode="${id}"><h3>${icon} ${name}</h3><p>${desc}</p></button>`
+      `<button class="mode-card" data-v41-mode="${id}"><h3>${icon} ${name}</h3><p>${desc}</p></button>`
     ).join('');
-    grid.querySelectorAll('[data-mode]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const mode = btn.dataset.mode;
-        if (mode === 'classic') return window.v4Screen ? window.v4Screen('difficulty') : window.startClassicMenu?.();
-        if (window.v4Select) return window.v4Select(mode);
-        if (window.v4Start) return window.v4Start(mode, mode === 'hardcore' ? 'nightmare' : 'normal');
-      });
+
+    grid.querySelectorAll('[data-v41-mode]').forEach(btn => {
+      btn.onclick = () => {
+        const mode = btn.dataset.v41Mode;
+        if (mode === 'classic') {
+          if (typeof window.v4Screen === 'function') return window.v4Screen('difficulty');
+          if (typeof window.startClassicMenu === 'function') return window.startClassicMenu();
+          return;
+        }
+        if (typeof window.v4Select === 'function') return window.v4Select(mode);
+        if (typeof window.v4Start === 'function') {
+          return window.v4Start(mode, mode === 'hardcore' ? 'nightmare' : 'normal');
+        }
+      };
     });
+  }
+
+  function isNewModeGridPresent() {
+    const grid = document.getElementById('modeGrid');
+    if (!grid) return false;
+    return ['streak','hardcore','ranked'].every(id => grid.querySelector(`[data-v41-mode="${id}"]`));
+  }
+
+  function ensureModes() {
+    if (!isNewModeGridPresent()) renderModesHotfix();
   }
 
   function showHotfixStatus() {
@@ -34,12 +52,27 @@
     if (e) e.textContent = 'Live country statistics loaded when available.';
   }
 
-  window.addEventListener('load', () => {
-    renderModesHotfix();
+  function boot() {
+    ensureModes();
     showHotfixStatus();
-    setTimeout(renderModesHotfix, 150);
-    setTimeout(renderModesHotfix, 600);
-  });
 
+    const grid = document.getElementById('modeGrid');
+    if (grid && !grid.dataset.v41Observer) {
+      grid.dataset.v41Observer = '1';
+      const observer = new MutationObserver(() => {
+        if (!isNewModeGridPresent()) renderModesHotfix();
+      });
+      observer.observe(grid, { childList: true, subtree: true });
+    }
+
+    [50, 150, 300, 600, 1000, 2000].forEach(ms => setTimeout(ensureModes, ms));
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+  window.addEventListener('load', boot, { once: true });
   window.addEventListener('countryDataReady', showHotfixStatus);
 })();
