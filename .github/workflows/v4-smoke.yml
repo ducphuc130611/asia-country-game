@@ -1,0 +1,35 @@
+name: V4.0 Smoke Test
+
+on:
+  push:
+    branches: [v4.0-rebuild]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -e
+          find js -name '*.js' -print0 | while IFS= read -r -d '' f; do
+            echo "Checking $f"
+            node --check "$f"
+          done
+      - name: Check required V4 files
+        shell: bash
+        run: |
+          set -e
+          test -f index.html
+          test -f js/v4.js
+          test -f js/v4-fixes.js
+          test -f js/config.js
+          test -f js/core/storage.js
+          test -f js/data/content.js
+          test -f js/data/registry.js
