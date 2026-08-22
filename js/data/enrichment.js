@@ -8,10 +8,9 @@ export async function enrichCountries(){
     for(const c of countries){
       const x=byName.get(c.name.toLowerCase());
       if(!x)continue;
-      c.population=Number(x.population||0);
-      c.area=Number(x.area||0);
-      c.languages=x.languages?Object.values(x.languages).join(', '):'Unknown';
-      if(x.region)c.continent=x.region;
+      c.population=Number(x.population||0);c.area=Number(x.area||0);c.languages=x.languages?Object.values(x.languages).join(', '):'Unknown';
     }
+    window.dispatchEvent(new CustomEvent('countryDataReady'));
   }catch(e){console.warn('Country metadata enrichment unavailable',e)}
 }
+enrichCountries();
