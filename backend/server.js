@@ -1,0 +1,85 @@
+import express from 'express';
+import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DATA_FILE = path.join(__dirname, 'data.json');
+const PORT = Number(process.env.PORT || 3000);
+const JWT_SECRET = process.env.JWT_SECRET || 'CHANGE_ME_IN_PRODUCTION';
+
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '100kb' }));
+
+function readDB(){
+  try { return JSON.parse(fs.readFileSync(DATA_FILE,'utf8')); }
+  catch { return { users: {}, matches: [], leaderboard: {} }; }
+}
+function writeDB(db){ fs.writeFileSync(DATA_FILE, JSON.stringify(db,null,2)); }
+function id(){ return crypto.randomUUID(); }
+function auth(req,res,next){
+  const h=req.headers.authorization||'';
+  if(!h.startsWith('Bearer ')) return res.status(401).json({error:'Authentication required'});
+  try { req.user=jwt.verify(h.slice(7),JWT_SECRET); next(); }
+  catch { return res.status(401).json({error:'Invalid token'}); }
+}
+function publicUser(u){ return {id:u.id,name:u.name,xp:u.xp,level:u.level,coins:u.coins,rating:u.rating,wins:u.wins,losses:u.losses}; }
+
+app.get('/api/health',(req,res)=>res.json({ok:true,version:'4.0.0'}));
+
+app.post('/api/auth/guest',(req,res)=>{
+  const db=readDB();
+  const name=String(req.body?.name||'Guest').trim().slice(0,20)||'Guest';
+  const uid=id();
+  db.users[uid]={id:uid,name,xp:0,level:1,coins:100,rating:1000,wins:0,losses:0,createdAt:new Date().toISOString()};
+  writeDB(db);
+  const token=jwt.sign({sub:uid},JWT_SECRET,{expiresIn:'30d'});
+  res.json({token,user:publicUser(db.users[uid])});
+});
+
+app.get('/api/me',auth,(req,res)=>{
+  const db=readDB(); const u=db.users[req.user.sub];
+  if(!u) return res.status(404).json({error:'User not found'});
+  res.json({user:publicUser(u)});
+});
+
+app.post('/api/me/progress',auth,(req,res)=>{
+  const db=readDB(); const u=db.users[req.user.sub];
+  if(!u) return res.status(404).json({error:'User not found'});
+  const xp=Math.max(0,Number(req.body?.xp||0)); const coins=Math.max(0,Number(req.body?.coins||0));
+  u.xp+=xp; u.coins+=coins; u.level=Math.max(1,Math.floor(u.xp/1000)+1);
+  writeDB(db); res.json({user:publicUser(u)});
+});
+
+app.get('/api/leaderboard', (req,res)=>{
+  const db=readDB();
+  const metric=['rating','xp','coins','wins'].includes(req.query.metric)?req.query.metric:'rating';
+  const limit=Math.min(100,Math.max(1,Number(req.query.limit||50)));
+  const rows=Object.values(db.users).sort((a,b)=>(b[metric]||0)-(a[metric]||0)).slice(0,limit).map((u,i)=>({rank:i+1,...publicUser(u)}));
+  res.json({metric,rows});
+});
+
+app.post('/api/pvp/match',auth,(req,res)=>{
+  const db=readDB(); const me=db.users[req.user.sub];
+  if(!me) return res.status(404).json({error:'User not found'});
+  const opponent=Object.values(db.users).filter(u=>u.id!==me.id).sort((a,b)=>Math.abs(a.rating-me.rating)-Math.abs(b.rating-me.rating))[0];
+  if(!opponent) return res.status(409).json({error:'No opponent available'});
+  const match={id:id(),a:me.id,b:opponent.id,status:'pending',createdAt:new Date().toISOString()};
+  db.matches.push(match); writeDB(db); res.json({match,opponent:publicUser(opponent)});
+});
+
+app.post('/api/pvp/:matchId/result',auth,(req,res)=>{
+  const db=readDB(); const m=db.matches.find(x=>x.id===req.params.matchId);
+  if(!m || (m.a!==req.user.sub && m.b!==req.user.sub)) return res.status(404).json({error:'Match not found'});
+  if(m.status==='finished') return res.status(409).json({error:'Match already finished'});
+  const winner=String(req.body?.winner||''); if(winner!==m.a && winner!==m.b) return res.status(400).json({error:'Invalid winner'});
+  const loser=winner===m.a?m.b:m.a; const w=db.users[winner], l=db.users[loser];
+  w.wins++; l.losses++; w.rating+=25; l.rating=Math.max(0,l.rating-25); m.status='finished'; m.winner=winner; m.finishedAt=new Date().toISOString();
+  writeDB(db); res.json({match:m,winner:publicUser(w),loser:publicUser(l)});
+});
+
+app.use((err,req,res,next)=>{ console.error(err); res.status(500).json({error:'Server error'}); });
+app.listen(PORT,()=>console.log(`Asia Country Game v4.0 backend listening on ${PORT}`));
