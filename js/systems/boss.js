@@ -9,8 +9,11 @@ export function fightBoss({makeQuestion,showGame,toast,sound,finishBoss}){
  const b=defs[Math.floor(Math.random()*defs.length)];
  const state=load();const profile=normalize(state.profile||{});const flags=ownerFlags();
  const hasSlayer=(profile.inventory?.['Boss Slayer']||0)>0;
- if(hasSlayer){profile.inventory['Boss Slayer']--;state.profile=profile;save(state)}
- const g={mode:'boss',difficulty:'nightmare',index:0,score:0,xp:0,coins:0,lives:b[4]>=3?2:3,combo:0,owner:{god:!!flags.god,infiniteTime:!!(flags.infiniteTime||flags.god),infiniteCombo:!!(flags.infiniteCombo||flags.god),blessing:!!flags.blessing},boss:{name:b[0],rarity:b[1],maxHP:b[2],hp:b[2],power:b[4]},questions:Array.from({length:b[3]},()=>makeQuestion('nightmare')),bossDamageMult:1,bossSlayer:hasSlayer,slayerUsed:false,slayerFlat:hasSlayer?20:0,skin:{time:0},used:{}};
+ const hasDamageBoost=(profile.bossDamageBoost===true);
+ if(hasSlayer)profile.inventory['Boss Slayer']--;
+ if(hasDamageBoost)profile.bossDamageBoost=false;
+ if(hasSlayer||hasDamageBoost){state.profile=profile;save(state)}
+ const g={mode:'boss',difficulty:'nightmare',index:0,score:0,xp:0,coins:0,lives:b[4]>=3?2:3,combo:0,owner:{god:!!flags.god,infiniteTime:!!(flags.infiniteTime||flags.god),infiniteCombo:!!(flags.infiniteCombo||flags.god),blessing:!!flags.blessing},boss:{name:b[0],rarity:b[1],maxHP:b[2],hp:b[2],power:b[4]},questions:Array.from({length:b[3]},()=>makeQuestion('nightmare')),bossDamageMult:hasDamageBoost?1.5:1,bossSlayer:hasSlayer,slayerUsed:false,slayerFlat:hasSlayer?20:0,skin:{time:0},used:{}};
  if(flags.bossKill)g.boss.hp=1;
  if(flags.bossHeal)g.boss.hp=g.boss.maxHP;
  if(flags.infiniteLives||flags.god)g.lives=9999;
