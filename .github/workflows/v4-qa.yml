@@ -1,0 +1,27 @@
+name: V4 QA
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Syntax check V4 JavaScript
+        shell: bash
+        run: |
+          set -e
+          find js -name '*.js' -print0 | xargs -0 -n1 node --check
+      - name: Public content security check
+        shell: bash
+        run: |
+          set -e
+          if grep -RniE 'OWNERV40|Owner Panel.*password|owner password|developer/testing' js/data/content.js; then
+            echo 'Public Rules/Update Log contains private Owner information.'
+            exit 1
+          fi
