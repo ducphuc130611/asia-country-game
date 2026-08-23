@@ -20,3 +20,4 @@ export const DIFFICULTIES={
  nightmare:{name:'Nightmare',types:['capital','country','currency','region','language','population','area','continent']}
 };
 export const MODES=['classic','survival','timeAttack','suddenDeath','endless','boss','daily','streak','hardcore','ranked'];
+import('./v4-integrity.js').catch(err=>console.error('V4 integrity bootstrap failed:',err));
