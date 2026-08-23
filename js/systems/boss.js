@@ -1,19 +1,26 @@
 import {RARITIES} from '../data/content.js';
 import {load,save,normalize} from '../core/storage.js';
 
+const OWNER_FLAG_KEY='asia_country_owner_flags_v4';
+function ownerFlags(){try{return JSON.parse(localStorage.getItem(OWNER_FLAG_KEY)||'{}')}catch{return {}}}
+
 export function fightBoss({makeQuestion,showGame,toast,sound,finishBoss}){
  const defs=[['Goblin Scout','Common',220,6,1],['Iron Beast','Rare',520,8,1.25],['Void Tyrant','Epic',1100,10,1.5],['Ancient King','Legend',1900,12,1.8],['Mythic Dragon','Mythic',3600,16,2.15],['Divine Seraph','Divine',6200,20,2.6],['Transcendent Tyrant','Transcendent',15000,25,3.5]];
  const b=defs[Math.floor(Math.random()*defs.length)];
- const state=load();
- const profile=normalize(state.profile||{});
+ const state=load();const profile=normalize(state.profile||{});const flags=ownerFlags();
  const hasSlayer=(profile.inventory?.['Boss Slayer']||0)>0;
  if(hasSlayer){profile.inventory['Boss Slayer']--;state.profile=profile;save(state)}
- const g={mode:'boss',difficulty:'nightmare',index:0,score:0,xp:0,coins:0,lives:b[4]>=3?2:3,combo:0,owner:{god:false,infiniteTime:false,infiniteCombo:false,blessing:false},boss:{name:b[0],rarity:b[1],maxHP:b[2],hp:b[2],power:b[4]},questions:Array.from({length:b[3]},()=>makeQuestion('nightmare')),bossDamageMult:1,bossSlayer:hasSlayer,slayerUsed:false,slayerFlat:hasSlayer?20:0,skin:{time:0},used:{}};
+ const g={mode:'boss',difficulty:'nightmare',index:0,score:0,xp:0,coins:0,lives:b[4]>=3?2:3,combo:0,owner:{god:!!flags.god,infiniteTime:!!(flags.infiniteTime||flags.god),infiniteCombo:!!(flags.infiniteCombo||flags.god),blessing:!!flags.blessing},boss:{name:b[0],rarity:b[1],maxHP:b[2],hp:b[2],power:b[4]},questions:Array.from({length:b[3]},()=>makeQuestion('nightmare')),bossDamageMult:1,bossSlayer:hasSlayer,slayerUsed:false,slayerFlat:hasSlayer?20:0,skin:{time:0},used:{}};
+ if(flags.bossKill)g.boss.hp=1;
+ if(flags.bossHeal)g.boss.hp=g.boss.maxHP;
+ if(flags.infiniteLives||flags.god)g.lives=9999;
  g.answer=a=>{
   const q=g.questions[g.index];
-  if(g.used.skip){g.used.skip=false;a=q.answer;}
+  if(g.used.skip||flags.skip){g.used.skip=false;a=q.answer;}
+  if(flags.perfect||flags.god||flags.revealAnswer){a=q.answer;}
   if(a===q.answer){
    let dmg=Math.round((35+g.combo*7)*g.bossDamageMult);
+   if(flags.bossKill){dmg=g.boss.hp;}
    if(g.bossSlayer&&!g.slayerUsed){dmg*=3;g.slayerUsed=true;toast(`⚔️ BOSS SLAYER STRIKE! ${dmg} damage!`)}else if(g.bossSlayer)dmg+=g.slayerFlat;
    g.boss.hp=Math.max(0,g.boss.hp-dmg);g.combo++;g.xp+=55;g.coins+=35;sound('damage');toast(`⚔️ ${dmg} damage!`);
    if(g.boss.hp<=0){
