@@ -1,0 +1,45 @@
+name: V4.5 QA
+on:
+  push:
+    branches: [v4.5-development]
+  pull_request:
+    branches: [main, v4.5-development]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -e
+          find js -type f -name '*.js' -print0 | while IFS= read -r -d '' file; do
+            node --check "$file"
+          done
+      - name: Check public content for private owner information
+        shell: bash
+        run: |
+          set -e
+          if grep -RniE 'OWNERV40|owner password|owner panel' js/data index.html; then
+            echo 'Private owner information leaked into public content.'
+            exit 1
+          fi
+      - name: Check complete database filters
+        shell: bash
+        run: |
+          set -e
+          grep -q "filterDB('America')" index.html
+          grep -q "filterDB('Oceania')" index.html
+          grep -q "North America.*America" js/data/registry.js
+          grep -q "South America.*America" js/data/registry.js
+      - name: Check V4.5 runtime is loaded
+        shell: bash
+        run: |
+          set -e
+          grep -q 'js/v4.5.js' index.html
+          grep -q "VERSION='4.5.0'" js/config.js
+          grep -q "asia_country_game_v450" js/config.js
